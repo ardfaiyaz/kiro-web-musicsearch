@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import HorizontalScroll from "@/app/components/HorizontalScroll";
 import GenreCard from "@/app/components/GenreCard";
+import DiscoveryMoodSelector from "@/app/components/DiscoveryMoodSelector";
 import {
   getTrendingSongs,
   getNewReleases,
@@ -113,6 +114,14 @@ export default async function DiscoverPage() {
               </HorizontalScroll>
             </section>
           )}
+
+          {/* Discover by Mood */}
+          <section aria-label="Discover by mood" className="mb-16">
+            <h3 className="mb-6 text-2xl font-bold text-foreground">
+              Discover by Mood
+            </h3>
+            <DiscoveryMoodSelector />
+          </section>
 
           {/* New Releases */}
           {newReleases.length > 0 && (

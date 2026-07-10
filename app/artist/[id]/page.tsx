@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
 import { getArtistById, getArtistTracks, getArtistAlbums } from "@/lib/itunes";
 import { getArtistInfo, getSimilarArtists } from "@/lib/lastfm";
+import { getSimilarTracks } from "@/lib/ai-discovery";
 import TrackGrid from "@/app/components/TrackGrid";
 import AlbumCard from "@/app/components/AlbumCard";
 import SimilarArtists from "@/app/components/SimilarArtists";
+import RecommendationPanel from "@/app/components/RecommendationPanel";
+import MusicInsights from "@/app/components/MusicInsights";
 import Header from "@/app/components/Header";
 import ArtistActions from "@/app/components/ArtistActions";
 
@@ -31,6 +34,12 @@ export default async function ArtistPage({
     getArtistTracks(artistId, -1),
     getArtistAlbums(artistId),
   ]);
+
+  // Get a representative track for "artists like X" recommendations
+  const representativeTrack = artistTracks.tracks[0] || null;
+  const artistRecommendations = representativeTrack
+    ? await getSimilarTracks(representativeTrack)
+    : { tracks: [], error: true };
 
   const bio = lastFmInfo?.bio?.summary
     ? lastFmInfo.bio.summary.replace(/<a\b[^>]*>.*?<\/a>/gi, "").trim()
@@ -148,6 +157,17 @@ export default async function ArtistPage({
         </section>
 
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Artist Insights */}
+          <section className="mb-16" aria-label="Artist insights">
+            <MusicInsights
+              type="artist"
+              artistName={artist.artistName}
+              genre={artist.primaryGenreName || "Music"}
+              lastFmInfo={lastFmInfo}
+              albums={albums}
+            />
+          </section>
+
           {/* Biography */}
           <section className="mb-16" aria-label="Biography">
             <h2 className="mb-6 text-2xl font-bold text-foreground">About</h2>
@@ -190,6 +210,16 @@ export default async function ArtistPage({
           {similarArtists.length > 0 && (
             <section className="mb-16">
               <SimilarArtists artists={similarArtists} />
+            </section>
+          )}
+
+          {/* Enhanced Recommendations */}
+          {!artistRecommendations.error && artistRecommendations.tracks.length > 0 && (
+            <section className="mb-16" aria-label="Recommended tracks">
+              <RecommendationPanel
+                title={`Artists Like ${artist.artistName}`}
+                tracks={artistRecommendations.tracks}
+              />
             </section>
           )}
         </div>

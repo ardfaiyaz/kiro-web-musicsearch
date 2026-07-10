@@ -542,3 +542,28 @@ html.reduce-motion .ambient-shape-3 {
 html.reduce-motion .ambient-floating-shapes {
   display: none;
 }
+
+/* Lyrics display */
+.lyrics-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.lyrics-line {
+  cursor: default;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.lyrics-line-active {
+  text-shadow: 0 0 20px var(--glass-highlight);
+}
+
+@keyframes lyricsScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
