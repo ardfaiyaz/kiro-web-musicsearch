@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "fix",
   "description": "Review fixes v2 - Make home page suggestion chips navigable via Link to /?q=... and add Link wrapper to Discover hero section for /track/[id] navigation.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Convert suggestion chip spans on app/page.tsx to Link components pointing to /?q=Taylor+Swift, /?q=The+Weeknd, /?q=Kendrick+Lamar.",
     "Wrap the Discover page hero section content in a Link to /track/${heroSong.id} in app/discover/page.tsx."
@@ -18,5 +18,5 @@
     "cd /projects/sandbox/kiro-web-musicsearch && bun run build"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "Both v2 review issues resolved: (1) Home page suggestion chips converted from span to Link components with href=/?q=<encoded artist name>. (2) Discover hero section wrapped in Link to /track/${heroSong.id} with a subtle group-hover scale effect on the artwork. Pre-existing lint warnings in SearchFilters.tsx remain unchanged. Build worker_threads warnings are cosmetic Bun compatibility notes. Black-and-white palette maintained - no saturated colors introduced."
 }
