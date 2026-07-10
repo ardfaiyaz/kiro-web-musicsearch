@@ -1,0 +1,23 @@
+{
+  "project_type": "Next.js 16 App Router with TypeScript and Tailwind CSS v4",
+  "language": "TypeScript/React",
+  "build_system": "Next.js with bun as runtime (npm not available, use bun/bunx)",
+  "test_framework": "No test framework configured. Lint via eslint.",
+  "build_command": "bunx next build",
+  "test_command": "bunx next lint",
+  "verification_instructions": "1. Run 'bunx next build' to verify TypeScript compilation and build. 2. Run 'bunx next lint' to check for lint errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. cd /projects/sandbox/kiro-web-musicsearch. 2. bun install. 3. bunx next build.",
+  "environment_constraints": "No npm/node directly - use bun and bunx. Bun 1.2.14 available via mise.",
+  "contribution_requirements": "AGENTS.md warns about breaking Next.js API changes - check node_modules/next/dist/docs/ if needed. Use semantic HTML and responsive Tailwind CSS utility classes per steering rules.",
+  "key_patterns": "Audio playback managed via React Context (AudioPlayerContext.tsx). AudioPlayer.tsx is a client component using the context. AudioPlayerProvider wraps the entire app in layout.tsx. Uses HTMLAudioElement with refs. Custom CSS variables for theming in globals.css. Tailwind v4 with @theme inline directive for custom colors.",
+  "relevant_files": [
+    "app/components/AudioPlayerContext.tsx",
+    "app/components/AudioPlayer.tsx",
+    "app/layout.tsx",
+    "app/track/[id]/page.tsx",
+    "app/globals.css",
+    "lib/types.ts"
+  ],
+  "directory_structure": "app/ - Next.js App Router pages and components. app/components/ - reusable client/server components. app/track/[id]/ - track detail page. lib/ - utility functions and types. public/ - static assets."
+}
