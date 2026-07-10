@@ -5,6 +5,9 @@ import { getTrackById, getArtistTracks } from "@/lib/itunes";
 import { getRecommendations } from "@/lib/recommendations";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
+import ExplicitBadge from "@/app/components/ExplicitBadge";
+import Header from "@/app/components/Header";
+import ShareMenu from "@/app/components/ShareMenu";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -136,10 +139,20 @@ export default async function TrackPage({
           {/* Details */}
           <section className="flex flex-1 flex-col gap-6" aria-label="Track details">
             <header>
-              <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-                {track.trackName}
-              </h2>
-              <p className="mt-1 text-lg text-muted">{track.artistName}</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+                  {track.trackName}
+                </h2>
+                {track.trackExplicitness === "explicit" && <ExplicitBadge />}
+              </div>
+              <p className="mt-1 text-lg text-muted">
+                <Link
+                  href={`/artist/${track.artistId}`}
+                  className="transition-colors hover:text-accent"
+                >
+                  {track.artistName}
+                </Link>
+              </p>
             </header>
 
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -148,7 +161,16 @@ export default async function TrackPage({
                   Album
                 </dt>
                 <dd className="text-sm text-foreground">
-                  {track.collectionName}
+                  {track.collectionId ? (
+                    <Link
+                      href={`/album/${track.collectionId}`}
+                      className="transition-colors hover:text-accent"
+                    >
+                      {track.collectionName}
+                    </Link>
+                  ) : (
+                    track.collectionName
+                  )}
                 </dd>
               </div>
               <div className="flex flex-col gap-1">
@@ -182,6 +204,19 @@ export default async function TrackPage({
                 previewUrl={track.previewUrl}
                 trackId={track.trackId}
                 trackName={track.trackName}
+                artistName={track.artistName}
+                artworkUrl={track.artworkUrl100?.replace("100x100", "200x200")}
+                track={track}
+              />
+            </div>
+
+            <div className="mt-4">
+              <ShareMenu
+                type="track"
+                trackName={track.trackName}
+                artistName={track.artistName}
+                albumName={track.collectionName}
+                artworkUrl={track.artworkUrl100}
               />
             </div>
           </section>

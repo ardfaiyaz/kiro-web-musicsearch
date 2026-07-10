@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ItunesAlbum } from "@/lib/types";
 
 function formatDate(dateString: string): string {
@@ -66,6 +67,6 @@ export default function AlbumCard({ album }: { album: ItunesAlbum }) {
           )}
         </div>
       </div>
-    </a>
+    </Link>
   );
 }

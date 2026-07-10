@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import TrackGrid from "@/app/components/TrackGrid";
+import Header from "@/app/components/Header";
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites();

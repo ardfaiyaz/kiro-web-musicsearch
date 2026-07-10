@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AudioPlayerProvider } from "./components/AudioPlayerContext";
 import { FavoritesProvider } from "./components/FavoritesContext";
+import { PersonalizationProvider } from "./components/PersonalizationContext";
+import { ThemeProvider } from "./components/ThemeContext";
+import MiniPlayer from "./components/MiniPlayer";
+import KeyboardShortcuts from "./components/KeyboardShortcuts";
+import OfflineDetector from "./components/OfflineDetector";
+import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,11 +35,29 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&!window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
-        <AudioPlayerProvider>
-          <FavoritesProvider>{children}</FavoritesProvider>
-        </AudioPlayerProvider>
+        <ThemeProvider>
+          <AudioPlayerProvider>
+            <FavoritesProvider>
+              <PersonalizationProvider>
+                <OfflineDetector />
+                <RecentlyPlayedTracker />
+                {children}
+                <MiniPlayer />
+                <KeyboardShortcuts />
+              </PersonalizationProvider>
+            </FavoritesProvider>
+          </AudioPlayerProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

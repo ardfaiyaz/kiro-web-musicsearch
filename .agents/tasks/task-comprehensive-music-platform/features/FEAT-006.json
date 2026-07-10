@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-006",
+  "type": "fix",
+  "description": "Address semantic review issues: infinite scroll filter inconsistency, RecentlyPlayedTracker data integrity, autocomplete race condition, artwork download cross-origin, theme flash, localStorage quota warning, and Last.fm API key documentation.",
+  "status": "completed",
+  "steps": [
+    "Fix InfiniteScroll.tsx to apply genre/year/explicit filters to paginated results by passing filter params and applying client-side filtering",
+    "Fix RecentlyPlayedTracker to store complete track metadata by extending AudioPlayerContext TrackMetadata to include full ItunesTrack data",
+    "Add AbortController to SearchBar.tsx autocomplete to cancel stale requests",
+    "Fix ShareMenu.tsx artwork download to use fetch+blob approach for cross-origin images",
+    "Add blocking inline script to layout.tsx to prevent theme flash on light-mode preference",
+    "Add .env.example documenting NEXT_PUBLIC_LASTFM_API_KEY requirement",
+    "Add console.warn for localStorage quota exceeded in personalization.ts",
+    "Note: PersonalizationContext shared subscription (#6) is acceptable for now"
+  ],
+  "acceptance_criteria": [
+    "Infinite scroll respects genre, year, and explicit filters on subsequent pages",
+    "RecentlyPlayedTracker stores full track data including primaryGenreName, artistId, collectionName",
+    "Autocomplete cancels stale requests using AbortController",
+    "Artwork download uses fetch+blob to actually download cross-origin images",
+    "No theme flash for light-mode users (blocking script sets correct class before paint)",
+    ".env.example documents the NEXT_PUBLIC_LASTFM_API_KEY requirement",
+    "localStorage quota errors produce a console warning",
+    "bun run build passes without errors"
+  ],
+  "verification": ["bun run build", "bun run lint"],
+  "blocked_reason": null,
+  "findings": "All fixes implemented and verified. Build and lint pass cleanly. The blocking script in layout.tsx uses suppressHydrationWarning on the html element since the script modifies the class before React hydrates. The InfiniteScroll filter approach fetches raw results then filters client-side (same logic as server) so filtered searches may show fewer than 25 results per page load but will continue loading. PersonalizationContext shared subscription issue (#6) intentionally left as-is per instructions."
+}

@@ -10,9 +10,10 @@ import {
   ReactNode,
 } from "react";
 import { usePathname } from "next/navigation";
+import { ItunesTrack } from "@/lib/types";
 
 interface AudioPlayerContextType {
-  play: (url: string, id: number) => void;
+  play: (url: string, id: number, metadata?: TrackMetadata) => void;
   pause: () => void;
   currentlyPlayingId: number | null;
   currentTime: number;
@@ -21,6 +22,17 @@ interface AudioPlayerContextType {
   progress: number;
   setVolume: (v: number) => void;
   seekTo: (time: number) => void;
+  trackName: string | null;
+  artistName: string | null;
+  artworkUrl: string | null;
+  currentTrack: ItunesTrack | null;
+}
+
+interface TrackMetadata {
+  trackName?: string;
+  artistName?: string;
+  artworkUrl?: string;
+  fullTrack?: ItunesTrack;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
@@ -36,6 +48,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [volume, setVolumeState] = useState(1);
   const volumeRef = useRef(1);
   const [progress, setProgress] = useState(0);
+  const [trackName, setTrackName] = useState<string | null>(null);
+  const [artistName, setArtistName] = useState<string | null>(null);
+  const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<ItunesTrack | null>(null);
 
   const resetPlaybackState = useCallback(() => {
     setCurrentTime(0);
@@ -51,6 +67,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current = null;
     }
     setCurrentlyPlayingId(null);
+    setTrackName(null);
+    setArtistName(null);
+    setArtworkUrl(null);
+    setCurrentTrack(null);
     resetPlaybackState();
   }, [resetPlaybackState]);
 
@@ -91,6 +111,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         if (audioRef.current === audio) {
           audioRef.current = null;
           setCurrentlyPlayingId(null);
+          setTrackName(null);
+          setArtistName(null);
+          setArtworkUrl(null);
+          setCurrentTrack(null);
           resetPlaybackState();
         }
       };
@@ -113,7 +137,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   }, [stopAudio]);
 
   const play = useCallback(
-    (url: string, id: number) => {
+    (url: string, id: number, metadata?: TrackMetadata) => {
       // Clean up listeners on the old element before discarding it
       cleanupRef.current?.();
       cleanupRef.current = null;
@@ -125,6 +149,12 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       }
 
       resetPlaybackState();
+
+      // Set track metadata
+      setTrackName(metadata?.trackName || null);
+      setArtistName(metadata?.artistName || null);
+      setArtworkUrl(metadata?.artworkUrl || null);
+      setCurrentTrack(metadata?.fullTrack || null);
 
       const audio = new Audio(url);
       audio.volume = volumeRef.current;
@@ -140,6 +170,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
           cleanupRef.current = null;
           audioRef.current = null;
           setCurrentlyPlayingId(null);
+          setTrackName(null);
+          setArtistName(null);
+          setArtworkUrl(null);
+          setCurrentTrack(null);
           resetPlaybackState();
         }
       });
@@ -178,6 +212,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         progress,
         setVolume,
         seekTo,
+        trackName,
+        artistName,
+        artworkUrl,
+        currentTrack,
       }}
     >
       {children}

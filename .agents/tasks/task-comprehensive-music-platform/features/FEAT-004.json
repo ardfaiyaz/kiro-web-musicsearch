@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Music discovery page with trending songs, new releases, featured albums, popular artists, browse by genre. Adds a /discover route that serves as a rich landing experience. Also adds infinite scrolling/pagination to search results.",
+  "status": "completed",
+  "steps": [
+    "Create lib/discovery.ts - utility functions that use the iTunes RSS feeds and search API to get: trending songs (iTunes top songs RSS), new releases (recent releases via search), featured albums, popular artists by genre. Use iTunes RSS Generator endpoints like https://rss.applemarketingtools.com/api/v2/us/music/most-played/25/songs.json for trending.",
+    "Create app/discover/page.tsx - Discovery page with sections: (a) Trending Songs carousel/grid, (b) New Releases section, (c) Featured Albums, (d) Popular Artists, (e) Browse by Genre grid (clickable genre cards that link to search with genre filter). Use semantic HTML with sections and headings. Make it responsive with different layouts for mobile/tablet/desktop.",
+    "Create app/discover/loading.tsx with skeleton loading state for the discovery page.",
+    "Create app/components/GenreCard.tsx - a visually appealing card for genre browsing with gradient backgrounds and genre icons/names. Genres: Pop, Rock, Hip-Hop/Rap, Electronic, Jazz, Classical, Country, R&B/Soul, Latin, Alternative, Indie, Metal.",
+    "Create app/components/HorizontalScroll.tsx - a horizontally scrollable container with scroll buttons for carousels (used for trending, new releases sections).",
+    "Add infinite scrolling to search results: Create app/components/InfiniteScroll.tsx that uses IntersectionObserver to load more results when the user scrolls near the bottom. Update the search page to use it with the iTunes API offset parameter.",
+    "Update app/page.tsx to use InfiniteScroll for search results. The initial load shows 25 results, and scrolling loads 25 more each time.",
+    "Update the main navigation in the header (used across pages) to include a link to /discover alongside the existing Favorites link.",
+    "Create app/components/Header.tsx - extract the repeated header navigation into a shared component used across all pages (home, favorites, discover, artist, album, track). Include links to Home, Discover, Favorites."
+  ],
+  "acceptance_criteria": [
+    "Discovery page at /discover shows trending songs, new releases, featured albums, popular artists, and genre browsing",
+    "Genre cards link to search results filtered by that genre",
+    "Horizontal scroll containers have navigation arrows and are touch-scrollable on mobile",
+    "Infinite scrolling loads more results as user scrolls down on search page",
+    "Shared header navigation appears on all pages with links to Home, Discover, Favorites",
+    "Discovery page is responsive across desktop, tablet, and mobile",
+    "bun run build passes without errors"
+  ],
+  "verification": ["bun run build", "bun run lint"],
+  "blocked_reason": null,
+  "findings": "Build and lint pass. The RSS new-releases endpoint returns 404, so getNewReleases was implemented using the iTunes Search API instead. The most-played RSS endpoints for songs and albums both work correctly. The worker_threads warnings are pre-existing Bun compatibility issues (not build failures). The Header component is client-side (uses usePathname) and works in both server and client component pages."
+}

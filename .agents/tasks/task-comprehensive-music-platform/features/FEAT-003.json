@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Artist profile page, album detail page with full track listing, enriched song details (explicit badge, track number), and music recommendations based on genre/artist similarity. Integrates Last.fm API for artist bios and similar artists.",
+  "status": "completed",
+  "steps": [
+    "Create lib/lastfm.ts - API utility for Last.fm: getArtistInfo (bio, image, tags, similar artists), getArtistTopAlbums, getSimilarArtists. Use a free Last.fm API key (can use a placeholder env var NEXT_PUBLIC_LASTFM_API_KEY or hardcode a free key). Handle API failures gracefully with fallbacks.",
+    "Update lib/types.ts to add types for: LastFmArtist, LastFmAlbum, LastFmSimilarArtist, AlbumDetail (with full track list from iTunes lookup).",
+    "Update lib/itunes.ts to add: getArtistById (lookup artist by ID), getAlbumById (lookup album by ID), getAlbumTracks (get all tracks in an album via lookup), getArtistAlbums (get albums for an artist).",
+    "Create app/artist/[id]/page.tsx - Artist profile page showing: artist image (from Last.fm or placeholder), artist name, biography (from Last.fm), genre tags, top songs (from iTunes), popular albums (from iTunes), similar artists section (from Last.fm). Use semantic HTML with article, section, header elements. Include loading.tsx and error.tsx for this route.",
+    "Create app/artist/[id]/loading.tsx with skeleton loading state for the artist profile.",
+    "Create app/album/[id]/page.tsx - Album detail page showing: large album artwork, album title, artist (linked to artist page), release year, genre, total tracks, copyright info, complete track listing with track numbers and durations, play preview buttons. Include loading.tsx and error.tsx.",
+    "Create app/album/[id]/loading.tsx with skeleton loading state for the album page.",
+    "Update app/track/[id]/page.tsx to add: explicit content badge, track number, link to album page, link to artist page. Add a 'Similar Tracks' section that shows tracks from the same genre using iTunes search.",
+    "Update AlbumCard.tsx to link to the internal /album/[id] page instead of external collectionViewUrl.",
+    "Update ArtistCard.tsx to link to the internal /artist/[id] page instead of external artistLinkUrl.",
+    "Create app/components/ExplicitBadge.tsx - a small 'E' badge component for explicit content.",
+    "Create app/components/SimilarArtists.tsx - displays a grid of similar artist cards from Last.fm data."
+  ],
+  "acceptance_criteria": [
+    "Artist profile page at /artist/[id] shows name, bio, genre tags, top songs, albums, and similar artists",
+    "Album detail page at /album/[id] shows artwork, metadata, and complete track listing with play buttons",
+    "Track detail page shows explicit badge when applicable and links to artist/album pages",
+    "Similar tracks section on track page shows genre-based recommendations",
+    "AlbumCard links to internal album page, ArtistCard links to internal artist page",
+    "Last.fm API failures are handled gracefully with fallback content",
+    "Loading skeletons display while artist/album pages load",
+    "bun run build passes without errors"
+  ],
+  "verification": ["bun run build", "bun run lint"],
+  "blocked_reason": null,
+  "findings": "Build passes with worker_threads warnings (pre-existing, not blocking). Last.fm integration uses regular img tags to avoid needing additional remotePatterns config. The lastfm.freetls.fastly.net domain was added to next.config.ts anyway for future use. AudioPlayer compact prop was added for the album track listing. ItunesTrack type extended with collectionId, trackNumber, discNumber, discCount fields that iTunes API returns but were previously untyped."
+}

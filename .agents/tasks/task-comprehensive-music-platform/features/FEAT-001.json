@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Dark/Light theme toggle, glassmorphism player, skeleton loaders, hover animations, and enhanced UI foundation. This establishes the visual design system that all subsequent features build upon.",
+  "status": "completed",
+  "steps": [
+    "Add a ThemeProvider context in app/components/ThemeContext.tsx that manages dark/light mode via a class on <html> (toggling a 'dark' class) and persists preference to localStorage. Replace the current prefers-color-scheme media query approach in app/globals.css with class-based dark mode using Tailwind's dark: variant.",
+    "Update app/globals.css: add dark mode CSS variables under html.dark selector instead of @media (prefers-color-scheme: dark). Add glassmorphism utility classes (backdrop-blur, translucent backgrounds). Add smooth transition classes for theme switching.",
+    "Update app/layout.tsx to wrap children in ThemeProvider. Add a theme toggle button in a shared navigation component.",
+    "Create app/components/ThemeToggle.tsx - a button that toggles between dark/light mode with sun/moon icons and smooth transition animation.",
+    "Create app/components/Skeleton.tsx - reusable skeleton loading components: SkeletonCard (for track/album cards), SkeletonText, SkeletonCircle, SkeletonGrid. Use Tailwind animate-pulse.",
+    "Update app/loading.tsx to use the new skeleton components instead of the basic LoadingSpinner for page-level loading.",
+    "Add hover animations to TrackCard.tsx, AlbumCard.tsx, ArtistCard.tsx - subtle scale transform, shadow elevation, and card lift effects using Tailwind transition utilities.",
+    "Update AudioPlayer.tsx to use glassmorphism styling: translucent background with backdrop-blur, subtle border, and glass effect. Style the progress bar and volume slider with modern gradients.",
+    "Create app/components/MiniPlayer.tsx - a fixed-bottom mini player that shows the currently playing track (artwork, title, artist, play/pause, progress) when audio is active. Uses glassmorphism styling. Only visible when a track is playing.",
+    "Update AudioPlayerContext.tsx to expose track metadata (trackName, artistName, artworkUrl) for the mini player to consume.",
+    "Add MiniPlayer to app/layout.tsx so it persists across page navigation."
+  ],
+  "acceptance_criteria": [
+    "Theme toggle switches between dark and light mode with visible UI change",
+    "Theme preference persists in localStorage across page reloads",
+    "Skeleton loading states show animated placeholders during page loads",
+    "Audio player has translucent glassmorphism effect with backdrop blur",
+    "Mini player appears at bottom of screen when audio is playing",
+    "Mini player shows track name, artist, artwork, and play/pause control",
+    "Hover animations on cards are smooth and performant",
+    "bun run build passes without errors"
+  ],
+  "verification": ["bun run build", "bun run lint"],
+  "blocked_reason": null,
+  "findings": "Build passes with worker_threads warnings (known bun limitation, not a real error). Used useSyncExternalStore for theme initialization to avoid the react-hooks/set-state-in-effect lint rule. The html element starts with 'dark' class in server HTML and ThemeProvider adjusts on mount via useEffect. suppressHydrationMismatch is not available on html element in Next.js 16 types. AudioPlayer now accepts optional artistName and artworkUrl props for mini player metadata."
+}
