@@ -42,9 +42,12 @@ export default async function DiscoverPage() {
                 />
               )}
             </div>
-            <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+            <Link
+              href={`/track/${heroSong.id}`}
+              className="group relative block mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+            >
               <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-end sm:gap-12">
-                <div className="relative aspect-square w-48 shrink-0 overflow-hidden rounded-2xl shadow-2xl sm:w-56 lg:w-64">
+                <div className="relative aspect-square w-48 shrink-0 overflow-hidden rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02] sm:w-56 lg:w-64">
                   {heroSong.artworkUrl100 && (
                     <Image
                       src={heroSong.artworkUrl100.replace("100x100", "600x600")}
@@ -68,7 +71,7 @@ export default async function DiscoverPage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </Link>
           </section>
         )}
 

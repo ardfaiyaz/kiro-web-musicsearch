@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import SearchBar from "./components/SearchBar";
 import SearchFilters from "./components/SearchFilters";
 import ArtistGrid from "./components/ArtistGrid";
@@ -212,15 +213,24 @@ export default async function Home({
             </div>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm text-muted animate-fade-in">
               <span>Try:</span>
-              <span className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground">
+              <Link
+                href="/?q=Taylor+Swift"
+                className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground"
+              >
                 Taylor Swift
-              </span>
-              <span className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground">
+              </Link>
+              <Link
+                href="/?q=The+Weeknd"
+                className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground"
+              >
                 The Weeknd
-              </span>
-              <span className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground">
+              </Link>
+              <Link
+                href="/?q=Kendrick+Lamar"
+                className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground"
+              >
                 Kendrick Lamar
-              </span>
+              </Link>
             </div>
           </section>
         )}

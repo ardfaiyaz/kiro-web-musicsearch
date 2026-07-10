@@ -1,0 +1,22 @@
+{
+  "id": "FEAT-004",
+  "type": "fix",
+  "description": "Review fixes v2 - Make home page suggestion chips navigable via Link to /?q=... and add Link wrapper to Discover hero section for /track/[id] navigation.",
+  "status": "in_progress",
+  "steps": [
+    "Convert suggestion chip spans on app/page.tsx to Link components pointing to /?q=Taylor+Swift, /?q=The+Weeknd, /?q=Kendrick+Lamar.",
+    "Wrap the Discover page hero section content in a Link to /track/${heroSong.id} in app/discover/page.tsx."
+  ],
+  "acceptance_criteria": [
+    "Home page suggestion chips are Link components navigating to /?q=<artist>",
+    "Discover page hero section is wrapped in a Link to /track/[heroSong.id]",
+    "Build passes with zero errors",
+    "Lint passes with zero errors"
+  ],
+  "verification": [
+    "cd /projects/sandbox/kiro-web-musicsearch && bun run lint",
+    "cd /projects/sandbox/kiro-web-musicsearch && bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}
