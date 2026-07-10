@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Add advanced search filters (entity filter, sort, clear) to the music search app. This includes: updating the iTunes API function to accept an entity parameter, creating a SearchFilters client component with filter-by-entity buttons (Song/Artist/Album), sort-by dropdown (Relevance/Release Date/Artist Name), and a Clear Filters button, integrating filters into the main page via URL search params, and applying client-side sorting to results.",
-  "status": "completed",
+  "status": "in_progress",
   "steps": [
     "Update lib/itunes.ts: modify searchTracks to accept an optional 'entity' parameter. When entity is 'song', pass entity=musicTrack. When entity is 'artist', pass entity=musicArtist. When entity is 'album', pass entity=album. Default (no filter or 'all') keeps current behavior (media=music).",
     "Create app/components/SearchFilters.tsx as a 'use client' component. It should read current URL search params (filter, sort) and provide: (1) Filter buttons for All/Song/Artist/Album that update the 'filter' URL param, (2) A sort dropdown for Relevance/Release Date/Artist Name that updates the 'sort' URL param, (3) A Clear Filters button that removes filter and sort params. Active filters should be visually indicated with accent styling. Use responsive Tailwind classes - stack vertically on mobile, horizontal on desktop. Use semantic HTML (fieldset/legend or nav with aria labels).",

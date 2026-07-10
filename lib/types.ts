@@ -15,7 +15,32 @@ export interface ItunesTrack {
   wrapperType: string;
 }
 
+export interface ItunesArtist {
+  artistId: number;
+  artistName: string;
+  artistLinkUrl: string;
+  primaryGenreName: string;
+  artistType: string;
+  wrapperType: string;
+}
+
+export interface ItunesAlbum {
+  collectionId: number;
+  collectionName: string;
+  artistName: string;
+  artistId: number;
+  artworkUrl100: string;
+  collectionViewUrl: string;
+  primaryGenreName: string;
+  releaseDate: string;
+  trackCount: number;
+  wrapperType: string;
+  collectionType: string;
+}
+
+export type ItunesResult = ItunesTrack | ItunesArtist | ItunesAlbum;
+
 export interface ItunesSearchResponse {
   resultCount: number;
-  results: ItunesTrack[];
+  results: ItunesResult[];
 }

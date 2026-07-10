@@ -3,9 +3,11 @@ import Link from "next/link";
 import SearchBar from "./components/SearchBar";
 import SearchFilters from "./components/SearchFilters";
 import TrackGrid from "./components/TrackGrid";
+import ArtistGrid from "./components/ArtistGrid";
+import AlbumGrid from "./components/AlbumGrid";
 import EmptyState from "./components/EmptyState";
 import LoadingSpinner from "./components/LoadingSpinner";
-import { searchTracks } from "@/lib/itunes";
+import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { ItunesTrack } from "@/lib/types";
 
 function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
@@ -23,7 +25,7 @@ function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
   return tracks;
 }
 
-async function SearchResults({
+async function TrackResults({
   query,
   filter,
   sort,
@@ -32,7 +34,7 @@ async function SearchResults({
   filter: string;
   sort: string;
 }) {
-  const entity = filter !== "all" ? filter : undefined;
+  const entity = filter === "song" ? "song" : undefined;
   const tracks = await searchTracks(query, entity);
   const sortedTracks = sortTracks(tracks, sort);
 
@@ -46,6 +48,40 @@ async function SearchResults({
         Results for &ldquo;{query}&rdquo;
       </h2>
       <TrackGrid tracks={sortedTracks} />
+    </section>
+  );
+}
+
+async function ArtistResults({ query }: { query: string }) {
+  const artists = await searchArtists(query);
+
+  if (artists.length === 0) {
+    return <EmptyState query={query} />;
+  }
+
+  return (
+    <section aria-label="Artist search results">
+      <h2 className="mb-4 text-lg font-semibold text-foreground">
+        Artists matching &ldquo;{query}&rdquo;
+      </h2>
+      <ArtistGrid artists={artists} />
+    </section>
+  );
+}
+
+async function AlbumResults({ query }: { query: string }) {
+  const albums = await searchAlbums(query);
+
+  if (albums.length === 0) {
+    return <EmptyState query={query} />;
+  }
+
+  return (
+    <section aria-label="Album search results">
+      <h2 className="mb-4 text-lg font-semibold text-foreground">
+        Albums matching &ldquo;{query}&rdquo;
+      </h2>
+      <AlbumGrid albums={albums} />
     </section>
   );
 }
@@ -145,10 +181,26 @@ export default async function Home({
           </section>
         )}
 
-        {query && (
+        {query && activeFilter === "artist" && (
+          <section className="mt-8">
+            <Suspense fallback={<LoadingSpinner message="Searching for artists..." />}>
+              <ArtistResults query={query} />
+            </Suspense>
+          </section>
+        )}
+
+        {query && activeFilter === "album" && (
+          <section className="mt-8">
+            <Suspense fallback={<LoadingSpinner message="Searching for albums..." />}>
+              <AlbumResults query={query} />
+            </Suspense>
+          </section>
+        )}
+
+        {query && (activeFilter === "all" || activeFilter === "song") && (
           <section className="mt-8">
             <Suspense fallback={<LoadingSpinner message="Searching for music..." />}>
-              <SearchResults query={query} filter={activeFilter} sort={activeSort} />
+              <TrackResults query={query} filter={activeFilter} sort={activeSort} />
             </Suspense>
           </section>
         )}
