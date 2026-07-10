@@ -66,6 +66,6 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
           d="M8.25 4.5l7.5 7.5-7.5 7.5"
         />
       </svg>
-    </Link>
+    </a>
   );
 }
