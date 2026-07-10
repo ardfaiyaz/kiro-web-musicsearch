@@ -18,6 +18,9 @@
   --dynamic-accent: transparent;
   --dynamic-accent-light: transparent;
   --dynamic-accent-muted: transparent;
+  --user-blur-intensity: 20px;
+  --user-glass-opacity: 0.7;
+  --animation-speed: 1;
 }
 
 html.dark {
@@ -38,6 +41,7 @@ html.dark {
   --dynamic-accent: transparent;
   --dynamic-accent-light: transparent;
   --dynamic-accent-muted: transparent;
+  --user-glass-opacity: 0.75;
 }
 
 @theme inline {
@@ -89,16 +93,16 @@ body {
 /* Glassmorphism utilities */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow: 0 4px 6px -1px var(--shadow-color);
 }
 
 .glass-elevated {
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.6)) saturate(200%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.6)) saturate(200%);
   border: 1px solid var(--glass-border);
   box-shadow: 0 8px 32px -4px var(--shadow-color),
     0 4px 16px -2px var(--shadow-color);
@@ -106,8 +110,8 @@ body {
 
 .glass-search {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(180%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(180%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 4px 12px -2px var(--shadow-color);
@@ -115,8 +119,8 @@ body {
 
 .glass-dropdown {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow: 0 8px 24px -4px var(--shadow-color),
     0 2px 8px -2px var(--shadow-color);
@@ -124,8 +128,8 @@ body {
 
 .glass-player {
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.6)) saturate(200%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.6)) saturate(200%);
   border: 1px solid var(--glass-border);
   box-shadow: 0 -4px 16px -4px var(--shadow-color);
 }
@@ -215,8 +219,8 @@ html.dark .glass-player {
 /* Glass Card variant */
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 4px 16px -4px var(--shadow-color);
@@ -225,8 +229,8 @@ html.dark .glass-player {
 
 .glass-tooltip {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(200%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(200%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 4px 12px -2px var(--shadow-color);
@@ -235,8 +239,8 @@ html.dark .glass-player {
 
 .glass-sidebar {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(180%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(180%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 4px 0 16px -4px var(--shadow-color);
@@ -245,8 +249,8 @@ html.dark .glass-player {
 
 .glass-dialog {
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.6)) saturate(200%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.6)) saturate(200%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 16px 48px -8px var(--shadow-color),
@@ -256,8 +260,8 @@ html.dark .glass-player {
 
 .glass-settings {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 4px 12px -2px var(--shadow-color);
@@ -266,8 +270,8 @@ html.dark .glass-player {
 
 .glass-recommendation {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 4px 16px -4px var(--shadow-color);
@@ -276,8 +280,8 @@ html.dark .glass-player {
 
 .glass-stats {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--user-blur-intensity)) saturate(180%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 2px 8px -2px var(--shadow-color);
@@ -286,8 +290,8 @@ html.dark .glass-player {
 
 .glass-fab {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(200%);
+  -webkit-backdrop-filter: blur(calc(var(--user-blur-intensity) * 1.2)) saturate(200%);
   border: 1px solid var(--glass-border);
   border-top-color: var(--glass-highlight);
   box-shadow: 0 8px 24px -4px var(--shadow-color),
@@ -471,4 +475,70 @@ html.dark .ambient-vignette {
     border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide-in-right animation for settings panel */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Full slide-up animation for expanded player */
+@keyframes slideUpFull {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up-full {
+  animation: slideUpFull 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Compact mode - reduces padding/margins site-wide */
+html.compact-mode .compact-mode-padding {
+  padding: 0.5rem;
+}
+
+html.compact-mode main {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+html.compact-mode header {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Reduce motion - disables all animations */
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+html.reduce-motion .ambient-gradient-layer,
+html.reduce-motion .ambient-shape-1,
+html.reduce-motion .ambient-shape-2,
+html.reduce-motion .ambient-shape-3 {
+  animation: none !important;
+}
+
+html.reduce-motion .ambient-floating-shapes {
+  display: none;
 }

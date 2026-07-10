@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Enhanced Player with glassmorphism, expanded view, queue, waveform visualization, and dynamic backgrounds. Plus Settings panel for controlling glass intensity, blur, accent colors, animation speed, and reduced motion.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create app/components/ExpandedPlayer.tsx - a full-screen or near-full-screen player overlay with: (1) Large album artwork with dynamic color background glow behind it, (2) Track info (name, artist, album) with large typography, (3) Full playback controls (play/pause, seek bar, volume, time display), (4) A simple waveform visualization using CSS bars that animate to simulate audio levels (use requestAnimationFrame with random heights synced to playing state), (5) Queue display showing upcoming tracks (pull from AudioPlayerContext - may need to extend context), (6) Glass morphism styling throughout, (7) Smooth slide-up animation from mini player, (8) Close button to collapse back to mini player. This is a client component.",
     "Extend app/components/AudioPlayerContext.tsx to support a queue of tracks: add queue state (ItunesTrack[]), addToQueue, removeFromQueue, playNext, clearQueue functions. Add an isExpanded state and toggleExpanded function to control showing ExpandedPlayer vs MiniPlayer.",
