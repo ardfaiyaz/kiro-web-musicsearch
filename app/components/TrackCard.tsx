@@ -20,7 +20,7 @@ export default function TrackCard({ track }: { track: ItunesTrack }) {
   return (
     <Link
       href={`/track/${track.trackId}`}
-      className="cursor-pointer group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
+      className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-border">
         {artworkUrl ? (
@@ -29,7 +29,7 @@ export default function TrackCard({ track }: { track: ItunesTrack }) {
             alt={`${track.trackName} album artwork`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-cover transition-premium group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
@@ -50,22 +50,24 @@ export default function TrackCard({ track }: { track: ItunesTrack }) {
           </div>
         )}
         <div
-          className={`absolute top-2 right-2 transition-opacity ${
+          className={`absolute top-2 right-2 transition-premium ${
             favorited ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           }`}
         >
           <FavoriteButton track={track} />
         </div>
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
+      <div className="flex flex-1 flex-col gap-1 p-4">
+        <h3 className="truncate text-sm font-bold text-foreground tracking-tight group-hover:text-accent transition-premium">
           {track.trackName}
         </h3>
         <p className="truncate text-xs text-muted">{track.artistName}</p>
-        <div className="mt-auto flex items-center justify-between pt-1">
-          <p className="truncate text-xs text-muted">{track.collectionName}</p>
+        <div className="mt-auto flex items-center justify-between pt-2">
+          <p className="truncate text-xs text-muted/70">
+            {track.collectionName}
+          </p>
           {track.trackTimeMillis && (
-            <span className="shrink-0 text-xs text-muted">
+            <span className="shrink-0 text-xs text-muted/70">
               {formatDuration(track.trackTimeMillis)}
             </span>
           )}

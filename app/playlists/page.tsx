@@ -59,7 +59,7 @@ export default function PlaylistsPage() {
             <button
               type="submit"
               disabled={!newPlaylistName.trim()}
-              className="rounded-xl bg-accent px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-xl bg-foreground px-6 py-2.5 text-sm font-medium text-background transition-colors hover:bg-foreground/80 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create
             </button>

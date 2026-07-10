@@ -111,7 +111,7 @@ export default function AudioPlayer({
     return (
       <button
         onClick={handleToggle}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover"
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background transition-colors hover:bg-foreground/80"
         aria-label={isPlaying ? `Pause ${trackName}` : `Play ${trackName} preview`}
       >
         {isPlaying ? (
@@ -138,7 +138,7 @@ export default function AudioPlayer({
           {/* Play/Pause Button */}
           <button
             onClick={handleToggle}
-            className="cursor-pointer flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover"
+            className="cursor-pointer flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background transition-colors hover:bg-foreground/80"
             aria-label={isPlaying ? `Pause ${trackName}` : `Play ${trackName} preview`}
           >
             {isPlaying ? (

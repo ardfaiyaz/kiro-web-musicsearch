@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ItunesArtist } from "@/lib/types";
 
 export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
@@ -9,24 +10,22 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
-    <a
-      href={artist.artistLinkUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="cursor-pointer group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
+    <Link
+      href={`/artist/${artist.artistId}`}
+      className="cursor-pointer group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-0.5"
     >
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full shadow-md">
         {artworkUrl && !imageFailed ? (
           <Image
             src={artworkUrl}
             alt={`${artist.artistName} profile image`}
             fill
-            sizes="56px"
-            className="object-cover transition-transform group-hover:scale-105"
+            sizes="64px"
+            className="object-cover transition-premium group-hover:scale-110"
             onError={() => setImageFailed(true)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
+          <div className="flex h-full w-full items-center justify-center rounded-full bg-foreground/5 text-muted transition-premium group-hover:bg-foreground/10">
             <svg
               className="h-7 w-7"
               fill="none"
@@ -45,7 +44,7 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1 overflow-hidden">
-        <h3 className="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-accent">
+        <h3 className="truncate text-sm font-bold text-foreground tracking-tight transition-premium group-hover:text-accent">
           {artist.artistName}
         </h3>
         <p className="truncate text-xs text-muted">
@@ -53,7 +52,7 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
         </p>
       </div>
       <svg
-        className="h-5 w-5 shrink-0 text-muted transition-colors group-hover:text-accent"
+        className="h-4 w-4 shrink-0 text-muted/50 transition-premium group-hover:text-foreground group-hover:translate-x-0.5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -62,10 +61,10 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth={1.5}
+          strokeWidth={2}
           d="M8.25 4.5l7.5 7.5-7.5 7.5"
         />
       </svg>
-    </a>
+    </Link>
   );
 }

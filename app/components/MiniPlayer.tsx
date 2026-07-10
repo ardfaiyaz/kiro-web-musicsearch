@@ -18,31 +18,31 @@ export default function MiniPlayer() {
   return (
     <aside
       aria-label="Mini player"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-card/80 backdrop-blur-xl transition-all duration-300"
+      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-dark shadow-2xl shadow-black/30 transition-premium hover:shadow-black/40"
     >
-      {/* Progress bar at top of mini player */}
-      <div className="h-0.5 w-full bg-border">
+      {/* Progress bar at top */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden rounded-t-2xl bg-white/10">
         <div
-          className="h-full bg-gradient-to-r from-accent to-accent-hover transition-all duration-150"
+          className="h-full bg-white/80 transition-all duration-150"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2 sm:px-6">
+      <div className="flex items-center gap-4 px-5 py-3">
         {/* Artwork */}
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-border sm:h-12 sm:w-12">
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-border shadow-lg sm:h-14 sm:w-14">
           {artworkUrl ? (
             <Image
               src={artworkUrl}
               alt={trackName ? `${trackName} artwork` : "Track artwork"}
               fill
-              sizes="48px"
+              sizes="56px"
               className="object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <svg
-                className="h-5 w-5 text-muted"
+                className="h-6 w-6 text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -60,11 +60,11 @@ export default function MiniPlayer() {
         </div>
 
         {/* Track info */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-medium text-foreground">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="truncate text-sm font-semibold text-white">
             {trackName || "Unknown Track"}
           </span>
-          <span className="truncate text-xs text-muted">
+          <span className="truncate text-xs text-white/60">
             {artistName || "Unknown Artist"}
           </span>
         </div>
@@ -72,7 +72,7 @@ export default function MiniPlayer() {
         {/* Pause button */}
         <button
           onClick={pause}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-black transition-premium hover:scale-105 hover:bg-white/90"
           aria-label="Pause"
         >
           <svg

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LastFmSimilarArtist } from "@/lib/types";
 
 export default function SimilarArtists({
@@ -11,7 +12,9 @@ export default function SimilarArtists({
 
   return (
     <section aria-label="Similar artists">
-      <h2 className="mb-6 text-xl font-bold text-foreground">Similar Artists</h2>
+      <h2 className="mb-6 text-xl font-bold text-foreground tracking-tight">
+        Similar Artists
+      </h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {artists.map((artist) => {
           const imageUrl =
@@ -20,25 +23,23 @@ export default function SimilarArtists({
             "";
 
           return (
-            <a
+            <Link
               key={artist.name}
-              href={artist.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-1"
+              href={`/?q=${encodeURIComponent(artist.name)}&filter=artist`}
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1"
             >
-              <div className="relative h-20 w-20 overflow-hidden rounded-full bg-border">
+              <div className="relative h-20 w-20 overflow-hidden rounded-full bg-border shadow-md">
                 {imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={imageUrl}
                     alt={`${artist.name} photo`}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-premium group-hover:scale-110"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-accent/10">
+                  <div className="flex h-full w-full items-center justify-center bg-foreground/5">
                     <svg
-                      className="h-8 w-8 text-accent"
+                      className="h-8 w-8 text-muted"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -54,10 +55,10 @@ export default function SimilarArtists({
                   </div>
                 )}
               </div>
-              <p className="text-center text-sm font-medium text-foreground transition-colors group-hover:text-accent truncate w-full">
+              <p className="text-center text-sm font-medium text-foreground transition-premium group-hover:text-accent truncate w-full">
                 {artist.name}
               </p>
-            </a>
+            </Link>
           );
         })}
       </div>
