@@ -1,0 +1,26 @@
+{
+  "project_type": "Next.js 16 App Router with React 19, TypeScript, Tailwind CSS 4",
+  "language": "TypeScript/TSX",
+  "build_system": "npm with next build",
+  "test_framework": "None configured (no test dependencies or test files exist)",
+  "build_command": "npm run build",
+  "test_command": "npm run lint",
+  "verification_instructions": "1. Run npm install to restore dependencies. 2. Run npm run build to verify the project compiles. 3. Run npm run lint to check for lint errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/kiro-web-musicsearch && npm install",
+  "environment_constraints": "Network access available (COMMON_DEPENDENCIES or OPEN_INTERNET). npm registry accessible. No test framework installed - verification is via build + lint.",
+  "contribution_requirements": "AGENTS.md says: This is Next.js 16 with breaking changes. Read relevant docs from node_modules/next/dist/docs/ before writing code. Heed deprecation notices.",
+  "key_patterns": "- Client components use 'use client' directive at top of file. - AudioPlayerContext provides a React context pattern for shared state (createContext + Provider + useContext hook). - Components live in app/components/. - Library code lives in lib/. - Tailwind CSS 4 with custom theme colors defined in globals.css via @theme inline. - Dark mode via prefers-color-scheme media query in CSS variables. - Responsive classes: sm:, lg:, xl: breakpoints. - Semantic HTML with aria-labels on sections. - TrackCard is a Link wrapping a card. - ItunesTrack is the main data type in lib/types.ts. - App Router pages use async components and Promise-based params.",
+  "relevant_files": [
+    "app/page.tsx",
+    "app/layout.tsx",
+    "app/components/TrackCard.tsx",
+    "app/components/TrackGrid.tsx",
+    "app/components/AudioPlayerContext.tsx",
+    "app/components/EmptyState.tsx",
+    "app/globals.css",
+    "lib/types.ts",
+    "app/track/[id]/page.tsx"
+  ],
+  "directory_structure": "app/ - Next.js App Router pages and components. app/components/ - Reusable UI components. app/track/[id]/ - Track detail page with dynamic route. lib/ - Shared utilities and types (itunes.ts, types.ts). public/ - Static assets."
+}
