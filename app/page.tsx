@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import SearchBar from "./components/SearchBar";
 import SearchFilters from "./components/SearchFilters";
 import ArtistGrid from "./components/ArtistGrid";
