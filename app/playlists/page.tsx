@@ -35,31 +35,31 @@ export default function PlaylistsPage() {
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-        <header className="mb-8">
-          <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
+        <header className="mb-10">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Playlists
           </h2>
-          <p className="mt-2 text-muted">
+          <p className="mt-3 text-lg text-muted">
             Create and manage your music collections
           </p>
         </header>
 
         {/* Create New Playlist */}
-        <section className="mb-8" aria-label="Create new playlist">
+        <section className="mb-10" aria-label="Create new playlist">
           <form onSubmit={handleCreate} className="flex gap-3">
             <input
               type="text"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
               placeholder="New playlist name..."
-              className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="flex-1 rounded-2xl border border-border bg-card px-5 py-3.5 text-sm text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 transition-all"
               aria-label="Playlist name"
             />
             <button
               type="submit"
               disabled={!newPlaylistName.trim()}
-              className="rounded-xl bg-accent px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-2xl bg-foreground px-7 py-3.5 text-sm font-medium text-background transition-colors hover:bg-foreground/80 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Create
             </button>
@@ -69,21 +69,23 @@ export default function PlaylistsPage() {
         {/* Playlists List */}
         <section aria-label="Your playlists">
           {playlists.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-              <svg
-                className="h-16 w-16 text-muted"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                />
-              </svg>
+            <div className="flex flex-col items-center justify-center gap-6 py-20 text-center">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-foreground/5">
+                <svg
+                  className="h-12 w-12 text-muted"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
+                  />
+                </svg>
+              </div>
               <h3 className="text-xl font-semibold text-foreground">
                 No playlists yet
               </h3>
@@ -97,9 +99,9 @@ export default function PlaylistsPage() {
               {playlists.map((playlist) => (
                 <div
                   key={playlist.id}
-                  className="rounded-xl border border-border bg-card overflow-hidden"
+                  className="overflow-hidden rounded-2xl border border-border bg-card transition-all"
                 >
-                  <div className="flex items-center justify-between p-4 sm:p-6">
+                  <div className="flex items-center justify-between p-5 sm:p-6">
                     <button
                       type="button"
                       onClick={() =>
@@ -110,9 +112,9 @@ export default function PlaylistsPage() {
                       className="flex flex-1 items-center gap-4 text-left"
                       aria-expanded={expandedId === playlist.id}
                     >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5">
                         <svg
-                          className="h-6 w-6 text-accent"
+                          className="h-6 w-6 text-foreground"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth={1.5}
@@ -136,7 +138,7 @@ export default function PlaylistsPage() {
                         </p>
                       </div>
                       <svg
-                        className={`ml-auto h-5 w-5 text-muted transition-transform ${
+                        className={`ml-auto h-5 w-5 text-muted transition-transform duration-300 ${
                           expandedId === playlist.id ? "rotate-180" : ""
                         }`}
                         fill="none"
@@ -156,7 +158,7 @@ export default function PlaylistsPage() {
                       type="button"
                       onClick={() => handleDelete(playlist.id)}
                       aria-label={`Delete playlist ${playlist.name}`}
-                      className="ml-4 flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-red-500/10 hover:text-red-500"
+                      className="ml-4 flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-foreground/5 hover:text-foreground"
                     >
                       <svg
                         className="h-4 w-4"
@@ -179,18 +181,18 @@ export default function PlaylistsPage() {
                   {expandedId === playlist.id && (
                     <div className="border-t border-border">
                       {playlist.tracks.length === 0 ? (
-                        <p className="px-6 py-4 text-sm text-muted">
+                        <p className="px-6 py-5 text-sm text-muted">
                           No tracks in this playlist yet. Browse tracks and add
                           them from the track detail page.
                         </p>
                       ) : (
-                        <ul className="divide-y divide-border">
+                        <ul className="divide-y divide-border/50">
                           {playlist.tracks.map((track) => (
                             <li
                               key={track.trackId}
-                              className="flex items-center gap-3 px-4 py-3 sm:px-6"
+                              className="flex items-center gap-3 px-5 py-3.5 sm:px-6"
                             >
-                              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-border">
+                              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-border">
                                 {track.artworkUrl100 ? (
                                   <Image
                                     src={track.artworkUrl100}
@@ -221,7 +223,7 @@ export default function PlaylistsPage() {
                               <div className="min-w-0 flex-1">
                                 <Link
                                   href={`/track/${track.trackId}`}
-                                  className="block truncate text-sm font-medium text-foreground transition-colors hover:text-accent"
+                                  className="block truncate text-sm font-medium text-foreground transition-colors hover:text-muted"
                                 >
                                   {track.trackName}
                                 </Link>
@@ -238,7 +240,7 @@ export default function PlaylistsPage() {
                                   )
                                 }
                                 aria-label={`Remove ${track.trackName} from playlist`}
-                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-red-500/10 hover:text-red-500"
+                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-foreground/5 hover:text-foreground"
                               >
                                 <svg
                                   className="h-4 w-4"

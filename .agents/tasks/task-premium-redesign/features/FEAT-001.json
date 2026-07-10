@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Premium Design Foundation - Rebuild the global CSS theme, typography system, layout.tsx, Header, and MiniPlayer with a premium black-and-white palette, editorial typography, glassmorphism, and refined spacing. Fix ArtistCard and AlbumCard to use in-app routes instead of external links.",
+  "status": "completed",
+  "steps": [
+    "Rewrite app/globals.css: Replace current CSS variables with a premium black-and-white color palette. Light mode: pure white backgrounds, deep black text, charcoal cards, soft gray borders. Dark mode: deep black (#000000/#050505) backgrounds, white/off-white text, charcoal gray cards (#111/#151515), subtle borders. Remove the purple/indigo accent color - replace with white/light gray accents in dark mode and black accents in light mode. Enhance the glassmorphism utility with stronger frosted glass effects and add new utility classes: .glass-dark, .glass-light for layered panels. Add smooth transition utilities and animation keyframes (fadeIn, slideUp, scaleIn, blur-in). Keep the @theme inline block pattern for Tailwind v4 CSS variable integration.",
+    "Update app/layout.tsx: Keep Geist font but make it feel more editorial. Ensure the body has proper base styling for the premium dark-first aesthetic. The dark mode should be the default/primary aesthetic.",
+    "Redesign app/components/Header.tsx: Create a sleek, minimal navigation bar with generous spacing, refined typography hierarchy (larger brand name), subtle glassmorphism background, and smooth hover transitions. Keep all existing navigation links (Search, Discover, Dashboard, Playlists, Favorites) but style them with the premium aesthetic. Use a slim, elegant design with proper responsive behavior.",
+    "Redesign app/components/MiniPlayer.tsx: Enhance to a premium floating player with stronger glassmorphism, larger artwork, smoother progress bar with gradient, elegant typography, and refined controls. Add subtle scale/shadow animation on hover.",
+    "Fix app/components/ArtistCard.tsx: Change from external link (<a href={artist.artistLinkUrl} target='_blank'>) to internal Next.js Link (<Link href={`/artist/${artist.artistId}`}>). Redesign with premium styling - larger circular artwork, elegant typography, subtle hover animations with scale and shadow.",
+    "Fix app/components/AlbumCard.tsx: Change from external link (<a href={album.collectionViewUrl} target='_blank'>) to internal Next.js Link (<Link href={`/album/${album.collectionId}`}>). Add premium card styling with larger rounded corners, soft shadows, hover scale effect.",
+    "Fix app/components/SimilarArtists.tsx: Change external Last.fm links to search the artist within the app using Link href={`/?q=${encodeURIComponent(artist.name)}&filter=artist`}. Add premium circular card styling.",
+    "Update app/components/TrackCard.tsx: Enhance with premium styling - larger artwork, refined typography, subtle hover animations, soft shadows.",
+    "Run npm run lint and npm run build to confirm zero errors."
+  ],
+  "acceptance_criteria": [
+    "All colors use a black-and-white primary palette with no saturated accent colors (only grayscale plus dynamic artwork-derived colors)",
+    "ArtistCard navigates to /artist/[id] in-app route instead of external iTunes page",
+    "AlbumCard navigates to /album/[id] in-app route instead of external iTunes page",
+    "SimilarArtists navigates to in-app search instead of external Last.fm page",
+    "Header is sleek and minimal with glassmorphism",
+    "MiniPlayer has enhanced glassmorphism and premium feel",
+    "Build passes with zero errors",
+    "Lint passes with zero errors"
+  ],
+  "verification": [
+    "cd /projects/sandbox/kiro-web-musicsearch && npm run lint",
+    "cd /projects/sandbox/kiro-web-musicsearch && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "Replaced all saturated accent colors (purple/indigo) with neutral black/white palette. Dark mode accent is white (#ffffff), light mode accent is black (#171717). Fixed contrast issues where bg-accent text-white was used - changed to bg-foreground text-background pattern for proper contrast in both modes. Pre-existing lint warnings (unused imports in page.tsx, favorites/page.tsx, track/[id]/page.tsx and unused vars in SearchFilters.tsx) were not introduced by this change. Build bun worker_threads warnings are cosmetic and do not affect compilation."
+}

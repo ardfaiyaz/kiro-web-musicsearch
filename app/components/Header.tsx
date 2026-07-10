@@ -17,14 +17,17 @@ export default function Header({ showBack = false }: HeaderProps) {
   };
 
   return (
-    <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <nav className="flex items-center justify-between" aria-label="Main navigation">
-          <div className="flex items-center gap-4">
+    <header className="glass sticky top-0 z-50 border-b border-border/50">
+      <div className="mx-auto max-w-7xl px-6 py-4 lg:px-8">
+        <nav
+          className="flex items-center justify-between"
+          aria-label="Main navigation"
+        >
+          <div className="flex items-center gap-5">
             {showBack && (
               <Link
                 href="/"
-                className="flex items-center gap-2 text-muted transition-colors hover:text-foreground"
+                className="flex items-center gap-2 text-muted transition-premium hover:text-foreground"
                 aria-label="Back to search"
               >
                 <svg
@@ -37,30 +40,39 @@ export default function Header({ showBack = false }: HeaderProps) {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                <span className="text-sm font-medium hidden sm:inline">Back</span>
+                <span className="text-sm font-medium hidden sm:inline">
+                  Back
+                </span>
               </Link>
             )}
-            <h1 className="text-lg font-bold text-foreground sm:text-xl">
-              <Link href="/" className="hover:text-accent transition-colors">
-                Music Search &amp; Discovery
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              <Link
+                href="/"
+                className="transition-premium hover:opacity-70"
+              >
+                Music
               </Link>
             </h1>
           </div>
-          <div className="flex items-center gap-1 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/"
-              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
-                isActive("/") && !isActive("/discover") && !isActive("/favorites") && !isActive("/dashboard") && !isActive("/playlists")
-                  ? "text-accent"
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
+                isActive("/") &&
+                !isActive("/discover") &&
+                !isActive("/favorites") &&
+                !isActive("/dashboard") &&
+                !isActive("/playlists")
+                  ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
             >
               <svg
-                className="h-4 w-4 sm:h-5 sm:w-5"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -77,14 +89,14 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/discover"
-              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/discover")
-                  ? "text-accent"
+                  ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
             >
               <svg
-                className="h-4 w-4 sm:h-5 sm:w-5"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -101,14 +113,14 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/dashboard"
-              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/dashboard")
-                  ? "text-accent"
+                  ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
             >
               <svg
-                className="h-4 w-4 sm:h-5 sm:w-5"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -125,14 +137,14 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/playlists"
-              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/playlists")
-                  ? "text-accent"
+                  ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
             >
               <svg
-                className="h-4 w-4 sm:h-5 sm:w-5"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -149,15 +161,15 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/favorites"
-              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/favorites")
-                  ? "text-red-500"
-                  : "text-muted hover:text-red-500"
+                  ? "bg-foreground/10 text-foreground"
+                  : "text-muted hover:text-foreground"
               }`}
               aria-label="Favorites"
             >
               <svg
-                className="h-4 w-4 sm:h-5 sm:w-5"
+                className="h-4 w-4"
                 fill={isActive("/favorites") ? "currentColor" : "none"}
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -172,7 +184,9 @@ export default function Header({ showBack = false }: HeaderProps) {
               </svg>
               <span className="hidden sm:inline">Favorites</span>
             </Link>
-            <ThemeToggle />
+            <div className="ml-2 border-l border-border/50 pl-2">
+              <ThemeToggle />
+            </div>
           </div>
         </nav>
       </div>

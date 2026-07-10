@@ -25,7 +25,6 @@ function getSpeechSupported(): boolean {
 }
 
 function subscribeSpeech(callback: () => void) {
-  // Speech support doesn't change - no subscription needed
   void callback;
   return () => {};
 }
@@ -56,7 +55,6 @@ export default function SearchBar() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -72,14 +70,12 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Debounced autocomplete fetching
   const fetchSuggestions = useCallback(async (term: string) => {
     if (!term.trim()) {
       setSuggestions([]);
       return;
     }
 
-    // Cancel any in-flight request before starting a new one
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -103,7 +99,6 @@ export default function SearchBar() {
         }));
       setSuggestions(results);
     } catch (error) {
-      // Ignore aborted requests; silently fail other errors
       if (error instanceof Error && error.name === "AbortError") return;
     }
   }, []);
@@ -163,7 +158,6 @@ export default function SearchBar() {
     setRecentSearches([]);
   }
 
-  // Voice search
   function startVoiceSearch() {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -206,12 +200,12 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-2xl items-center gap-2"
+      className="flex w-full max-w-2xl items-center gap-3"
       role="search"
     >
       <div className="relative flex-1">
         <svg
-          className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted"
+          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -220,7 +214,7 @@ export default function SearchBar() {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.5}
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
@@ -232,24 +226,22 @@ export default function SearchBar() {
           onFocus={handleFocus}
           placeholder="Search songs, artists, or albums..."
           maxLength={200}
-          className="w-full rounded-xl border border-border bg-card py-3 pl-10 pr-16 text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
+          className="w-full rounded-2xl border border-border bg-card py-4 pl-12 pr-16 text-base text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 transition-all"
           aria-label="Search music"
           aria-autocomplete="list"
           role="combobox"
           aria-expanded={showSuggestions || showRecent}
           aria-controls="search-dropdown"
         />
-        {/* Keyboard shortcut hint */}
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border border-border bg-background px-1.5 py-0.5 font-mono text-xs text-muted sm:inline">
+        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden rounded-md border border-border bg-background px-2 py-0.5 font-mono text-xs text-muted sm:inline">
           /
         </span>
 
-        {/* Autocomplete / Recent dropdown */}
         {(showSuggestions || showRecent) && (
           <div
             ref={dropdownRef}
             id="search-dropdown"
-            className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-border bg-card shadow-lg"
+            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-border bg-card shadow-xl animate-scale-in"
             role="listbox"
           >
             {showSuggestions &&
@@ -258,7 +250,7 @@ export default function SearchBar() {
                   key={s.trackId}
                   type="button"
                   onClick={() => handleSuggestionClick(s)}
-                  className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-accent/10"
+                  className="flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5"
                   role="option"
                   aria-selected={false}
                 >
@@ -272,7 +264,7 @@ export default function SearchBar() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     />
                   </svg>
@@ -283,14 +275,14 @@ export default function SearchBar() {
 
             {showRecent && (
               <>
-                <div className="flex items-center justify-between px-4 py-2 border-b border-border">
-                  <span className="text-xs font-medium text-muted">
+                <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted">
                     Recent Searches
                   </span>
                   <button
                     type="button"
                     onClick={handleClearRecent}
-                    className="text-xs text-accent transition-colors hover:text-accent-hover"
+                    className="text-xs text-muted transition-colors hover:text-foreground"
                   >
                     Clear
                   </button>
@@ -300,7 +292,7 @@ export default function SearchBar() {
                     key={r.timestamp}
                     type="button"
                     onClick={() => handleRecentClick(r)}
-                    className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-accent/10"
+                    className="flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5"
                     role="option"
                     aria-selected={false}
                   >
@@ -314,7 +306,7 @@ export default function SearchBar() {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
+                        strokeWidth={1.5}
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
@@ -327,15 +319,14 @@ export default function SearchBar() {
         )}
       </div>
 
-      {/* Voice search button */}
       {speechSupported && (
         <button
           type="button"
           onClick={isListening ? stopVoiceSearch : startVoiceSearch}
-          className={`rounded-xl p-3 transition-colors ${
+          className={`cursor-pointer rounded-2xl p-4 transition-all ${
             isListening
-              ? "bg-red-500 text-white animate-pulse"
-              : "border border-border text-muted hover:text-foreground hover:bg-card"
+              ? "bg-foreground text-background animate-pulse"
+              : "border border-border text-muted hover:text-foreground hover:border-foreground/30"
           }`}
           aria-label={isListening ? "Stop voice search" : "Start voice search"}
           title={isListening ? "Stop listening" : "Voice search"}
@@ -350,7 +341,7 @@ export default function SearchBar() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={1.5}
               d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z"
             />
           </svg>
@@ -360,7 +351,7 @@ export default function SearchBar() {
       <button
         type="submit"
         disabled={isPending || !query.trim()}
-        className="cursor-pointer rounded-xl bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        className="cursor-pointer rounded-2xl bg-foreground px-7 py-4 text-base font-medium text-background transition-all hover:bg-foreground/80 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {isPending ? (
           <span className="flex items-center gap-2">
@@ -384,7 +375,7 @@ export default function SearchBar() {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            Searching
+            <span className="hidden sm:inline">Searching</span>
           </span>
         ) : (
           "Search"
