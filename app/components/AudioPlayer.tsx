@@ -20,10 +20,14 @@ export default function AudioPlayer({
   previewUrl,
   trackId,
   trackName,
+  artistName,
+  artworkUrl,
 }: {
   previewUrl: string | null;
   trackId: number;
   trackName: string;
+  artistName?: string;
+  artworkUrl?: string;
 }) {
   const {
     play,
@@ -66,7 +70,7 @@ export default function AudioPlayer({
     if (isPlaying) {
       pause();
     } else {
-      play(previewUrl!, trackId);
+      play(previewUrl!, trackId, { trackName, artistName, artworkUrl });
     }
   }
 
@@ -94,7 +98,7 @@ export default function AudioPlayer({
   return (
     <section
       aria-label={`Audio player for ${trackName}`}
-      className="rounded-xl border border-border bg-card px-4 py-4 sm:px-5"
+      className="glass rounded-xl px-4 py-4 sm:px-5"
     >
       <div className="flex flex-col gap-3 sm:gap-4">
         {/* Controls row: play button + progress + time */}

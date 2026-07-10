@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTrackById, getArtistTracks } from "@/lib/itunes";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -71,6 +72,7 @@ export default async function TrackPage({
                 Music Search & Discovery
               </Link>
             </h1>
+            <ThemeToggle />
             <Link
               href="/favorites"
               className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
@@ -180,6 +182,8 @@ export default async function TrackPage({
                 previewUrl={track.previewUrl}
                 trackId={track.trackId}
                 trackName={track.trackName}
+                artistName={track.artistName}
+                artworkUrl={track.artworkUrl100?.replace("100x100", "200x200")}
               />
             </div>
           </section>

@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Enhanced search with autocomplete/suggestions, additional filters (genre, release year, explicit content), additional sort options (album name), voice search, recent searches persistence, and keyboard shortcuts.",
+  "status": "pending",
+  "steps": [
+    "Update lib/types.ts to add explicit content fields (trackExplicitness, collectionExplicitness) to ItunesTrack and ItunesAlbum interfaces. Add a RecentSearch type.",
+    "Create lib/recent-searches.ts - localStorage utility to store/retrieve recent search queries (max 10), with add, get, clear functions.",
+    "Update app/components/SearchBar.tsx to: (a) Show a dropdown with autocomplete suggestions using debounced iTunes search API calls as the user types. (b) Show recent searches when the input is focused and empty. (c) Add a voice search button using the browser's SpeechRecognition API (with feature detection fallback). (d) Add keyboard shortcut '/' to focus search (with a visual hint). (e) Save successful searches to recent searches.",
+    "Update app/components/SearchFilters.tsx to add: Genre filter (dropdown with common music genres like Pop, Rock, Hip-Hop, Electronic, Jazz, Classical, Country, R&B, etc.), Release Year filter (dropdown or range selector for decade/year ranges), Explicit Content toggle (show/hide explicit tracks). Add 'Album Name' to sort options.",
+    "Update app/page.tsx to handle the new filter parameters: genre, year, explicit. Pass them to the search functions and filter results accordingly. Add albumName sort.",
+    "Update lib/itunes.ts to support genre filtering via the genreIndex parameter in the iTunes API, and to handle explicit content filtering on the results.",
+    "Create app/components/KeyboardShortcuts.tsx - a client component that registers global keyboard shortcuts: '/' to focus search, 'Escape' to close dropdowns, space to play/pause current track. Show a small '?' help modal listing shortcuts.",
+    "Add KeyboardShortcuts component to app/layout.tsx."
+  ],
+  "acceptance_criteria": [
+    "Typing in search bar shows autocomplete dropdown with live suggestions after a short debounce",
+    "Recent searches appear when search input is focused and empty",
+    "Voice search button appears (on supported browsers) and transcribes speech to search query",
+    "Genre, Release Year, and Explicit Content filters are available and functional",
+    "Sort by Album Name option works correctly",
+    "Pressing '/' focuses the search bar from anywhere on the page",
+    "Recent searches persist in localStorage",
+    "bun run build passes without errors"
+  ],
+  "verification": ["bun run build", "bun run lint"],
+  "blocked_reason": null,
+  "findings": ""
+}
