@@ -81,8 +81,9 @@ export default async function DiscoverPage() {
               </h3>
               <HorizontalScroll>
                 {trendingSongs.map((song) => (
-                  <article
+                  <Link
                     key={song.id}
+                    href={`/track/${song.id}`}
                     className="group flex w-44 shrink-0 flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-foreground/20 hover:shadow-xl hover:-translate-y-1 sm:w-52"
                   >
                     <div className="relative aspect-square w-full overflow-hidden bg-border">
@@ -104,7 +105,7 @@ export default async function DiscoverPage() {
                         {song.artistName}
                       </p>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </HorizontalScroll>
             </section>
@@ -118,8 +119,9 @@ export default async function DiscoverPage() {
               </h3>
               <HorizontalScroll>
                 {newReleases.map((album) => (
-                  <article
+                  <Link
                     key={album.id}
+                    href={`/album/${album.id}`}
                     className="group flex w-44 shrink-0 flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-foreground/20 hover:shadow-xl hover:-translate-y-1 sm:w-52"
                   >
                     <div className="relative aspect-square w-full overflow-hidden bg-border">
@@ -141,7 +143,7 @@ export default async function DiscoverPage() {
                         {album.artistName}
                       </p>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </HorizontalScroll>
             </section>
@@ -155,8 +157,9 @@ export default async function DiscoverPage() {
               </h3>
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {topAlbums.slice(0, 10).map((album) => (
-                  <article
+                  <Link
                     key={album.id}
+                    href={`/album/${album.id}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-foreground/20 hover:shadow-xl hover:-translate-y-1"
                   >
                     <div className="relative aspect-square w-full overflow-hidden bg-border">
@@ -178,7 +181,7 @@ export default async function DiscoverPage() {
                         {album.artistName}
                       </p>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             </section>
