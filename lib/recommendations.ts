@@ -150,7 +150,9 @@ async function fetchTracksForTerm(term: string): Promise<ItunesTrack[]> {
     }
 
     const data: ItunesSearchResponse = await response.json();
-    return data.results.filter((item) => item.wrapperType === "track");
+    return data.results.filter(
+      (item): item is ItunesTrack => item.wrapperType === "track"
+    );
   } catch {
     return [];
   }
