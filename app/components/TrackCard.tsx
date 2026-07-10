@@ -1,6 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ItunesTrack } from "@/lib/types";
+import FavoriteButton from "./FavoriteButton";
+import { useFavorites } from "./FavoritesContext";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -9,6 +13,8 @@ function formatDuration(ms: number): string {
 }
 
 export default function TrackCard({ track }: { track: ItunesTrack }) {
+  const { isFavorite } = useFavorites();
+  const favorited = isFavorite(track.trackId);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "200x200");
 
   return (
@@ -43,6 +49,13 @@ export default function TrackCard({ track }: { track: ItunesTrack }) {
             </svg>
           </div>
         )}
+        <div
+          className={`absolute top-2 right-2 transition-opacity ${
+            favorited ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+        >
+          <FavoriteButton track={track} />
+        </div>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-3">
         <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
