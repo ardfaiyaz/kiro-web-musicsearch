@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Smart Recommendations, AI Discovery, Music Insights, and Lyrics. Enhanced recommendation engine with explanations, mood/activity-based discovery, artist/track insights panels, and lyrics display with auto-scroll and highlighted current line.",
+  "status": "pending",
+  "steps": [
+    "Create lib/ai-discovery.ts - expand the recommendation engine with new functions: (1) getRecommendationsByMood(mood: string) - maps moods (happy, sad, energetic, chill, romantic, dark) to search terms and fetches from iTunes, (2) getRecommendationsByActivity(activity: string) - maps activities (workout, study, sleep, driving, party, cooking) to search terms, (3) getSimilarTracks(track: ItunesTrack) - enhanced version that returns tracks with reason explanations (e.g., 'Same genre: Pop', 'Similar era: 2020s', 'Related artist'), (4) getHiddenGems(genre: string) - searches for lesser-known tracks in a genre by filtering for tracks with less common artists, (5) getTrendingInGenre(genre: string) - fetches trending tracks filtered by genre. Each recommendation result should include a 'reason' field explaining why it was recommended.",
+    "Create app/components/RecommendationPanel.tsx - a glass-styled panel component that displays recommendations in categorized sections: Similar Artists, Similar Genre, Similar Mood, Hidden Gems, Trending, New Releases. Each recommendation card shows the track/artist with a small badge/text explaining why it was chosen. Uses glass-recommendation styling. Accepts a source track or artist as prop.",
+    "Create app/components/MusicInsights.tsx - a client component that displays insights for a track or artist: (1) Popularity indicator (visual bar or badge based on available data), (2) Genre tags with colored badges, (3) Discography timeline for artists (list of albums sorted by date in a horizontal timeline UI), (4) Related artists network (simple list with links), (5) Release era context. Style with glass-stats class.",
+    "Create app/components/LyricsDisplay.tsx - a client component for lyrics display. Since there is no lyrics API available for free, implement a placeholder/simulated lyrics experience: (1) Display a glass-styled panel with large typography, (2) Show a message that lyrics require a premium API connection, (3) Include the UI structure: scrollable container with line-by-line display, highlighted current line styling (larger font, brighter color, subtle glow), smooth scroll transitions between lines, (4) Add CSS for the auto-scroll animation pattern so it is ready when a lyrics source is connected. The component accepts optional lyrics text as a prop so it can display if available.",
+    "Update app/track/[id]/page.tsx to integrate: (1) RecommendationPanel below existing recommendations with enhanced explanations, (2) MusicInsights panel showing track metadata in a visual format, (3) LyricsDisplay placeholder section.",
+    "Update app/artist/[id]/page.tsx to integrate: (1) MusicInsights for the artist (stats, genre tags, timeline), (2) RecommendationPanel showing 'Artists like X' with reasons.",
+    "Create app/components/DiscoveryMoodSelector.tsx - a client component with a grid of mood/activity cards (glass-styled) that users can click to get recommendations. Moods: Happy, Sad, Energetic, Chill, Romantic, Dark. Activities: Workout, Study, Sleep, Driving, Party. Clicking a card fetches and displays relevant tracks below.",
+    "Update app/discover/page.tsx to include the DiscoveryMoodSelector section between existing sections, with a 'Discover by Mood' heading."
+  ],
+  "acceptance_criteria": [
+    "Running `bun run build` passes with zero errors",
+    "Running `bun run lint` passes with zero errors",
+    "RecommendationPanel displays categorized recommendations with reason explanations",
+    "MusicInsights shows visual genre tags, popularity indicators, and timeline for artists",
+    "LyricsDisplay has the UI structure for line-by-line lyrics with highlighted current line styling",
+    "DiscoveryMoodSelector renders mood/activity cards and fetches recommendations on click",
+    "All new components use glass styling consistent with the design system",
+    "Track and artist pages integrate the new insight and recommendation panels"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful build with zero TypeScript errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

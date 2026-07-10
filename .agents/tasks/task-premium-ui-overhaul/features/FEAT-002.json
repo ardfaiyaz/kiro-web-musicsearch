@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Enhanced Player with glassmorphism, expanded view, queue, waveform visualization, and dynamic backgrounds. Plus Settings panel for controlling glass intensity, blur, accent colors, animation speed, and reduced motion.",
+  "status": "pending",
+  "steps": [
+    "Create app/components/ExpandedPlayer.tsx - a full-screen or near-full-screen player overlay with: (1) Large album artwork with dynamic color background glow behind it, (2) Track info (name, artist, album) with large typography, (3) Full playback controls (play/pause, seek bar, volume, time display), (4) A simple waveform visualization using CSS bars that animate to simulate audio levels (use requestAnimationFrame with random heights synced to playing state), (5) Queue display showing upcoming tracks (pull from AudioPlayerContext - may need to extend context), (6) Glass morphism styling throughout, (7) Smooth slide-up animation from mini player, (8) Close button to collapse back to mini player. This is a client component.",
+    "Extend app/components/AudioPlayerContext.tsx to support a queue of tracks: add queue state (ItunesTrack[]), addToQueue, removeFromQueue, playNext, clearQueue functions. Add an isExpanded state and toggleExpanded function to control showing ExpandedPlayer vs MiniPlayer.",
+    "Update app/components/MiniPlayer.tsx to: (1) Apply dynamic colors from DynamicColorProvider for progress bar and subtle artwork glow, (2) Add a click handler or expand button that triggers toggleExpanded from AudioPlayerContext, (3) Conditionally render ExpandedPlayer when isExpanded is true (or render both with the expanded one as an overlay).",
+    "Create app/components/SettingsPanel.tsx - a client component rendered as a slide-out panel or modal with glass styling. Include controls for: (1) Theme toggle (light/dark) - reuse existing ThemeToggle logic, (2) Blur intensity slider (0-50px range, stored in localStorage, applied via CSS custom property --user-blur-intensity), (3) Glass opacity slider (0.3-0.95 range, stored in localStorage, applied via --user-glass-opacity), (4) Accent color picker (preset colors + custom, stored in localStorage, applied via --dynamic-accent override), (5) Animation speed selector (slow/normal/fast/none, stored in localStorage, applied via --animation-speed multiplier), (6) Reduced motion toggle (applies a class that disables all animations), (7) Compact mode toggle (reduces padding/margins site-wide via a class on html). All settings should persist in localStorage and apply immediately.",
+    "Create app/components/SettingsContext.tsx - a client context provider that reads settings from localStorage on mount and provides them to the app. Exports useSettings hook. Updates CSS custom properties on document.documentElement when settings change.",
+    "Update app/layout.tsx to include SettingsContext provider and render a settings button (gear icon) in a fixed position or in the header that opens the SettingsPanel.",
+    "Update app/globals.css to add CSS custom properties for user-configurable settings: --user-blur-intensity (default 20px), --user-glass-opacity (default 0.7 light / 0.75 dark), --animation-speed (default 1). Update all .glass-* classes to use these variables. Add .compact-mode class that reduces padding.",
+    "Add a floating action button (FAB) in the bottom-right corner (above the mini player) with glass-fab styling that opens SettingsPanel on click."
+  ],
+  "acceptance_criteria": [
+    "Running `bun run build` passes with zero errors",
+    "Running `bun run lint` passes with zero errors",
+    "ExpandedPlayer displays large artwork, track info, seek bar, volume, and waveform bars",
+    "AudioPlayerContext supports queue (addToQueue, playNext) and isExpanded state",
+    "MiniPlayer can expand into ExpandedPlayer via click/button",
+    "SettingsPanel allows adjusting blur, glass opacity, accent color, animation speed, reduced motion, compact mode",
+    "All settings persist in localStorage and apply immediately via CSS custom properties",
+    "Settings gear button is accessible in the UI"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful build with zero TypeScript errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

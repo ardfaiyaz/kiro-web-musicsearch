@@ -241,7 +241,7 @@ export default function SearchBar() {
           <div
             ref={dropdownRef}
             id="search-dropdown"
-            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl glass-dropdown animate-scale-in"
+            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl glass-dropdown border-t border-t-white/10 animate-scale-in"
             role="listbox"
           >
             {showSuggestions &&

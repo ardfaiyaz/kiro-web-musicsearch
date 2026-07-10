@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Enhanced Search with keyboard navigation, Explore page with trending/editor picks, Favorites & Collections expansion. Improve search UX with trending searches and full keyboard nav. Build out Explore content. Extend favorites to support artists, albums, genres, and custom collections.",
+  "status": "pending",
+  "steps": [
+    "Update app/components/SearchBar.tsx to add: (1) Keyboard navigation for the dropdown - arrow up/down to move through suggestions/recent items, Enter to select, Escape to close. Track activeIndex state and apply a highlight class to the active item. (2) Add a 'Trending Searches' section in the dropdown when no query is entered (below recent searches), showing hardcoded popular search terms like 'Taylor Swift', 'Drake', 'BTS', 'Billie Eilish', 'The Weeknd'. Style these with a small trending icon. (3) Enhance the dropdown glass styling with the glass-dropdown class and add subtle animations (fade in, scale in) when appearing.",
+    "Update app/discover/page.tsx to enhance the Explore experience: (1) Add an 'Editor Picks' section with curated search queries presented as editorial cards (glass-styled with gradient backgrounds). Use hardcoded editorial content like 'Best of 2024', 'Indie Essentials', 'Late Night Vibes', 'Feel Good Classics'. Each card links to a search with that query. (2) Add a 'Trending Artists' section using data already fetched from getTrendingSongs (extract unique artists). (3) Ensure all sections use glass-card styling and have smooth scroll animations.",
+    "Extend app/components/FavoritesContext.tsx to also manage favorite artists and albums (consolidate with PersonalizationContext or import its functions). The context should expose: favoriteArtists, favoriteAlbums, addFavoriteArtist, removeFavoriteArtist, addFavoriteAlbum, removeFavoriteAlbum, isFavoriteArtist, isFavoriteAlbum. (Note: PersonalizationContext already has some of this - ensure FavoritesContext is the single source or they are properly coordinated.)",
+    "Update app/favorites/page.tsx to show tabs or sections for: (1) Favorite Songs (existing), (2) Favorite Artists (grid of artist cards), (3) Favorite Albums (grid of album cards). Add tab navigation at the top with glass-styled pill buttons. Each section shows its respective content or an empty state.",
+    "Create app/components/CollectionsManager.tsx - a client component that allows users to create named collections (beyond playlists). A collection can hold mixed items: tracks, artists, albums. Uses localStorage. Provides a modal/dialog for creating a new collection with a name and optional description. Display collections as glass-styled cards.",
+    "Update app/favorites/page.tsx to include a 'Collections' tab that shows the CollectionsManager."
+  ],
+  "acceptance_criteria": [
+    "Running `bun run build` passes with zero errors",
+    "Running `bun run lint` passes with zero errors",
+    "SearchBar dropdown supports full keyboard navigation (arrow keys, Enter, Escape)",
+    "SearchBar shows trending searches section when input is empty",
+    "Discover page has Editor Picks editorial cards and Trending Artists section",
+    "Favorites page shows tabs for Songs, Artists, Albums, and Collections",
+    "CollectionsManager allows creating and viewing custom collections with localStorage persistence",
+    "All new UI uses glass styling consistent with the design system"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful build with zero TypeScript errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

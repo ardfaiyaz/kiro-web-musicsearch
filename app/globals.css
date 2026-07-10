@@ -15,6 +15,9 @@
   --glass-highlight: rgba(0, 0, 0, 0.03);
   --shadow-color: rgba(0, 0, 0, 0.04);
   --ring: rgba(0, 0, 0, 0.05);
+  --dynamic-accent: transparent;
+  --dynamic-accent-light: transparent;
+  --dynamic-accent-muted: transparent;
 }
 
 html.dark {
@@ -32,6 +35,9 @@ html.dark {
   --glass-highlight: rgba(255, 255, 255, 0.15);
   --shadow-color: rgba(0, 0, 0, 0.5);
   --ring: rgba(255, 255, 255, 0.1);
+  --dynamic-accent: transparent;
+  --dynamic-accent-light: transparent;
+  --dynamic-accent-muted: transparent;
 }
 
 @theme inline {
@@ -204,6 +210,258 @@ html.dark .glass-player {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
+}
+
+/* Glass Card variant */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 4px 16px -4px var(--shadow-color);
+  border-radius: 1rem;
+}
+
+.glass-tooltip {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 4px 12px -2px var(--shadow-color);
+  border-radius: 0.75rem;
+}
+
+.glass-sidebar {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 4px 0 16px -4px var(--shadow-color);
+  border-radius: 1rem;
+}
+
+.glass-dialog {
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 16px 48px -8px var(--shadow-color),
+    0 8px 24px -4px var(--shadow-color);
+  border-radius: 1.5rem;
+}
+
+.glass-settings {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 4px 12px -2px var(--shadow-color);
+  border-radius: 1rem;
+}
+
+.glass-recommendation {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 4px 16px -4px var(--shadow-color);
+  border-radius: 1rem;
+}
+
+.glass-stats {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 2px 8px -2px var(--shadow-color);
+  border-radius: 0.75rem;
+}
+
+.glass-fab {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  box-shadow: 0 8px 24px -4px var(--shadow-color),
+    0 4px 12px -2px var(--shadow-color);
+  border-radius: 9999px;
+}
+
+/* Dynamic tinting */
+.dynamic-tint {
+  background: color-mix(in srgb, var(--dynamic-accent, transparent) 5%, var(--glass-bg));
+}
+
+/* Ambient Background */
+.ambient-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-gradient-layer {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  opacity: 0.4;
+  animation: ambientShift 20s ease-in-out infinite;
+}
+
+.ambient-floating-shapes {
+  position: absolute;
+  inset: 0;
+}
+
+.ambient-shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  filter: blur(80px);
+}
+
+.ambient-shape-1 {
+  width: 400px;
+  height: 400px;
+  top: 10%;
+  left: 10%;
+  animation: floatShape1 25s ease-in-out infinite;
+}
+
+.ambient-shape-2 {
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  right: 10%;
+  animation: floatShape2 30s ease-in-out infinite;
+}
+
+.ambient-shape-3 {
+  width: 350px;
+  height: 350px;
+  bottom: 10%;
+  left: 30%;
+  animation: floatShape3 35s ease-in-out infinite;
+}
+
+.ambient-film-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+.ambient-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+html.dark .ambient-vignette {
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+/* Aurora animation */
+@keyframes ambientShift {
+  0%, 100% {
+    transform: translate(0%, 0%) rotate(0deg);
+  }
+  25% {
+    transform: translate(5%, -3%) rotate(1deg);
+  }
+  50% {
+    transform: translate(-3%, 5%) rotate(-1deg);
+  }
+  75% {
+    transform: translate(-5%, -2%) rotate(0.5deg);
+  }
+}
+
+@keyframes aurora {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateX(0%) scale(1);
+  }
+  33% {
+    opacity: 0.5;
+    transform: translateX(5%) scale(1.05);
+  }
+  66% {
+    opacity: 0.4;
+    transform: translateX(-3%) scale(0.98);
+  }
+}
+
+/* Floating shapes animations */
+@keyframes floatShape1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -20px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 30px) scale(0.9);
+  }
+  75% {
+    transform: translate(15px, 15px) scale(1.05);
+  }
+}
+
+@keyframes floatShape2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-25px, 20px) scale(1.08);
+  }
+  66% {
+    transform: translate(20px, -15px) scale(0.95);
+  }
+}
+
+@keyframes floatShape3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  20% {
+    transform: translate(20px, -25px) scale(1.05);
+  }
+  40% {
+    transform: translate(-15px, -10px) scale(0.95);
+  }
+  60% {
+    transform: translate(-25px, 15px) scale(1.1);
+  }
+  80% {
+    transform: translate(10px, 20px) scale(0.98);
+  }
+}
+
+/* Reduced motion: disable all ambient and float animations */
+@media (prefers-reduced-motion: reduce) {
+  .ambient-gradient-layer,
+  .ambient-shape-1,
+  .ambient-shape-2,
+  .ambient-shape-3 {
+    animation: none !important;
+  }
+
+  .ambient-floating-shapes {
+    display: none;
+  }
 }
 
 /* Premium transitions */

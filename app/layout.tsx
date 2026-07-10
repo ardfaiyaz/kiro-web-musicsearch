@@ -4,6 +4,8 @@ import { AudioPlayerProvider } from "./components/AudioPlayerContext";
 import { FavoritesProvider } from "./components/FavoritesContext";
 import { PersonalizationProvider } from "./components/PersonalizationContext";
 import { ThemeProvider } from "./components/ThemeContext";
+import { DynamicColorProvider } from "./components/DynamicColorProvider";
+import AmbientBackground from "./components/AmbientBackground";
 import MiniPlayer from "./components/MiniPlayer";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
 import OfflineDetector from "./components/OfflineDetector";
@@ -47,15 +49,20 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           <AudioPlayerProvider>
-            <FavoritesProvider>
-              <PersonalizationProvider>
-                <OfflineDetector />
-                <RecentlyPlayedTracker />
-                {children}
-                <MiniPlayer />
-                <KeyboardShortcuts />
-              </PersonalizationProvider>
-            </FavoritesProvider>
+            <DynamicColorProvider>
+              <FavoritesProvider>
+                <PersonalizationProvider>
+                  <AmbientBackground />
+                  <div className="relative z-10 flex min-h-full flex-col">
+                    <OfflineDetector />
+                    <RecentlyPlayedTracker />
+                    {children}
+                    <MiniPlayer />
+                    <KeyboardShortcuts />
+                  </div>
+                </PersonalizationProvider>
+              </FavoritesProvider>
+            </DynamicColorProvider>
           </AudioPlayerProvider>
         </ThemeProvider>
       </body>
