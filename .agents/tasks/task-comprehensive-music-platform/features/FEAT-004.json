@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Music discovery page with trending songs, new releases, featured albums, popular artists, browse by genre. Adds a /discover route that serves as a rich landing experience. Also adds infinite scrolling/pagination to search results.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create lib/discovery.ts - utility functions that use the iTunes RSS feeds and search API to get: trending songs (iTunes top songs RSS), new releases (recent releases via search), featured albums, popular artists by genre. Use iTunes RSS Generator endpoints like https://rss.applemarketingtools.com/api/v2/us/music/most-played/25/songs.json for trending.",
     "Create app/discover/page.tsx - Discovery page with sections: (a) Trending Songs carousel/grid, (b) New Releases section, (c) Featured Albums, (d) Popular Artists, (e) Browse by Genre grid (clickable genre cards that link to search with genre filter). Use semantic HTML with sections and headings. Make it responsive with different layouts for mobile/tablet/desktop.",

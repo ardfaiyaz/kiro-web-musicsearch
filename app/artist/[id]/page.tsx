@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArtistById, getArtistTracks, getArtistAlbums } from "@/lib/itunes";
 import { getArtistInfo, getSimilarArtists } from "@/lib/lastfm";
 import TrackGrid from "@/app/components/TrackGrid";
 import AlbumCard from "@/app/components/AlbumCard";
 import SimilarArtists from "@/app/components/SimilarArtists";
-import ThemeToggle from "@/app/components/ThemeToggle";
+import Header from "@/app/components/Header";
 
 export default async function ArtistPage({
   params,
@@ -45,39 +44,7 @@ export default async function ArtistPage({
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-muted transition-colors hover:text-foreground"
-              aria-label="Back to search"
-            >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="text-sm font-medium">Back</span>
-            </Link>
-            <h1 className="flex-1 text-lg font-bold text-foreground sm:text-xl">
-              <Link href="/" className="hover:text-accent transition-colors">
-                Music Search & Discovery
-              </Link>
-            </h1>
-            <ThemeToggle />
-          </nav>
-        </div>
-      </header>
+      <Header showBack />
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
         <article>

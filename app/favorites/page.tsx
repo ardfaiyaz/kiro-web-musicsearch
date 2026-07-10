@@ -3,42 +3,14 @@
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import TrackGrid from "@/app/components/TrackGrid";
-import ThemeToggle from "@/app/components/ThemeToggle";
+import Header from "@/app/components/Header";
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites();
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-between">
-            <h1 className="text-lg font-bold text-foreground sm:text-xl">
-              <Link href="/" className="hover:text-accent transition-colors">
-                Music Search &amp; Discovery
-              </Link>
-            </h1>
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <Link
-                href="/favorites"
-                className="flex items-center gap-1.5 text-sm font-medium text-red-500 transition-colors hover:text-red-400"
-                aria-label="Favorites"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                </svg>
-                <span className="hidden sm:inline">Favorites</span>
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
         <section aria-label="Your favorites">
