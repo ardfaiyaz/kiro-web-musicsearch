@@ -47,7 +47,7 @@ export default async function TrackPage({
           <nav className="flex items-center gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 text-muted transition-colors hover:text-foreground"
+              className="cursor-pointer flex items-center gap-2 text-muted transition-colors hover:text-foreground"
               aria-label="Back to search"
             >
               <svg
@@ -67,13 +67,13 @@ export default async function TrackPage({
               <span className="text-sm font-medium">Back</span>
             </Link>
             <h1 className="flex-1 text-lg font-bold text-foreground sm:text-xl">
-              <Link href="/" className="hover:text-accent transition-colors">
+              <Link href="/" className="cursor-pointer hover:text-accent transition-colors">
                 Music Search & Discovery
               </Link>
             </h1>
             <Link
               href="/favorites"
-              className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
+              className="cursor-pointer flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
               aria-label="Favorites"
             >
               <svg

@@ -1,0 +1,7 @@
+{
+  "task_id": "task-cursor-pointer-ui-fix",
+  "task_description": "Add cursor-pointer to all clickable elements (buttons, links, interactive cards, selects) across all components to ensure the pointer cursor appears on hover, fixing the UI/UX issue.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

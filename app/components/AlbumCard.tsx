@@ -20,7 +20,7 @@ export default function AlbumCard({ album }: { album: ItunesAlbum }) {
       href={album.collectionViewUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
+      className="cursor-pointer group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-border">
         {artworkUrl ? (

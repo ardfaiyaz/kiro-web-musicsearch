@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Add cursor-pointer class to all clickable elements (buttons, links, interactive cards) across all components to ensure the pointer cursor appears on hover. Also fix any other UI/UX issues found (missing cursor styles on interactive elements).",
+  "status": "in_progress",
+  "steps": [
+    "In app/components/SearchFilters.tsx: Add `cursor-pointer` to all filter <button> elements (the FILTER_OPTIONS buttons) and the 'Clear Filters' button. Add `cursor-pointer` to the <select> element for sort.",
+    "In app/components/SearchBar.tsx: Add `cursor-pointer` to the submit <button>. The button already has `disabled:cursor-not-allowed` for disabled state, so add `cursor-pointer` for the default enabled state.",
+    "In app/components/FavoriteButton.tsx: Add `cursor-pointer` to the favorite toggle <button>.",
+    "In app/components/TrackCard.tsx: Add `cursor-pointer` to the outer <Link> wrapper since it is the clickable card.",
+    "In app/components/AlbumCard.tsx: Add `cursor-pointer` to the outer <a> tag since it is the clickable card.",
+    "In app/components/ArtistCard.tsx: Add `cursor-pointer` to the outer <a> tag since it is the clickable card.",
+    "In app/components/AudioPlayer.tsx: Add `cursor-pointer` to the play/pause <button> and the mute/unmute <button>.",
+    "In app/components/ErrorMessage.tsx: Add `cursor-pointer` to the 'Try Again' <button>.",
+    "In app/page.tsx: Add `cursor-pointer` to the Favorites <Link> in the header nav.",
+    "In app/favorites/page.tsx: Add `cursor-pointer` to the 'Music Search & Discovery' <Link>, the 'Favorites' <Link>, and the 'Search for music' <Link>.",
+    "In app/track/[id]/page.tsx: Add `cursor-pointer` to the 'Back to search' <Link>, the 'Music Search & Discovery' <Link>, and the 'Favorites' <Link> in the header nav.",
+    "Run `bun run build` to confirm the project still compiles without errors.",
+    "Run `bun run lint` to confirm no linting issues."
+  ],
+  "acceptance_criteria": [
+    "Every <button>, <a>, and <Link> element that is interactive has the `cursor-pointer` class in its className",
+    "The <select> dropdown in SearchFilters has cursor-pointer",
+    "The build (bun run build) succeeds without errors",
+    "Lint (bun run lint) passes without errors"
+  ],
+  "verification": [
+    "Run `bun run build` and confirm it succeeds",
+    "Run `bun run lint` and confirm no errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

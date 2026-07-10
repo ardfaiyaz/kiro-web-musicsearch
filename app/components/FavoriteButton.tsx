@@ -22,7 +22,7 @@ export default function FavoriteButton({ track }: { track: ItunesTrack }) {
       type="button"
       onClick={handleClick}
       aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
-      className={`flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110 ${
+      className={`cursor-pointer flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110 ${
         favorited ? "text-red-500" : "text-muted hover:text-red-500"
       }`}
     >

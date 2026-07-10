@@ -63,7 +63,7 @@ export default function SearchFilters() {
             type="button"
             onClick={() => updateParams("filter", option.value)}
             aria-pressed={currentFilter === option.value}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentFilter === option.value
                 ? "bg-accent text-white"
                 : "border border-border text-foreground hover:bg-card"
@@ -82,7 +82,7 @@ export default function SearchFilters() {
           id="sort-select"
           value={currentSort}
           onChange={(e) => updateParams("sort", e.target.value)}
-          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
+          className="w-full cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
         >
           {SORT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -95,7 +95,7 @@ export default function SearchFilters() {
           <button
             type="button"
             onClick={clearFilters}
-            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-foreground"
+            className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-foreground"
           >
             Clear Filters
           </button>

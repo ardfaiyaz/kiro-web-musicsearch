@@ -28,7 +28,7 @@ export default function ErrorMessage({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-2 rounded-xl bg-accent px-6 py-2.5 font-medium text-white transition-colors hover:bg-accent-hover"
+          className="cursor-pointer mt-2 rounded-xl bg-accent px-6 py-2.5 font-medium text-white transition-colors hover:bg-accent-hover"
         >
           Try Again
         </button>

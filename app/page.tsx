@@ -117,7 +117,7 @@ export default async function Home({
             </h1>
             <Link
               href="/favorites"
-              className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
+              className="cursor-pointer flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
               aria-label="Favorites"
             >
               <svg
