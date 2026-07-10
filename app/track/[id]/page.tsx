@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTrackById, getArtistTracks } from "@/lib/itunes";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
+import Recommendations from "@/app/components/Recommendations";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -205,6 +206,9 @@ export default async function TrackPage({
             </section>
           )
         )}
+
+        {/* AI-Powered Recommendations */}
+        <Recommendations trackId={track.trackId} />
       </main>
 
       <footer className="border-t border-border py-6 text-center text-sm text-muted">

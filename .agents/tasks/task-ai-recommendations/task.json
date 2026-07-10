@@ -1,0 +1,7 @@
+{
+  "task_id": "task-ai-recommendations",
+  "task_description": "Implement an AI-powered recommendation feature that suggests songs and artists with similar genres, moods, or musical characteristics. The system analyzes the selected song's metadata and provides a curated list of similar tracks from different artists to help users discover new music.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
