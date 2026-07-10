@@ -11,6 +11,54 @@ import ThemeToggle from "./components/ThemeToggle";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { ItunesTrack } from "@/lib/types";
 
+function filterByGenre(tracks: ItunesTrack[], genre: string): ItunesTrack[] {
+  if (!genre) return tracks;
+  return tracks.filter(
+    (t) => t.primaryGenreName.toLowerCase().includes(genre.toLowerCase())
+  );
+}
+
+function filterByYear(tracks: ItunesTrack[], year: string): ItunesTrack[] {
+  if (!year) return tracks;
+
+  return tracks.filter((t) => {
+    const releaseYear = new Date(t.releaseDate).getFullYear();
+    switch (year) {
+      case "2024":
+        return releaseYear === 2024;
+      case "2023":
+        return releaseYear === 2023;
+      case "2022":
+        return releaseYear === 2022;
+      case "2020s":
+        return releaseYear >= 2020 && releaseYear <= 2021;
+      case "2010s":
+        return releaseYear >= 2010 && releaseYear <= 2019;
+      case "2000s":
+        return releaseYear >= 2000 && releaseYear <= 2009;
+      case "1990s":
+        return releaseYear >= 1990 && releaseYear <= 1999;
+      case "1980s":
+        return releaseYear >= 1980 && releaseYear <= 1989;
+      case "older":
+        return releaseYear < 1980;
+      default:
+        return true;
+    }
+  });
+}
+
+function filterByExplicit(tracks: ItunesTrack[], explicit: string): ItunesTrack[] {
+  if (!explicit) return tracks;
+  if (explicit === "hide") {
+    return tracks.filter((t) => t.trackExplicitness !== "explicit");
+  }
+  if (explicit === "only") {
+    return tracks.filter((t) => t.trackExplicitness === "explicit");
+  }
+  return tracks;
+}
+
 function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
   if (sort === "releaseDate") {
     return [...tracks].sort(
@@ -23,6 +71,11 @@ function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
       a.artistName.localeCompare(b.artistName)
     );
   }
+  if (sort === "albumName") {
+    return [...tracks].sort((a, b) =>
+      a.collectionName.localeCompare(b.collectionName)
+    );
+  }
   return tracks;
 }
 
@@ -30,13 +83,22 @@ async function TrackResults({
   query,
   filter,
   sort,
+  genre,
+  year,
+  explicit,
 }: {
   query: string;
   filter: string;
   sort: string;
+  genre: string;
+  year: string;
+  explicit: string;
 }) {
   const entity = filter === "song" ? "song" : undefined;
-  const tracks = await searchTracks(query, entity);
+  let tracks = await searchTracks(query, entity);
+  tracks = filterByGenre(tracks, genre);
+  tracks = filterByYear(tracks, year);
+  tracks = filterByExplicit(tracks, explicit);
   const sortedTracks = sortTracks(tracks, sort);
 
   if (sortedTracks.length === 0) {
@@ -88,7 +150,7 @@ async function AlbumResults({ query }: { query: string }) {
 }
 
 const VALID_FILTERS = ["all", "song", "artist", "album"] as const;
-const VALID_SORTS = ["relevance", "releaseDate", "artistName"] as const;
+const VALID_SORTS = ["relevance", "releaseDate", "artistName", "albumName"] as const;
 
 function isValidFilter(value: string): value is (typeof VALID_FILTERS)[number] {
   return (VALID_FILTERS as readonly string[]).includes(value);
@@ -101,12 +163,22 @@ function isValidSort(value: string): value is (typeof VALID_SORTS)[number] {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; filter?: string; sort?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    filter?: string;
+    sort?: string;
+    genre?: string;
+    year?: string;
+    explicit?: string;
+  }>;
 }) {
-  const { q, filter, sort } = await searchParams;
+  const { q, filter, sort, genre, year, explicit: explicitParam } = await searchParams;
   const query = q?.trim() || "";
   const activeFilter = filter && isValidFilter(filter) ? filter : "all";
   const activeSort = sort && isValidSort(sort) ? sort : "relevance";
+  const activeGenre = genre || "";
+  const activeYear = year || "";
+  const activeExplicit = explicitParam || "";
 
   return (
     <div className="flex flex-1 flex-col">
@@ -204,7 +276,14 @@ export default async function Home({
         {query && (activeFilter === "all" || activeFilter === "song") && (
           <section className="mt-8">
             <Suspense fallback={<LoadingSpinner message="Searching for music..." />}>
-              <TrackResults query={query} filter={activeFilter} sort={activeSort} />
+              <TrackResults
+                query={query}
+                filter={activeFilter}
+                sort={activeSort}
+                genre={activeGenre}
+                year={activeYear}
+                explicit={activeExplicit}
+              />
             </Suspense>
           </section>
         )}

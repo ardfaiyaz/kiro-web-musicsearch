@@ -13,6 +13,8 @@ export interface ItunesTrack {
   collectionViewUrl: string;
   kind: string;
   wrapperType: string;
+  trackExplicitness?: string;
+  collectionExplicitness?: string;
 }
 
 export interface ItunesArtist {
@@ -36,6 +38,7 @@ export interface ItunesAlbum {
   trackCount: number;
   wrapperType: string;
   collectionType: string;
+  collectionExplicitness?: string;
 }
 
 export type ItunesResult = ItunesTrack | ItunesArtist | ItunesAlbum;
@@ -43,4 +46,9 @@ export type ItunesResult = ItunesTrack | ItunesArtist | ItunesAlbum;
 export interface ItunesSearchResponse {
   resultCount: number;
   results: ItunesResult[];
+}
+
+export interface RecentSearch {
+  query: string;
+  timestamp: number;
 }
