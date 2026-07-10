@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrackById, getArtistTracks } from "@/lib/itunes";
+import { getRecommendations } from "@/lib/recommendations";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
-import Recommendations from "@/app/components/Recommendations";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -39,6 +39,7 @@ export default async function TrackPage({
   }
 
   const recommendationsResult = await getArtistTracks(track.artistId, track.trackId);
+  const aiRecommendations = await getRecommendations(track);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "600x600");
 
   return (
@@ -208,7 +209,25 @@ export default async function TrackPage({
         )}
 
         {/* AI-Powered Recommendations */}
-        <Recommendations trackId={track.trackId} />
+        {aiRecommendations.error ? (
+          <section className="mt-12" aria-label="Recommendations error">
+            <h2 className="mb-4 text-xl font-bold text-foreground">
+              You Might Also Like
+            </h2>
+            <p className="text-sm text-muted">
+              Unable to load recommendations at this time. Please try again later.
+            </p>
+          </section>
+        ) : (
+          aiRecommendations.tracks.length > 0 && (
+            <section className="mt-12" aria-label="Recommended tracks">
+              <h2 className="mb-6 text-xl font-bold text-foreground">
+                You Might Also Like
+              </h2>
+              <TrackGrid tracks={aiRecommendations.tracks} />
+            </section>
+          )
+        )}
       </main>
 
       <footer className="border-t border-border py-6 text-center text-sm text-muted">

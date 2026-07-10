@@ -8,7 +8,7 @@ import { ItunesTrack, ItunesSearchResponse } from "./types";
 const GENRE_SEARCH_MAP: Record<string, string[]> = {
   Pop: ["pop hits", "dance pop", "synth pop", "indie pop", "electropop"],
   Rock: ["rock", "alternative rock", "indie rock", "classic rock", "garage rock"],
-  "Alternative": ["alternative", "indie", "shoegaze", "post-punk", "dream pop"],
+  Alternative: ["alternative", "indie", "shoegaze", "post-punk", "dream pop"],
   "Hip-Hop/Rap": ["hip hop", "rap", "trap", "boom bap", "conscious rap"],
   "R&B/Soul": ["r&b", "soul", "neo soul", "contemporary r&b", "funk"],
   Electronic: ["electronic", "edm", "house", "techno", "ambient"],
@@ -23,6 +23,21 @@ const GENRE_SEARCH_MAP: Record<string, string[]> = {
   Latin: ["latin", "reggaeton", "salsa", "latin pop", "bachata"],
   Soundtrack: ["soundtrack", "film score", "cinematic", "orchestral", "instrumental"],
   Singer: ["singer-songwriter", "acoustic", "folk", "indie", "vocal"],
+  "K-Pop": ["k-pop", "korean pop", "k-pop dance", "k-pop ballad", "korean r&b"],
+  Anime: ["anime", "j-pop", "japanese pop", "anime soundtrack", "vocaloid"],
+  "Christian & Gospel": ["gospel", "christian", "worship", "contemporary christian", "praise"],
+  "Fitness & Workout": ["workout", "fitness", "running music", "gym", "high energy"],
+  "Children's Music": ["children", "kids music", "nursery", "lullaby", "family"],
+  World: ["world music", "afrobeat", "celtic", "middle eastern", "indian"],
+  "New Age": ["new age", "meditation", "relaxation", "ambient", "healing"],
+  Punk: ["punk", "punk rock", "pop punk", "hardcore", "emo"],
+  "Singer/Songwriter": ["singer-songwriter", "acoustic", "folk", "indie", "vocal"],
+  Funk: ["funk", "funky", "groove", "disco funk", "soul funk"],
+  Disco: ["disco", "nu disco", "dance", "boogie", "funky"],
+  "J-Pop": ["j-pop", "japanese pop", "anime", "city pop", "j-rock"],
+  Afrobeats: ["afrobeats", "afro pop", "afro house", "amapiano", "highlife"],
+  Indie: ["indie", "indie rock", "indie pop", "lo-fi", "bedroom pop"],
+  "Lo-Fi": ["lo-fi", "lo-fi beats", "chill hop", "study music", "ambient beats"],
 };
 
 /**
@@ -49,18 +64,47 @@ function extractStyleKeywords(track: ItunesTrack): string[] {
 }
 
 /**
+ * Simple deterministic hash function that produces a numeric seed
+ * from a trackId. Used to create repeatable shuffles for caching.
+ */
+function seededRandom(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+/**
+ * Deterministic shuffle using a seeded PRNG (Fisher-Yates algorithm).
+ * Ensures the same trackId always produces the same order, making
+ * cache headers meaningful.
+ */
+function deterministicShuffle<T>(array: T[], seed: number): T[] {
+  const result = [...array];
+  const random = seededRandom(seed);
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
  * Generates multiple search strategies based on the source track's
  * genre, artist style, and musical characteristics.
+ * Uses a deterministic shuffle seeded by trackId so that the same
+ * track always produces the same strategies, enabling effective caching.
  */
 function generateSearchStrategies(track: ItunesTrack): string[] {
   const strategies: string[] = [];
   const genre = track.primaryGenreName;
 
-  // Strategy 1: Genre-based searches
+  // Strategy 1: Genre-based searches (deterministic selection)
   const genreTerms = GENRE_SEARCH_MAP[genre];
   if (genreTerms && genreTerms.length > 0) {
-    // Pick 2 random genre terms for variety
-    const shuffled = [...genreTerms].sort(() => Math.random() - 0.5);
+    // Pick 2 genre terms deterministically based on trackId
+    const shuffled = deterministicShuffle(genreTerms, track.trackId);
     strategies.push(shuffled[0]);
     if (shuffled.length > 1) {
       strategies.push(shuffled[1]);
@@ -129,17 +173,32 @@ export async function getRecommendations(
   try {
     const strategies = generateSearchStrategies(sourceTrack);
 
-    // Execute all search strategies in parallel
+    // Deduplicate search terms before fetching to avoid redundant HTTP requests
+    const uniqueTerms = [...new Set(strategies.map((term) => term.toLowerCase().trim()))];
+
+    // Execute all unique search strategies in parallel
     const results = await Promise.allSettled(
-      strategies.map((term) => fetchTracksForTerm(term))
+      uniqueTerms.map((term) => fetchTracksForTerm(term))
     );
 
-    // Collect all tracks from successful queries
+    // Collect all tracks from successful queries and track if any succeeded
     const allTracks: ItunesTrack[] = [];
+    let anyStrategySucceeded = false;
+
     for (const result of results) {
       if (result.status === "fulfilled") {
+        if (result.value.length > 0) {
+          anyStrategySucceeded = true;
+        }
         allTracks.push(...result.value);
       }
+    }
+
+    // If all strategies returned zero tracks, treat it as an error.
+    // This catches the case where all iTunes API calls failed silently
+    // (fetchTracksForTerm swallows errors and returns []).
+    if (!anyStrategySucceeded) {
+      return { tracks: [], error: true };
     }
 
     // Filter out tracks from the same artist
