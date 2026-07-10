@@ -1,4 +1,9 @@
-import { ItunesSearchResponse, ItunesTrack } from "./types";
+import {
+  ItunesSearchResponse,
+  ItunesTrack,
+  ItunesArtist,
+  ItunesAlbum,
+} from "./types";
 
 export async function searchTracks(
   query: string,
@@ -8,11 +13,7 @@ export async function searchTracks(
     const encodedQuery = encodeURIComponent(query);
     let url = `https://itunes.apple.com/search?term=${encodedQuery}&media=music&limit=25&entity=musicTrack`;
 
-    if (entity === "artist") {
-      url += "&attribute=artistTerm";
-    } else if (entity === "album") {
-      url += "&attribute=albumTerm";
-    } else if (entity === "song") {
+    if (entity === "song") {
       url += "&attribute=songTerm";
     }
 
@@ -24,10 +25,60 @@ export async function searchTracks(
 
     const data: ItunesSearchResponse = await response.json();
 
-    return data.results.filter((item) => item.wrapperType === "track");
+    return data.results.filter(
+      (item): item is ItunesTrack => item.wrapperType === "track"
+    );
   } catch (error) {
     console.error("Failed to search tracks:", error);
     throw new Error("Failed to search for music. Please try again.");
+  }
+}
+
+export async function searchArtists(
+  query: string
+): Promise<ItunesArtist[]> {
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=musicArtist&limit=25`;
+
+    const response = await fetch(url, { next: { revalidate: 60 } });
+
+    if (!response.ok) {
+      throw new Error(`iTunes API error: ${response.status}`);
+    }
+
+    const data: ItunesSearchResponse = await response.json();
+
+    return data.results.filter(
+      (item): item is ItunesArtist => item.wrapperType === "artist"
+    );
+  } catch (error) {
+    console.error("Failed to search artists:", error);
+    throw new Error("Failed to search for artists. Please try again.");
+  }
+}
+
+export async function searchAlbums(
+  query: string
+): Promise<ItunesAlbum[]> {
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=album&limit=25`;
+
+    const response = await fetch(url, { next: { revalidate: 60 } });
+
+    if (!response.ok) {
+      throw new Error(`iTunes API error: ${response.status}`);
+    }
+
+    const data: ItunesSearchResponse = await response.json();
+
+    return data.results.filter(
+      (item): item is ItunesAlbum => item.wrapperType === "collection"
+    );
+  } catch (error) {
+    console.error("Failed to search albums:", error);
+    throw new Error("Failed to search for albums. Please try again.");
   }
 }
 
@@ -46,7 +97,7 @@ export async function getTrackById(
 
     const data: ItunesSearchResponse = await response.json();
     const track = data.results.find(
-      (item) => item.wrapperType === "track"
+      (item): item is ItunesTrack => item.wrapperType === "track"
     );
     return track || null;
   } catch (error) {
@@ -77,8 +128,9 @@ export async function getArtistTracks(
     const data: ItunesSearchResponse = await response.json();
     const tracks = data.results
       .filter(
-        (item) =>
-          item.wrapperType === "track" && item.trackId !== excludeTrackId
+        (item): item is ItunesTrack =>
+          item.wrapperType === "track" &&
+          (item as ItunesTrack).trackId !== excludeTrackId
       )
       .slice(0, 10);
     return { tracks, error: false };

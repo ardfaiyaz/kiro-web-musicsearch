@@ -25,5 +25,5 @@
     "bun run lint"
   ],
   "blocked_reason": null,
-  "findings": "Build and lint pass cleanly. Fixed review issues: (1) Changed entity filter approach to always use entity=musicTrack with attribute parameter (artistTerm/albumTerm/songTerm) to narrow results. This ensures all API responses are track-shaped objects. (2) Removed the unsafe early return that cast non-track results to ItunesTrack[]. (3) The wrapperType === 'track' filter is now applied for all code paths. (4) Added input validation for filter and sort URL params using const arrays and type guard functions."
+  "findings": "Fixed the core bug: search filters now use the correct iTunes API entity parameter (entity=musicArtist for artist filter, entity=album for album filter) instead of always using entity=musicTrack with different attribute params. Created separate searchArtists() and searchAlbums() API functions, added ItunesArtist and ItunesAlbum types, and created ArtistCard/ArtistGrid and AlbumCard/AlbumGrid components for proper display of each result type. Build and lint pass cleanly."
 }
