@@ -1,18 +1,32 @@
 import { ItunesSearchResponse, ItunesTrack } from "./types";
 
-export async function searchTracks(query: string): Promise<ItunesTrack[]> {
+export async function searchTracks(
+  query: string,
+  entity?: string
+): Promise<ItunesTrack[]> {
   try {
     const encodedQuery = encodeURIComponent(query);
-    const response = await fetch(
-      `https://itunes.apple.com/search?term=${encodedQuery}&media=music&limit=25`,
-      { next: { revalidate: 60 } }
-    );
+    let url = `https://itunes.apple.com/search?term=${encodedQuery}&media=music&limit=25`;
+
+    if (entity === "song") {
+      url += "&entity=musicTrack";
+    } else if (entity === "artist") {
+      url += "&entity=musicArtist";
+    } else if (entity === "album") {
+      url += "&entity=album";
+    }
+
+    const response = await fetch(url, { next: { revalidate: 60 } });
 
     if (!response.ok) {
       throw new Error(`iTunes API error: ${response.status}`);
     }
 
     const data: ItunesSearchResponse = await response.json();
+
+    if (entity === "artist" || entity === "album") {
+      return data.results as ItunesTrack[];
+    }
     return data.results.filter((item) => item.wrapperType === "track");
   } catch (error) {
     console.error("Failed to search tracks:", error);

@@ -1,0 +1,7 @@
+{
+  "task_id": "task-advanced-search-filters",
+  "task_description": "Implement advanced search filters for the music search app, allowing users to filter by entity type (Song/Artist/Album), sort results (Relevance/Release Date/Artist Name), and clear all filters. Filters are managed via URL search params and update results without page refresh.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
