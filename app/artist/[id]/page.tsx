@@ -5,6 +5,7 @@ import TrackGrid from "@/app/components/TrackGrid";
 import AlbumCard from "@/app/components/AlbumCard";
 import SimilarArtists from "@/app/components/SimilarArtists";
 import Header from "@/app/components/Header";
+import ArtistActions from "@/app/components/ArtistActions";
 
 export default async function ArtistPage({
   params,
@@ -112,6 +113,7 @@ export default async function ArtistPage({
                   ))}
                 </div>
               )}
+              <ArtistActions artist={artist} />
             </div>
           </header>
 

@@ -1,4 +1,5 @@
 import { LastFmArtist, LastFmSimilarArtist } from "./types";
+import { ApiResult, classifyError } from "./api-error";
 
 const LASTFM_API_KEY =
   process.env.NEXT_PUBLIC_LASTFM_API_KEY || "";
@@ -76,5 +77,40 @@ export async function getSimilarArtists(
   } catch (error) {
     console.error("Failed to fetch similar artists:", error);
     return [];
+  }
+}
+
+// --- Structured error versions ---
+
+export async function getArtistInfoWithError(
+  artistName: string
+): Promise<ApiResult<LastFmArtist>> {
+  if (!LASTFM_API_KEY) {
+    return { data: null, error: null };
+  }
+
+  try {
+    const encodedName = encodeURIComponent(artistName);
+    const url = `${LASTFM_BASE_URL}?method=artist.getinfo&artist=${encodedName}&api_key=${LASTFM_API_KEY}&format=json`;
+
+    const response = await fetch(url, { next: { revalidate: 3600 } });
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: classifyError(new Error(`HTTP ${response.status}`), response.status),
+      };
+    }
+
+    const data: LastFmArtistInfoResponse = await response.json();
+
+    if (data.error || !data.artist) {
+      return { data: null, error: null };
+    }
+
+    return { data: data.artist, error: null };
+  } catch (error) {
+    console.error("Failed to fetch Last.fm artist info:", error);
+    return { data: null, error: classifyError(error) };
   }
 }

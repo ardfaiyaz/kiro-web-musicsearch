@@ -54,7 +54,7 @@ export default function Header({ showBack = false }: HeaderProps) {
             <Link
               href="/"
               className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
-                isActive("/") && !isActive("/discover") && !isActive("/favorites")
+                isActive("/") && !isActive("/discover") && !isActive("/favorites") && !isActive("/dashboard") && !isActive("/playlists")
                   ? "text-accent"
                   : "text-muted hover:text-foreground"
               }`}
@@ -98,6 +98,54 @@ export default function Header({ showBack = false }: HeaderProps) {
                 />
               </svg>
               <span className="hidden sm:inline">Discover</span>
+            </Link>
+            <Link
+              href="/dashboard"
+              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
+                isActive("/dashboard")
+                  ? "text-accent"
+                  : "text-muted hover:text-foreground"
+              }`}
+            >
+              <svg
+                className="h-4 w-4 sm:h-5 sm:w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"
+                />
+              </svg>
+              <span className="hidden sm:inline">Dashboard</span>
+            </Link>
+            <Link
+              href="/playlists"
+              className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3 ${
+                isActive("/playlists")
+                  ? "text-accent"
+                  : "text-muted hover:text-foreground"
+              }`}
+            >
+              <svg
+                className="h-4 w-4 sm:h-5 sm:w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"
+                />
+              </svg>
+              <span className="hidden sm:inline">Playlists</span>
             </Link>
             <Link
               href="/favorites"

@@ -5,6 +5,7 @@ import { getAlbumTracks } from "@/lib/itunes";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
+import AlbumActions from "@/app/components/AlbumActions";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -133,6 +134,8 @@ export default async function AlbumPage({
                   <span className="text-xs text-muted">Explicit content</span>
                 </div>
               )}
+
+              <AlbumActions album={album} />
             </section>
           </header>
 

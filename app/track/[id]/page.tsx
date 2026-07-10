@@ -6,6 +6,7 @@ import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
+import ShareMenu from "@/app/components/ShareMenu";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -152,6 +153,16 @@ export default async function TrackPage({
                 trackName={track.trackName}
                 artistName={track.artistName}
                 artworkUrl={track.artworkUrl100?.replace("100x100", "200x200")}
+              />
+            </div>
+
+            <div className="mt-4">
+              <ShareMenu
+                type="track"
+                trackName={track.trackName}
+                artistName={track.artistName}
+                albumName={track.collectionName}
+                artworkUrl={track.artworkUrl100}
               />
             </div>
           </section>

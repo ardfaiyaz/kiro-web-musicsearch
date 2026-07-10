@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AudioPlayerProvider } from "./components/AudioPlayerContext";
 import { FavoritesProvider } from "./components/FavoritesContext";
+import { PersonalizationProvider } from "./components/PersonalizationContext";
 import { ThemeProvider } from "./components/ThemeContext";
 import MiniPlayer from "./components/MiniPlayer";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
+import OfflineDetector from "./components/OfflineDetector";
+import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,9 +40,13 @@ export default function RootLayout({
         <ThemeProvider>
           <AudioPlayerProvider>
             <FavoritesProvider>
-              {children}
-              <MiniPlayer />
-              <KeyboardShortcuts />
+              <PersonalizationProvider>
+                <OfflineDetector />
+                <RecentlyPlayedTracker />
+                {children}
+                <MiniPlayer />
+                <KeyboardShortcuts />
+              </PersonalizationProvider>
             </FavoritesProvider>
           </AudioPlayerProvider>
         </ThemeProvider>

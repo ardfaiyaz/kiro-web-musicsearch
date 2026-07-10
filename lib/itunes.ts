@@ -5,6 +5,7 @@ import {
   ItunesAlbum,
   AlbumDetail,
 } from "./types";
+import { ApiResult, classifyError } from "./api-error";
 
 export async function searchTracks(
   query: string,
@@ -271,5 +272,96 @@ export async function searchTracksByGenre(
   } catch (error) {
     console.error("Failed to search tracks by genre:", error);
     return [];
+  }
+}
+
+// --- Structured error versions for graceful degradation ---
+
+export async function searchTracksWithError(
+  query: string,
+  entity?: string
+): Promise<ApiResult<ItunesTrack[]>> {
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    let url = `https://itunes.apple.com/search?term=${encodedQuery}&media=music&limit=25&entity=musicTrack`;
+
+    if (entity === "song") {
+      url += "&attribute=songTerm";
+    }
+
+    const response = await fetch(url, { next: { revalidate: 60 } });
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: classifyError(new Error(`HTTP ${response.status}`), response.status),
+      };
+    }
+
+    const data: ItunesSearchResponse = await response.json();
+    const tracks = data.results.filter(
+      (item): item is ItunesTrack => item.wrapperType === "track"
+    );
+
+    return { data: tracks, error: null };
+  } catch (error) {
+    console.error("Failed to search tracks:", error);
+    return { data: null, error: classifyError(error) };
+  }
+}
+
+export async function searchArtistsWithError(
+  query: string
+): Promise<ApiResult<ItunesArtist[]>> {
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=musicArtist&limit=25`;
+
+    const response = await fetch(url, { next: { revalidate: 60 } });
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: classifyError(new Error(`HTTP ${response.status}`), response.status),
+      };
+    }
+
+    const data: ItunesSearchResponse = await response.json();
+    const artists = data.results.filter(
+      (item): item is ItunesArtist => item.wrapperType === "artist"
+    );
+
+    return { data: artists, error: null };
+  } catch (error) {
+    console.error("Failed to search artists:", error);
+    return { data: null, error: classifyError(error) };
+  }
+}
+
+export async function searchAlbumsWithError(
+  query: string
+): Promise<ApiResult<ItunesAlbum[]>> {
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=album&limit=25`;
+
+    const response = await fetch(url, { next: { revalidate: 60 } });
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: classifyError(new Error(`HTTP ${response.status}`), response.status),
+      };
+    }
+
+    const data: ItunesSearchResponse = await response.json();
+    const albums = data.results.filter(
+      (item): item is ItunesAlbum => item.wrapperType === "collection"
+    );
+
+    return { data: albums, error: null };
+  } catch (error) {
+    console.error("Failed to search albums:", error);
+    return { data: null, error: classifyError(error) };
   }
 }
