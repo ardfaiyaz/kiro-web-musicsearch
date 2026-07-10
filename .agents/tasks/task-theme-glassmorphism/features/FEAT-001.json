@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Overhaul the theme system and glassmorphism CSS foundation in globals.css: expand design tokens, add more semantic color variables for surfaces/glass/shadows, implement smooth theme transitions across all properties (background, text, borders, shadows, glass effects) with 200ms duration, and enhance glassmorphism utilities with proper backdrop-blur, saturate, and layered translucency for both light and dark modes.",
+  "status": "completed",
+  "steps": [
+    "In app/globals.css: Expand :root and html.dark CSS custom properties to include: --surface (card surface), --surface-hover, --glass-bg (light/dark frosted glass background), --glass-border, --shadow-color, --accent-foreground (text on accent), --ring (focus ring color). For :root (light): bright translucent whites for glass, subtle shadows with rgba(0,0,0,0.04). For html.dark: dark translucent backgrounds for glass, cool shadows with rgba(0,0,0,0.5).",
+    "In app/globals.css @theme inline block: Register all new CSS custom properties as Tailwind colors/utilities so they can be used as classes (e.g., bg-surface, bg-glass-bg, border-glass-border, shadow-shadow-color).",
+    "In app/globals.css: Add a universal theme transition rule on *, *::before, *::after that animates color, background-color, border-color, box-shadow, and outline-color with duration 200ms ease. This eliminates flickering when switching themes. Exclude transform and opacity from this transition to avoid interfering with interactive animations.",
+    "In app/globals.css: Completely rewrite .glass utility to use proper Apple-style frosted glass: background uses var(--glass-bg), backdrop-filter: blur(20px) saturate(180%), border: 1px solid var(--glass-border), box-shadow uses var(--shadow-color). Add .glass-elevated for higher elevation (more blur, stronger shadow). Remove the separate .glass-dark and .glass-light utilities since .glass now adapts to theme via CSS variables.",
+    "In app/globals.css: Add a .glass-search utility specifically for the floating search bar with stronger blur (blur(24px)), slightly different opacity, and a soft highlight on top border.",
+    "In app/globals.css: Add a .glass-dropdown utility for dropdowns/menus with backdrop-filter: blur(20px) saturate(180%), rounded corners styling hints, and subtle drop shadow.",
+    "In app/globals.css: Add a .glass-player utility for the audio player/mini player with stronger blur (blur(32px) saturate(200%)) and darker background for better readability over dynamic content."
+  ],
+  "acceptance_criteria": [
+    "CSS custom properties cover all semantic tokens needed: background, foreground, muted, border, card, accent, accent-hover, surface, glass-bg, glass-border, shadow-color, ring",
+    "Both :root (light) and html.dark define all variables with appropriate values",
+    "A global transition rule animates theme changes smoothly at 200ms",
+    ".glass, .glass-elevated, .glass-search, .glass-dropdown, .glass-player utilities all use backdrop-filter with blur and saturate",
+    "All glassmorphism utilities adapt to theme via CSS variables rather than separate light/dark classes",
+    "Running 'bun run build' succeeds with zero errors"
+  ],
+  "verification": [
+    "bun run build",
+    "bun run lint"
+  ],
+  "blocked_reason": null,
+  "findings": "Build and lint pass successfully. The NotImplementedError warnings from bun about worker_threads are cosmetic and do not affect the build output. Pre-existing lint warnings exist in SearchFilters.tsx (unused vars) unrelated to this feature."
+}
