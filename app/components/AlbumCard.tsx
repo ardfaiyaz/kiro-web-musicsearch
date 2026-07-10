@@ -17,9 +17,11 @@ export default function AlbumCard({ album }: { album: ItunesAlbum }) {
   const artworkUrl = album.artworkUrl100?.replace("100x100", "200x200");
 
   return (
-    <Link
-      href={`/album/${album.collectionId}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-1 hover:scale-[1.02]"
+    <a
+      href={album.collectionViewUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="cursor-pointer group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-border">
         {artworkUrl ? (

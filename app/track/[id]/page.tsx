@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTrackById, getArtistTracks, searchTracksByGenre } from "@/lib/itunes";
+import { getTrackById, getArtistTracks } from "@/lib/itunes";
+import { getRecommendations } from "@/lib/recommendations";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
@@ -41,12 +42,64 @@ export default async function TrackPage({
   }
 
   const recommendationsResult = await getArtistTracks(track.artistId, track.trackId);
-  const similarTracks = await searchTracksByGenre(track.primaryGenreName, track.trackId);
+  const aiRecommendations = await getRecommendations(track);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "600x600");
 
   return (
     <div className="flex flex-1 flex-col">
-      <Header showBack />
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="cursor-pointer flex items-center gap-2 text-muted transition-colors hover:text-foreground"
+              aria-label="Back to search"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span className="text-sm font-medium">Back</span>
+            </Link>
+            <h1 className="flex-1 text-lg font-bold text-foreground sm:text-xl">
+              <Link href="/" className="cursor-pointer hover:text-accent transition-colors">
+                Music Search & Discovery
+              </Link>
+            </h1>
+            <Link
+              href="/favorites"
+              className="cursor-pointer flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
+              aria-label="Favorites"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 8.25c0-3.15-2.7-5.25-5.437-5.25A5.5 5.5 0 0012 5.052 5.5 5.5 0 007.688 3C4.95 3 2.25 5.1 2.25 8.25c0 7.22 9.75 12.75 9.75 12.75s9.75-5.53 9.75-12.75z"
+                />
+              </svg>
+              <span className="hidden sm:inline">Favorites</span>
+            </Link>
+          </nav>
+        </div>
+      </header>
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
         <article className="flex flex-col gap-8 lg:flex-row lg:gap-12">
@@ -190,14 +243,25 @@ export default async function TrackPage({
           )
         )}
 
-        {/* Similar Tracks by Genre */}
-        {similarTracks.length > 0 && (
-          <section className="mt-12" aria-label="Similar tracks">
-            <h2 className="mb-6 text-xl font-bold text-foreground">
-              Similar Tracks in {track.primaryGenreName}
+        {/* AI-Powered Recommendations */}
+        {aiRecommendations.error ? (
+          <section className="mt-12" aria-label="Recommendations error">
+            <h2 className="mb-4 text-xl font-bold text-foreground">
+              You Might Also Like
             </h2>
-            <TrackGrid tracks={similarTracks} />
+            <p className="text-sm text-muted">
+              Unable to load recommendations at this time. Please try again later.
+            </p>
           </section>
+        ) : (
+          aiRecommendations.tracks.length > 0 && (
+            <section className="mt-12" aria-label="Recommended tracks">
+              <h2 className="mb-6 text-xl font-bold text-foreground">
+                You Might Also Like
+              </h2>
+              <TrackGrid tracks={aiRecommendations.tracks} />
+            </section>
+          )
         )}
       </main>
 

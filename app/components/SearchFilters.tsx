@@ -108,7 +108,7 @@ export default function SearchFilters() {
             type="button"
             onClick={() => updateParams("filter", option.value)}
             aria-pressed={currentFilter === option.value}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentFilter === option.value
                 ? "bg-accent text-white"
                 : "border border-border text-foreground hover:bg-card"
@@ -121,85 +121,27 @@ export default function SearchFilters() {
 
       {/* Additional filters row */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Genre filter */}
-        <div className="flex items-center gap-2">
-          <label htmlFor="genre-select" className="text-sm font-medium text-muted">
-            Genre:
-          </label>
-          <select
-            id="genre-select"
-            value={currentGenre}
-            onChange={(e) => updateParams("genre", e.target.value)}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
-          >
-            {GENRE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Year filter */}
-        <div className="flex items-center gap-2">
-          <label htmlFor="year-select" className="text-sm font-medium text-muted">
-            Year:
-          </label>
-          <select
-            id="year-select"
-            value={currentYear}
-            onChange={(e) => updateParams("year", e.target.value)}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
-          >
-            {YEAR_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Explicit content toggle */}
-        <div className="flex items-center gap-2">
-          <label htmlFor="explicit-select" className="text-sm font-medium text-muted">
-            Explicit:
-          </label>
-          <select
-            id="explicit-select"
-            value={currentExplicit}
-            onChange={(e) => updateParams("explicit", e.target.value)}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All</option>
-            <option value="hide">Hide Explicit</option>
-            <option value="only">Explicit Only</option>
-          </select>
-        </div>
-
-        {/* Sort */}
-        <div className="flex items-center gap-2">
-          <label htmlFor="sort-select" className="text-sm font-medium text-muted">
-            Sort:
-          </label>
-          <select
-            id="sort-select"
-            value={currentSort}
-            onChange={(e) => updateParams("sort", e.target.value)}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
-          >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <label htmlFor="sort-select" className="text-sm font-medium text-muted">
+          Sort by:
+        </label>
+        <select
+          id="sort-select"
+          value={currentSort}
+          onChange={(e) => updateParams("sort", e.target.value)}
+          className="w-full cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
+        >
+          {SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
         {hasActiveFilters && (
           <button
             type="button"
             onClick={clearFilters}
-            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-foreground"
+            className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-foreground"
           >
             Clear Filters
           </button>

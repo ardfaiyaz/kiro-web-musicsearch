@@ -28,6 +28,7 @@ export interface ItunesArtist {
   primaryGenreName: string;
   artistType: string;
   wrapperType: string;
+  artworkUrl100?: string;
 }
 
 export interface ItunesAlbum {

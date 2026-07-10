@@ -51,9 +51,36 @@ export async function searchArtists(
 
     const data: ItunesSearchResponse = await response.json();
 
-    return data.results.filter(
+    const artists = data.results.filter(
       (item): item is ItunesArtist => item.wrapperType === "artist"
     );
+
+    // Fetch artwork for each artist by looking up a representative track
+    const enrichedArtists = await Promise.all(
+      artists.map(async (artist) => {
+        try {
+          const lookupResponse = await fetch(
+            `https://itunes.apple.com/lookup?id=${artist.artistId}&entity=song&limit=1`,
+            { next: { revalidate: 300 } }
+          );
+          if (lookupResponse.ok) {
+            const lookupData: ItunesSearchResponse =
+              await lookupResponse.json();
+            const track = lookupData.results.find(
+              (item): item is ItunesTrack => item.wrapperType === "track"
+            );
+            if (track?.artworkUrl100) {
+              return { ...artist, artworkUrl100: track.artworkUrl100 };
+            }
+          }
+        } catch {
+          // If lookup fails, just return artist without artwork
+        }
+        return artist;
+      })
+    );
+
+    return enrichedArtists;
   } catch (error) {
     console.error("Failed to search artists:", error);
     throw new Error("Failed to search for artists. Please try again.");
