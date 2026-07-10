@@ -1,0 +1,14 @@
+{
+  "task_id": "task-theme-glassmorphism",
+  "task_description": "Redesign and stabilize the application's visual system with a proper theme system (light/dark) using semantic design tokens, smooth 200ms transitions, and premium glassmorphism effects using backdrop-filter blur and saturate. Fix all color inconsistencies across components and ensure correct contrast in both themes.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "skipped",
+    "docker_build": "skipped",
+    "summary": "bun run build succeeds with zero errors. bun run lint passes with zero errors (only 2 pre-existing unused variable warnings that existed before this change). No test suite configured. Review feedback addressed in follow-up commit."
+  }
+}

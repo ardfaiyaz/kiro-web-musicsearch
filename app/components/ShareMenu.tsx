@@ -135,7 +135,7 @@ export default function ShareMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-20 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-lg"
+          className="absolute right-0 top-full z-20 mt-2 w-56 overflow-hidden glass-dropdown rounded-xl"
         >
           <button
             role="menuitem"

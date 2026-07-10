@@ -226,7 +226,7 @@ export default function SearchBar() {
           onFocus={handleFocus}
           placeholder="Search songs, artists, or albums..."
           maxLength={200}
-          className="w-full rounded-2xl border border-border bg-card py-4 pl-12 pr-16 text-base text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-foreground/10 transition-all"
+          className="w-full rounded-2xl glass-search py-4 pl-12 pr-16 text-base text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           aria-label="Search music"
           aria-autocomplete="list"
           role="combobox"
@@ -241,7 +241,7 @@ export default function SearchBar() {
           <div
             ref={dropdownRef}
             id="search-dropdown"
-            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-border bg-card shadow-xl animate-scale-in"
+            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl glass-dropdown animate-scale-in"
             role="listbox"
           >
             {showSuggestions &&

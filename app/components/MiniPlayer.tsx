@@ -18,12 +18,12 @@ export default function MiniPlayer() {
   return (
     <aside
       aria-label="Mini player"
-      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-dark shadow-2xl shadow-black/30 transition-premium hover:shadow-black/40"
+      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-player shadow-2xl transition-premium"
     >
       {/* Progress bar at top */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden rounded-t-2xl bg-white/10">
+      <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden rounded-t-2xl bg-foreground/10">
         <div
-          className="h-full bg-white/80 transition-all duration-150"
+          className="h-full bg-foreground/80 transition-all duration-150"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -61,10 +61,10 @@ export default function MiniPlayer() {
 
         {/* Track info */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="truncate text-sm font-semibold text-white">
+          <span className="truncate text-sm font-semibold text-foreground">
             {trackName || "Unknown Track"}
           </span>
-          <span className="truncate text-xs text-white/60">
+          <span className="truncate text-xs text-muted">
             {artistName || "Unknown Artist"}
           </span>
         </div>
@@ -72,7 +72,7 @@ export default function MiniPlayer() {
         {/* Pause button */}
         <button
           onClick={pause}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-black transition-premium hover:scale-105 hover:bg-white/90"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background transition-premium hover:scale-105 hover:bg-foreground/90"
           aria-label="Pause"
         >
           <svg

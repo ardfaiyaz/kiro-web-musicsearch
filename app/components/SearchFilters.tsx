@@ -110,7 +110,7 @@ export default function SearchFilters() {
             aria-pressed={currentFilter === option.value}
             className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentFilter === option.value
-                ? "bg-accent text-white"
+                ? "bg-foreground text-background"
                 : "border border-border text-foreground hover:bg-card"
             }`}
           >
