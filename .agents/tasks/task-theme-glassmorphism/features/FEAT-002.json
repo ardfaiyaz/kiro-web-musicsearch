@@ -1,0 +1,48 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Update all components and pages to use the new design tokens and glassmorphism utilities consistently across both themes. Fix color inconsistencies, apply glass effects to appropriate components, ensure correct text contrast, and eliminate hardcoded colors. Make the search experience feel floating and premium with frosted glass.",
+  "status": "in_progress",
+  "steps": [
+    "In app/components/ThemeContext.tsx: Improve the theme provider to ensure no hydration mismatch. The current implementation uses useSyncExternalStore which is good. Add a transition class toggle: when theme changes, briefly add a 'theme-transitioning' class to html element to help with smooth transitions, remove after 300ms.",
+    "In app/components/Header.tsx: Replace the inline 'glass' class usage with the improved glass utility. Ensure all navigation text uses text-foreground/text-muted semantic tokens (already mostly correct). Verify active state pill background works in both themes (bg-foreground/10 is fine).",
+    "In app/components/SearchBar.tsx: Apply .glass-search to the search input container for a floating frosted glass effect. Apply .glass-dropdown to the dropdown suggestions/recent searches panel. Ensure the dropdown has rounded-2xl, smooth enter/exit animation, and proper z-index layering. Remove direct bg-card from the dropdown and replace with the glass-dropdown utility.",
+    "In app/components/SearchFilters.tsx: Fix the active filter button: 'bg-accent text-white' is hardcoded and will break in light mode where accent is #171717 (dark text on dark bg). Change to 'bg-foreground text-background' which correctly inverts per theme. Ensure select elements use proper theme colors for both the dropdown and the option elements.",
+    "In app/components/MiniPlayer.tsx: Replace 'glass-dark' class with the new .glass-player utility that adapts to both themes. In dark mode it should be dark frosted glass with white text; in light mode it should be light frosted glass with dark text. Change hardcoded text-white and text-white/60 to use CSS variables or conditional theme-aware classes. Update the pause button from hardcoded 'bg-white text-black' to 'bg-foreground text-background'.",
+    "In app/components/AudioPlayer.tsx: The full player already uses .glass which will be updated. Ensure range input styling adapts (slider thumb uses bg-foreground which is good). No hardcoded colors to fix here.",
+    "In app/components/TrackCard.tsx: Already uses semantic tokens (bg-card, border-border, text-foreground, text-muted). The card should have a subtle glass effect on hover. Add hover:shadow-lg with theme-aware shadow color. No major issues.",
+    "In app/components/AlbumCard.tsx: Same pattern as TrackCard - already uses semantic tokens. Verify hover states work in both themes.",
+    "In app/components/ArtistCard.tsx: Already uses semantic tokens. Verify no issues.",
+    "In app/components/ShareMenu.tsx: The dropdown menu uses 'bg-card border-border'. Replace with .glass-dropdown utility for a premium frosted glass effect on the share menu popup.",
+    "In app/components/EmptyState.tsx: Uses semantic tokens - no changes needed.",
+    "In app/components/GenreCard.tsx: Uses gradient backgrounds with white text and drop-shadow - this is intentional for genre cards and doesn't need theme adaptation.",
+    "In app/page.tsx: The hero section and search area use semantic tokens. The 'Try:' suggestion pills use border-border which is fine. No changes needed.",
+    "In app/discover/page.tsx: The hero section uses bg-card and artwork blur overlay. Cards in the horizontal scrolls use border-border bg-card. All correct with semantic tokens. No changes needed.",
+    "In app/dashboard/page.tsx: Uses bg-card, border-border, text-foreground, text-muted throughout. The stat cards and insight panels are correct. No changes needed.",
+    "In app/favorites/page.tsx: Uses semantic tokens throughout. No changes needed.",
+    "In app/playlists/page.tsx: The new playlist input uses bg-card border-border which is fine. The create button uses bg-foreground text-background (correct). Playlist cards use bg-card border-border. No changes needed.",
+    "In app/track/[id]/page.tsx: Hero section uses bg-card with artwork blur overlay. All text and detail sections use semantic tokens. No changes needed.",
+    "In app/artist/[id]/page.tsx: Hero section uses bg-card with artist image blur. Tags use border-border. All correct. No changes needed.",
+    "In app/album/[id]/page.tsx: Table uses bg-card/80 for header and border-border for rows. All correct. No changes needed.",
+    "In app/error.tsx and app/not-found.tsx: Read and verify they use semantic tokens. Fix any hardcoded colors.",
+    "In app/loading.tsx: Read and verify it uses semantic tokens. Fix any hardcoded colors."
+  ],
+  "acceptance_criteria": [
+    "No component uses hardcoded white/black text colors that ignore theme (except intentional cases like genre cards)",
+    "SearchBar has a frosted glass floating effect via glass-search utility",
+    "Search dropdown uses glass-dropdown utility with backdrop blur",
+    "ShareMenu dropdown uses glass-dropdown utility with backdrop blur",
+    "MiniPlayer adapts to both light and dark themes (not always dark)",
+    "SearchFilters active button uses bg-foreground text-background (adapts to theme)",
+    "Header navigation uses the improved .glass utility",
+    "All text maintains accessible contrast in both light and dark modes",
+    "Running 'bun run build' succeeds with zero errors",
+    "Running 'bun run lint' produces zero errors"
+  ],
+  "verification": [
+    "bun run build",
+    "bun run lint"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
