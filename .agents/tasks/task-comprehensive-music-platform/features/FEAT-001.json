@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Dark/Light theme toggle, glassmorphism player, skeleton loaders, hover animations, and enhanced UI foundation. This establishes the visual design system that all subsequent features build upon.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Add a ThemeProvider context in app/components/ThemeContext.tsx that manages dark/light mode via a class on <html> (toggling a 'dark' class) and persists preference to localStorage. Replace the current prefers-color-scheme media query approach in app/globals.css with class-based dark mode using Tailwind's dark: variant.",
     "Update app/globals.css: add dark mode CSS variables under html.dark selector instead of @media (prefers-color-scheme: dark). Add glassmorphism utility classes (backdrop-blur, translucent backgrounds). Add smooth transition classes for theme switching.",
@@ -28,5 +28,5 @@
   ],
   "verification": ["bun run build", "bun run lint"],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Build passes with worker_threads warnings (known bun limitation, not a real error). Used useSyncExternalStore for theme initialization to avoid the react-hooks/set-state-in-effect lint rule. The html element starts with 'dark' class in server HTML and ThemeProvider adjusts on mount via useEffect. suppressHydrationMismatch is not available on html element in Next.js 16 types. AudioPlayer now accepts optional artistName and artworkUrl props for mini player metadata."
 }
