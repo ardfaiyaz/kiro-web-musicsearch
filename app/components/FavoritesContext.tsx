@@ -15,6 +15,8 @@ import {
   removeFavorite as removeFav,
 } from "@/lib/favorites";
 
+const STORAGE_KEY = "music-search-favorites";
+
 interface FavoritesContextType {
   favorites: ItunesTrack[];
   addFavorite: (track: ItunesTrack) => void;
@@ -30,18 +32,35 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const listenersRef = useRef(new Set<() => void>());
   const snapshotRef = useRef<ItunesTrack[]>(emptyArray);
 
-  const subscribe = useCallback((listener: () => void) => {
-    listenersRef.current.add(listener);
-    return () => {
-      listenersRef.current.delete(listener);
-    };
+  const notify = useCallback(() => {
+    snapshotRef.current = getFavorites();
+    listenersRef.current.forEach((listener) => listener());
   }, []);
 
+  const subscribe = useCallback(
+    (listener: () => void) => {
+      listenersRef.current.add(listener);
+
+      // Initialize the snapshot on first subscription
+      snapshotRef.current = getFavorites();
+
+      // Listen for cross-tab localStorage changes
+      const handleStorage = (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY) {
+          notify();
+        }
+      };
+      window.addEventListener("storage", handleStorage);
+
+      return () => {
+        listenersRef.current.delete(listener);
+        window.removeEventListener("storage", handleStorage);
+      };
+    },
+    [notify]
+  );
+
   const getSnapshot = useCallback(() => {
-    const current = getFavorites();
-    if (JSON.stringify(current) !== JSON.stringify(snapshotRef.current)) {
-      snapshotRef.current = current;
-    }
     return snapshotRef.current;
   }, []);
 
@@ -52,11 +71,6 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     getSnapshot,
     getServerSnapshot
   );
-
-  const notify = useCallback(() => {
-    snapshotRef.current = getFavorites();
-    listenersRef.current.forEach((listener) => listener());
-  }, []);
 
   const addFavorite = useCallback(
     (track: ItunesTrack) => {

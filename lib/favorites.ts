@@ -16,13 +16,21 @@ export function addFavorite(track: ItunesTrack): void {
   const favorites = getFavorites();
   if (favorites.some((fav) => fav.trackId === track.trackId)) return;
   favorites.push(track);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+  } catch {
+    // Silently handle quota exceeded or other write failures
+  }
 }
 
 export function removeFavorite(trackId: number): void {
   const favorites = getFavorites();
   const updated = favorites.filter((fav) => fav.trackId !== trackId);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch {
+    // Silently handle quota exceeded or other write failures
+  }
 }
 
 export function isFavorite(trackId: number): boolean {

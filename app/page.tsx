@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import SearchBar from "./components/SearchBar";
 import TrackGrid from "./components/TrackGrid";
 import EmptyState from "./components/EmptyState";
@@ -38,7 +39,7 @@ export default async function Home({
             <h1 className="text-lg font-bold text-foreground sm:text-xl">
               Music Search &amp; Discovery
             </h1>
-            <a
+            <Link
               href="/favorites"
               className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
               aria-label="Favorites"
@@ -58,7 +59,7 @@ export default async function Home({
                 />
               </svg>
               <span className="hidden sm:inline">Favorites</span>
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
