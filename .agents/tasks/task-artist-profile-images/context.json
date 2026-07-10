@@ -1,0 +1,25 @@
+{
+  "project_type": "Next.js 16 app with TypeScript, Tailwind CSS 4, React 19",
+  "language": "TypeScript",
+  "build_system": "bun (bun.lock present, bun install + bun run build)",
+  "test_framework": "None - no test files exist in the project",
+  "build_command": "bun run build",
+  "test_command": "bun run lint",
+  "verification_instructions": "Run 'bun run build' to verify the project compiles without errors",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/kiro-web-musicsearch && bun install",
+  "environment_constraints": "No npm/node available directly, only bun via mise shims. Next.js build uses workers which emit warnings but still succeeds.",
+  "contribution_requirements": "AGENTS.md says Next.js 16 may have breaking changes from training data - check node_modules/next/dist/docs/ if it exists (currently does not).",
+  "key_patterns": "- Image usage: TrackCard.tsx and AlbumCard.tsx use Next.js Image component with fill prop, sizes prop for responsive, and object-cover class. They use artworkUrl100 from the API response and upscale to 200x200. Fallback is an SVG placeholder. - API pattern: lib/itunes.ts exports async functions that call fetch with revalidate caching and filter results by wrapperType. - Remote image patterns for is*-ssl.mzstatic.com are already configured in next.config.ts. - Components are client components ('use client' directive) when they need interactivity.",
+  "relevant_files": [
+    "lib/types.ts",
+    "lib/itunes.ts",
+    "app/components/ArtistCard.tsx",
+    "app/components/ArtistGrid.tsx",
+    "app/components/AlbumCard.tsx",
+    "app/components/TrackCard.tsx",
+    "app/page.tsx",
+    "next.config.ts"
+  ],
+  "directory_structure": "Root: Next.js app router project. app/ contains page.tsx and components/. lib/ contains types.ts and itunes.ts. public/ for static assets. Standard Next.js 16 layout."
+}

@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import { ItunesArtist } from "@/lib/types";
 
 export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
+  const artworkUrl = artist.artworkUrl100?.replace("100x100", "200x200");
+  const [imageFailed, setImageFailed] = useState(false);
+
   return (
     <a
       href={artist.artistLinkUrl}
@@ -10,21 +15,34 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
       rel="noopener noreferrer"
       className="cursor-pointer group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
     >
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
-        <svg
-          className="h-7 w-7"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full">
+        {artworkUrl && !imageFailed ? (
+          <Image
+            src={artworkUrl}
+            alt={`${artist.artistName} profile image`}
+            fill
+            sizes="56px"
+            className="object-cover transition-transform group-hover:scale-105"
+            onError={() => setImageFailed(true)}
           />
-        </svg>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
+            <svg
+              className="h-7 w-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+              />
+            </svg>
+          </div>
+        )}
       </div>
       <div className="flex flex-1 flex-col gap-1 overflow-hidden">
         <h3 className="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-accent">
