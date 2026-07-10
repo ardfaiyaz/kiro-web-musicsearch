@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add artwork URL fetching for artists and display actual artist profile images in ArtistCard instead of the generic SVG person icon. The iTunes musicArtist entity does not return artwork, so we need to fetch a representative track per artist (via lookup API) to obtain artwork. Then update the ArtistCard component to display that artwork using Next.js Image component with fallback to the current SVG icon.",
+  "status": "in_progress",
+  "steps": [
+    "1. Add an optional `artworkUrl100` field to the `ItunesArtist` interface in `lib/types.ts`.",
+    "2. In `lib/itunes.ts`, modify the `searchArtists` function to enrich each artist with artwork. After fetching artists, for each artist, call the iTunes lookup API `https://itunes.apple.com/lookup?id={artistId}&entity=song&limit=1` to get one track. Extract `artworkUrl100` from that track and attach it to the artist object. Use `Promise.all` to parallelize lookups. Handle errors gracefully (if a lookup fails, just leave artworkUrl100 undefined).",
+    "3. Update `app/components/ArtistCard.tsx` to display the artist image: Import Next.js `Image` from 'next/image'. Replace the 14x14 (h-14 w-14) SVG person icon div with a conditional render: if `artist.artworkUrl100` exists, render a circular Next.js Image (with the URL upscaled to 200x200 by replacing '100x100' with '200x200', following the pattern from TrackCard.tsx and AlbumCard.tsx). If no artwork, keep the current SVG fallback. Use `rounded-full overflow-hidden` for the circular look. Use responsive sizes prop. Keep the overall card layout the same (horizontal flex with image on left, text on right).",
+    "4. Verify the build passes with `bun run build`."
+  ],
+  "acceptance_criteria": [
+    "ItunesArtist type has optional artworkUrl100 field",
+    "searchArtists function fetches artwork for each artist via lookup API",
+    "ArtistCard displays circular artist image when artworkUrl100 is available",
+    "ArtistCard falls back to SVG person icon when artworkUrl100 is not available",
+    "Next.js Image component is used with proper alt text, sizes, and fill/dimensions props",
+    "Build passes without errors (bun run build)"
+  ],
+  "verification": [
+    "Run `bun run build` and confirm it completes successfully with no type errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

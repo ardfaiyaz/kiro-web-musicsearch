@@ -1,0 +1,7 @@
+{
+  "task_id": "task-artist-profile-images",
+  "task_description": "Display actual artist profile/artwork images in ArtistCard instead of the generic SVG person icon. Fetch artwork from iTunes lookup API since the musicArtist search entity does not include artwork URLs.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
