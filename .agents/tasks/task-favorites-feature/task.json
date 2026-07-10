@@ -1,0 +1,7 @@
+{
+  "task_id": "task-favorites-feature",
+  "task_description": "Implement a favorites feature allowing users to save favorite songs using browser localStorage. Includes: favorite button on each track card, a /favorites page, remove favorite functionality, persistence across page refreshes, empty state when no favorites, and navigation link.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

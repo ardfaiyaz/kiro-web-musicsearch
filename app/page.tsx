@@ -36,8 +36,29 @@ export default async function Home({
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between">
             <h1 className="text-lg font-bold text-foreground sm:text-xl">
-              Music Search & Discovery
+              Music Search &amp; Discovery
             </h1>
+            <a
+              href="/favorites"
+              className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-red-500"
+              aria-label="Favorites"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 8.25c0-3.15-2.7-5.25-5.437-5.25A5.5 5.5 0 0012 5.052 5.5 5.5 0 007.688 3C4.95 3 2.25 5.1 2.25 8.25c0 7.22 9.75 12.75 9.75 12.75s9.75-5.53 9.75-12.75z"
+                />
+              </svg>
+              <span className="hidden sm:inline">Favorites</span>
+            </a>
           </nav>
         </div>
       </header>
