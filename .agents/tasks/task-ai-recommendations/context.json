@@ -1,0 +1,33 @@
+{
+  "project_type": "Next.js 16 web application with App Router, React 19, TypeScript, Tailwind CSS v4",
+  "language": "TypeScript",
+  "build_system": "bun (package manager and runtime) with next build. node_modules need `bun install` first. Worker threads warnings from bun are non-fatal.",
+  "test_framework": "No test framework installed - project has no test files",
+  "build_command": "cd /projects/sandbox/kiro-web-musicsearch && bun run build",
+  "test_command": "cd /projects/sandbox/kiro-web-musicsearch && bun run lint",
+  "verification_instructions": "1. Run `bun run build` to verify compilation and type checking pass. 2. Run `bun run lint` to verify no lint errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/kiro-web-musicsearch && bun install",
+  "environment_constraints": "No npm available - use bun. Node.js not directly available in PATH but bun handles everything. OPEN_INTERNET network mode - full external access. AGENTS.md warns to check node_modules/next/dist/docs/ for Next.js API changes but that directory does not exist in this version.",
+  "contribution_requirements": "Use responsive Tailwind CSS utility classes. Use Semantic HTML for all layout sections.",
+  "key_patterns": {
+    "api_layer": "lib/itunes.ts contains all iTunes API calls. Functions return typed results. Uses fetch with next revalidate options.",
+    "types": "lib/types.ts defines ItunesTrack interface and ItunesSearchResponse",
+    "pages": "Server components by default. app/track/[id]/page.tsx fetches data server-side using async component pattern.",
+    "components": "Client components in app/components/ use 'use client' directive. TrackCard links to /track/[id]. TrackGrid renders a responsive grid of TrackCards.",
+    "styling": "Tailwind CSS v4 with custom CSS variables for theming (dark/light mode via prefers-color-scheme). Color tokens: background, foreground, muted, border, card, accent, accent-hover.",
+    "recommendations_current": "Track detail page calls getArtistTracks() to show more songs from the same artist. This is the section to replace/augment with AI recommendations.",
+    "error_handling": "Functions return { tracks, error: boolean } pattern for graceful degradation."
+  },
+  "relevant_files": [
+    "app/track/[id]/page.tsx",
+    "lib/itunes.ts",
+    "lib/types.ts",
+    "app/components/TrackCard.tsx",
+    "app/components/TrackGrid.tsx",
+    "app/components/LoadingSpinner.tsx",
+    "app/globals.css",
+    "app/layout.tsx"
+  ],
+  "directory_structure": "app/ - Next.js App Router pages and components. lib/ - shared utilities and API functions. app/components/ - reusable React components. app/track/[id]/ - track detail page. app/favorites/ - favorites page."
+}

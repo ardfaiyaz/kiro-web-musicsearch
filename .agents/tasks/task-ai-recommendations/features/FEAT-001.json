@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Implement the AI-powered recommendation engine and integrate it into the track detail page. This creates a recommendation API route that analyzes a track's genre, artist, and musical characteristics to find similar tracks from different artists using the iTunes Search API with intelligent query construction. It also updates the track detail page to display AI recommendations with proper loading states, error handling, and responsive design.",
+  "status": "completed",
+  "steps": [
+    "Create lib/recommendations.ts - an intelligent recommendation engine that: (1) Takes a source track (ItunesTrack) as input, (2) Generates multiple search strategies based on genre, artist style keywords, and musical characteristics, (3) Queries the iTunes Search API with varied search terms to find diverse recommendations, (4) Filters out tracks from the same artist, (5) Deduplicates results and ranks them by relevance (genre match > mood similarity), (6) Returns at least 5 recommendations when available. The engine should derive search terms from genre (e.g., 'Pop' -> search for pop music), extract mood/style keywords from track and album names, and search by related genres.",
+    "Create app/api/recommendations/route.ts - a Next.js API route that: (1) Accepts GET requests with a trackId query parameter, (2) Looks up the track using getTrackById from lib/itunes.ts, (3) Calls the recommendation engine to get similar tracks, (4) Returns JSON response with recommendations array, (5) Includes proper error handling with appropriate HTTP status codes, (6) Has response caching headers for performance.",
+    "Create app/components/Recommendations.tsx - a client component that: (1) Accepts a trackId prop, (2) Fetches recommendations from the API route on mount and when trackId changes, (3) Shows a loading state with a spinner/skeleton while fetching (using a pattern similar to LoadingSpinner.tsx), (4) Displays recommendations in a grid using TrackGrid or a custom layout showing album artwork, artist name, and song title, (5) Each recommendation links to /track/[id] so clicking refreshes the page with new recommendations, (6) Shows an appropriate empty state when no recommendations are available, (7) Shows an error message when the API request fails, (8) Uses responsive Tailwind CSS classes for mobile and desktop, (9) Uses semantic HTML with proper section/heading structure, (10) Includes a heading like 'Recommended For You' or 'You Might Also Like' that differentiates from the existing 'More from [Artist]' section.",
+    "Update app/track/[id]/page.tsx to: (1) Import and render the new Recommendations component below the existing artist tracks section, (2) Pass the current track ID as a prop, (3) Keep the existing 'More from [Artist]' section intact as a secondary recommendation, (4) The AI recommendations section should appear prominently, ideally before or after the artist section with a clear visual distinction."
+  ],
+  "acceptance_criteria": [
+    "AI recommendations are displayed on the track detail page after selecting a song",
+    "At least 5 relevant songs are recommended when available from the iTunes API",
+    "Recommendations prioritize similar genres and musical style over the same artist (tracks from the same artist are filtered out)",
+    "Selecting a recommended song navigates to that track's page and generates new recommendations (via trackId prop change)",
+    "The feature displays album artwork, artist name, and song title for each recommendation",
+    "A loading state is shown while recommendations are being generated",
+    "Error handling is implemented for failed recommendation API requests",
+    "The layout works on both desktop and mobile (responsive Tailwind classes)",
+    "Semantic HTML is used (section, headings, etc.)",
+    "Running `bun run build` passes without errors",
+    "Running `bun run lint` passes without errors"
+  ],
+  "verification": [
+    "Run `cd /projects/sandbox/kiro-web-musicsearch && bun run build` and confirm it completes successfully",
+    "Run `cd /projects/sandbox/kiro-web-musicsearch && bun run lint` and confirm no lint errors"
+  ],
+  "blocked_reason": null,
+  "findings": "Build passes with bun worker_threads warnings (non-fatal, as documented in context). Lint passes clean. Review feedback addressed: (1) Replaced Math.random() shuffle with deterministic seeded PRNG using trackId as seed - cache headers are now meaningful. (2) Added anyStrategySucceeded check - when all strategies return zero tracks, error: true is returned. (3) Converted from client-side useEffect fetch to server-side fetching in the page component, eliminating the extra round-trip waterfall. Removed the Recommendations.tsx client component. (4) Expanded GENRE_SEARCH_MAP from 17 to 32 genres, adding K-Pop, Anime, Christian & Gospel, Fitness & Workout, Children's Music, World, New Age, Punk, Singer/Songwriter, Funk, Disco, J-Pop, Afrobeats, Indie, Lo-Fi. (5) Added Set-based deduplication of search terms (case-insensitive) before fetching to prevent redundant HTTP requests."
+}
