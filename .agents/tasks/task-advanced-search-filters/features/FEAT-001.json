@@ -25,5 +25,5 @@
     "bun run lint"
   ],
   "blocked_reason": null,
-  "findings": "Build and lint pass cleanly. The iTunes API entity filter for 'artist' and 'album' will return results with wrapperType 'artist' or 'collection' respectively, which get filtered out by the existing .filter(item => item.wrapperType === 'track'). This means artist-only and album-only filters may return empty results for some queries. This is acceptable since the filter changes the API response type but the UI still shows track-based results."
+  "findings": "Build and lint pass cleanly. Fixed review issues: (1) Changed entity filter approach to always use entity=musicTrack with attribute parameter (artistTerm/albumTerm/songTerm) to narrow results. This ensures all API responses are track-shaped objects. (2) Removed the unsafe early return that cast non-track results to ItunesTrack[]. (3) The wrapperType === 'track' filter is now applied for all code paths. (4) Added input validation for filter and sort URL params using const arrays and type guard functions."
 }
