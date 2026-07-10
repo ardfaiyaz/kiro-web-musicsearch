@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import SettingsPanel from "./SettingsPanel";
+import dynamic from "next/dynamic";
+
+const SettingsPanel = dynamic(() => import("./SettingsPanel"), {
+  ssr: false,
+});
 
 export default function SettingsFab() {
   const [isOpen, setIsOpen] = useState(false);

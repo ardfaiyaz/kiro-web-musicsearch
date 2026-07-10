@@ -12,6 +12,7 @@ import SettingsFab from "./components/SettingsFab";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
+import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -56,6 +57,7 @@ export default function RootLayout({
                 <FavoritesProvider>
                   <PersonalizationProvider>
                     <AmbientBackground />
+                    <CustomCursorWrapper />
                     <div className="relative z-10 flex min-h-full flex-col">
                       <OfflineDetector />
                       <RecentlyPlayedTracker />

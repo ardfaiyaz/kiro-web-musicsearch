@@ -12,7 +12,7 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
   return (
     <Link
       href={`/artist/${artist.artistId}`}
-      className="cursor-pointer group flex items-center gap-4 rounded-2xl glass-card p-4 transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-0.5"
+      className="cursor-pointer group flex items-center gap-4 rounded-2xl glass-card hover-glow card-tilt p-4 transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
     >
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full shadow-md">
         {artworkUrl && !imageFailed ? (

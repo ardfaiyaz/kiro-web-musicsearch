@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { ItunesTrack } from "@/lib/types";
 import { useFavorites } from "./FavoritesContext";
 
 export default function FavoriteButton({ track }: { track: ItunesTrack }) {
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const favorited = isFavorite(track.trackId);
+  const [isBursting, setIsBursting] = useState(false);
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -14,6 +16,8 @@ export default function FavoriteButton({ track }: { track: ItunesTrack }) {
       removeFavorite(track.trackId);
     } else {
       addFavorite(track);
+      setIsBursting(true);
+      setTimeout(() => setIsBursting(false), 600);
     }
   }
 
@@ -22,9 +26,9 @@ export default function FavoriteButton({ track }: { track: ItunesTrack }) {
       type="button"
       onClick={handleClick}
       aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
-      className={`cursor-pointer flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110 ${
+      className={`cursor-pointer relative flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110 ${
         favorited ? "text-red-500" : "text-muted hover:text-red-500"
-      }`}
+      } ${isBursting ? "heart-burst" : ""}`}
     >
       {favorited ? (
         <svg

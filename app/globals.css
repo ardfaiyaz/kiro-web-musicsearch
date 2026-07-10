@@ -567,3 +567,207 @@ html.reduce-motion .ambient-floating-shapes {
     transform: translateY(-100%);
   }
 }
+
+/* ===== Micro-Interactions ===== */
+
+/* Hover glow effect */
+.hover-glow {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px -4px var(--dynamic-accent, var(--accent)),
+    0 0 8px -2px var(--dynamic-accent, var(--accent));
+}
+
+/* Card tilt - CSS-only 3D perspective tilt on hover */
+.card-tilt {
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-tilt:hover {
+  transform: perspective(800px) rotateX(2deg) rotateY(-2deg) translateY(-4px);
+}
+
+/* Heart burst animation */
+@keyframes heartBurst {
+  0% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.3);
+  }
+  30% {
+    transform: scale(0.9);
+  }
+  45% {
+    transform: scale(1.15);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heartBurstRing {
+  0% {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.heart-burst {
+  animation: heartBurst 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.heart-burst::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0;
+  animation: heartBurstRing 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* Shimmer loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-loading {
+  background: linear-gradient(
+    90deg,
+    var(--border) 25%,
+    var(--surface) 50%,
+    var(--border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Icon bounce animation */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.icon-bounce:hover {
+  animation: iconBounce 0.4s ease-in-out;
+}
+
+/* Animated Equalizer */
+@keyframes equalizerBar1 {
+  0%, 100% { height: 30%; }
+  50% { height: 100%; }
+}
+
+@keyframes equalizerBar2 {
+  0%, 100% { height: 60%; }
+  50% { height: 20%; }
+}
+
+@keyframes equalizerBar3 {
+  0%, 100% { height: 45%; }
+  50% { height: 90%; }
+}
+
+@keyframes equalizerBar4 {
+  0%, 100% { height: 80%; }
+  50% { height: 40%; }
+}
+
+/* Floating particles */
+@keyframes floatParticle {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* Custom cursor body style */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Reduced motion: disable micro-interactions */
+@media (prefers-reduced-motion: reduce) {
+  .hover-glow:hover {
+    box-shadow: none;
+  }
+
+  .card-tilt:hover {
+    transform: none;
+  }
+
+  .heart-burst {
+    animation: none;
+  }
+
+  .heart-burst::after {
+    animation: none;
+    display: none;
+  }
+
+  .shimmer-loading {
+    animation: none;
+  }
+
+  .icon-bounce:hover {
+    animation: none;
+  }
+}
+
+html.reduce-motion .hover-glow:hover {
+  box-shadow: none;
+}
+
+html.reduce-motion .card-tilt:hover {
+  transform: none;
+}
+
+html.reduce-motion .heart-burst {
+  animation: none;
+}
+
+html.reduce-motion .heart-burst::after {
+  animation: none;
+  display: none;
+}
+
+html.reduce-motion .shimmer-loading {
+  animation: none;
+}
+
+html.reduce-motion .icon-bounce:hover {
+  animation: none;
+}

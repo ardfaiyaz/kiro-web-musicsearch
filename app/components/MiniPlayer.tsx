@@ -3,7 +3,12 @@
 import Image from "next/image";
 import { useAudioPlayer } from "./AudioPlayerContext";
 import { useDynamicColors } from "./DynamicColorProvider";
-import ExpandedPlayer from "./ExpandedPlayer";
+import AnimatedEqualizer from "./AnimatedEqualizer";
+import dynamic from "next/dynamic";
+
+const ExpandedPlayer = dynamic(() => import("./ExpandedPlayer"), {
+  ssr: false,
+});
 
 export default function MiniPlayer() {
   const {
@@ -93,7 +98,8 @@ export default function MiniPlayer() {
               <span className="truncate text-sm font-semibold text-foreground">
                 {trackName || "Unknown Track"}
               </span>
-              <span className="truncate text-xs text-muted">
+              <span className="flex items-center gap-2 truncate text-xs text-muted">
+                <AnimatedEqualizer />
                 {artistName || "Unknown Artist"}
               </span>
             </button>
@@ -101,7 +107,7 @@ export default function MiniPlayer() {
             {/* Expand button */}
             <button
               onClick={toggleExpanded}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted transition-premium hover:text-foreground"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted transition-premium hover:text-foreground icon-bounce"
               aria-label="Expand player"
             >
               <svg

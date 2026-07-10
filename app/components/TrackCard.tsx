@@ -20,7 +20,7 @@ export default function TrackCard({ track }: { track: ItunesTrack }) {
   return (
     <Link
       href={`/track/${track.trackId}`}
-      className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl glass-card transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1"
+      className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl glass-card card-tilt hover-glow transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-border">
         {artworkUrl ? (
