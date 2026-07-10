@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { useAudioPlayer } from "./AudioPlayerContext";
 
 export default function AudioPlayer({
@@ -13,22 +12,7 @@ export default function AudioPlayer({
   trackName: string;
 }) {
   const { play, pause, currentlyPlayingId } = useAudioPlayer();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    // Poll to check if this track is still playing
-    intervalRef.current = setInterval(() => {
-      const playing = currentlyPlayingId.current === trackId;
-      setIsPlaying(playing);
-    }, 200);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [currentlyPlayingId, trackId]);
+  const isPlaying = currentlyPlayingId === trackId;
 
   if (!previewUrl) {
     return (
@@ -55,10 +39,8 @@ export default function AudioPlayer({
   function handleToggle() {
     if (isPlaying) {
       pause();
-      setIsPlaying(false);
     } else {
       play(previewUrl!, trackId);
-      setIsPlaying(true);
     }
   }
 

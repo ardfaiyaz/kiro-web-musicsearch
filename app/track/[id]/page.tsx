@@ -37,7 +37,7 @@ export default async function TrackPage({
     notFound();
   }
 
-  const recommendations = await getArtistTracks(track.artistId, track.trackId);
+  const recommendationsResult = await getArtistTracks(track.artistId, track.trackId);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "600x600");
 
   return (
@@ -165,13 +165,24 @@ export default async function TrackPage({
         </article>
 
         {/* Recommendations */}
-        {recommendations.length > 0 && (
-          <section className="mt-12" aria-label="More from this artist">
-            <h2 className="mb-6 text-xl font-bold text-foreground">
+        {recommendationsResult.error ? (
+          <section className="mt-12" aria-label="Recommendations unavailable">
+            <h2 className="mb-4 text-xl font-bold text-foreground">
               More from {track.artistName}
             </h2>
-            <TrackGrid tracks={recommendations} />
+            <p className="text-sm text-muted">
+              Unable to load recommendations at this time. Please try again later.
+            </p>
           </section>
+        ) : (
+          recommendationsResult.tracks.length > 0 && (
+            <section className="mt-12" aria-label="More from this artist">
+              <h2 className="mb-6 text-xl font-bold text-foreground">
+                More from {track.artistName}
+              </h2>
+              <TrackGrid tracks={recommendationsResult.tracks} />
+            </section>
+          )
         )}
       </main>
 

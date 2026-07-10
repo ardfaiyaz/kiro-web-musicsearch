@@ -44,10 +44,15 @@ export async function getTrackById(
   }
 }
 
+export interface ArtistTracksResult {
+  tracks: ItunesTrack[];
+  error: boolean;
+}
+
 export async function getArtistTracks(
   artistId: number,
   excludeTrackId: number
-): Promise<ItunesTrack[]> {
+): Promise<ArtistTracksResult> {
   try {
     const response = await fetch(
       `https://itunes.apple.com/lookup?id=${artistId}&entity=song&limit=11`,
@@ -59,14 +64,15 @@ export async function getArtistTracks(
     }
 
     const data: ItunesSearchResponse = await response.json();
-    return data.results
+    const tracks = data.results
       .filter(
         (item) =>
           item.wrapperType === "track" && item.trackId !== excludeTrackId
       )
       .slice(0, 10);
+    return { tracks, error: false };
   } catch (error) {
     console.error("Failed to get artist tracks:", error);
-    return [];
+    return { tracks: [], error: true };
   }
 }
