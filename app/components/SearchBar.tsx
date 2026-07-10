@@ -54,6 +54,7 @@ export default function SearchBar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -77,9 +78,18 @@ export default function SearchBar() {
       setSuggestions([]);
       return;
     }
+
+    // Cancel any in-flight request before starting a new one
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const res = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=musicTrack&limit=5`
+        `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=musicTrack&limit=5`,
+        { signal: controller.signal }
       );
       if (!res.ok) return;
       const data = await res.json();
@@ -92,8 +102,9 @@ export default function SearchBar() {
           artistName: r.artistName,
         }));
       setSuggestions(results);
-    } catch {
-      // Silently fail autocomplete
+    } catch (error) {
+      // Ignore aborted requests; silently fail other errors
+      if (error instanceof Error && error.name === "AbortError") return;
     }
   }, []);
 

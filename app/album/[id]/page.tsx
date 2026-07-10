@@ -201,6 +201,7 @@ export default async function AlbumPage({
                               "200x200"
                             )}
                             compact
+                            track={track}
                           />
                         )}
                       </td>

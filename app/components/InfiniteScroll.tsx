@@ -9,12 +9,65 @@ interface InfiniteScrollProps {
   initialTracks: ItunesTrack[];
   query: string;
   entity?: string;
+  genre?: string;
+  year?: string;
+  explicit?: string;
+}
+
+function applyGenreFilter(tracks: ItunesTrack[], genre: string): ItunesTrack[] {
+  if (!genre) return tracks;
+  return tracks.filter(
+    (t) => t.primaryGenreName.toLowerCase().includes(genre.toLowerCase())
+  );
+}
+
+function applyYearFilter(tracks: ItunesTrack[], year: string): ItunesTrack[] {
+  if (!year) return tracks;
+  return tracks.filter((t) => {
+    const releaseYear = new Date(t.releaseDate).getFullYear();
+    switch (year) {
+      case "2024":
+        return releaseYear === 2024;
+      case "2023":
+        return releaseYear === 2023;
+      case "2022":
+        return releaseYear === 2022;
+      case "2020s":
+        return releaseYear >= 2020 && releaseYear <= 2021;
+      case "2010s":
+        return releaseYear >= 2010 && releaseYear <= 2019;
+      case "2000s":
+        return releaseYear >= 2000 && releaseYear <= 2009;
+      case "1990s":
+        return releaseYear >= 1990 && releaseYear <= 1999;
+      case "1980s":
+        return releaseYear >= 1980 && releaseYear <= 1989;
+      case "older":
+        return releaseYear < 1980;
+      default:
+        return true;
+    }
+  });
+}
+
+function applyExplicitFilter(tracks: ItunesTrack[], explicit: string): ItunesTrack[] {
+  if (!explicit) return tracks;
+  if (explicit === "hide") {
+    return tracks.filter((t) => t.trackExplicitness !== "explicit");
+  }
+  if (explicit === "only") {
+    return tracks.filter((t) => t.trackExplicitness === "explicit");
+  }
+  return tracks;
 }
 
 export default function InfiniteScroll({
   initialTracks,
   query,
   entity,
+  genre,
+  year,
+  explicit,
 }: InfiniteScrollProps) {
   const [tracks, setTracks] = useState<ItunesTrack[]>(initialTracks);
   const [offset, setOffset] = useState(25);
@@ -51,16 +104,31 @@ export default function InfiniteScroll({
       );
       const data = await response.json();
 
-      const newTracks = (data.results || []).filter(
+      let newTracks = (data.results || []).filter(
         (item: { wrapperType: string }) => item.wrapperType === "track"
       ) as ItunesTrack[];
 
-      if (newTracks.length === 0) {
+      // Apply the same filters that the server applied to the initial page
+      if (genre) {
+        newTracks = applyGenreFilter(newTracks, genre);
+      }
+      if (year) {
+        newTracks = applyYearFilter(newTracks, year);
+      }
+      if (explicit) {
+        newTracks = applyExplicitFilter(newTracks, explicit);
+      }
+
+      if (newTracks.length === 0 && data.results.length < 25) {
+        // No more raw results from the API
         setHasMore(false);
+      } else if (newTracks.length === 0) {
+        // Filters excluded all results from this page but there may be more
+        setOffset((prev) => prev + 25);
       } else {
         setTracks((prev) => [...prev, ...newTracks]);
         setOffset((prev) => prev + 25);
-        if (newTracks.length < 25) {
+        if (data.results.length < 25) {
           setHasMore(false);
         }
       }
@@ -70,7 +138,7 @@ export default function InfiniteScroll({
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, query, offset, entity]);
+  }, [loading, hasMore, query, offset, entity, genre, year, explicit]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

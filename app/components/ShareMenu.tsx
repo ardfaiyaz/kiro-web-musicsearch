@@ -85,17 +85,24 @@ export default function ShareMenu({
     setOpen(false);
   }
 
-  function handleDownloadArtwork() {
+  async function handleDownloadArtwork() {
     if (!artworkUrl) return;
     const highResUrl = artworkUrl.replace("100x100", "600x600");
-    const link = document.createElement("a");
-    link.href = highResUrl;
-    link.download = `${getSearchQuery().replace(/\s+/g, "-")}-artwork.jpg`;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const response = await fetch(highResUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${getSearchQuery().replace(/\s+/g, "-")}-artwork.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      // Fallback: open in a new tab if fetch fails
+      window.open(highResUrl, "_blank", "noopener,noreferrer");
+    }
     setOpen(false);
   }
 

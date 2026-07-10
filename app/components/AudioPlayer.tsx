@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useAudioPlayer } from "./AudioPlayerContext";
+import { ItunesTrack } from "@/lib/types";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
@@ -23,6 +24,7 @@ export default function AudioPlayer({
   artistName,
   artworkUrl,
   compact = false,
+  track,
 }: {
   previewUrl: string | null;
   trackId: number;
@@ -30,6 +32,7 @@ export default function AudioPlayer({
   artistName?: string;
   artworkUrl?: string;
   compact?: boolean;
+  track?: ItunesTrack;
 }) {
   const {
     play,
@@ -79,7 +82,7 @@ export default function AudioPlayer({
     if (isPlaying) {
       pause();
     } else {
-      play(previewUrl!, trackId, { trackName, artistName, artworkUrl });
+      play(previewUrl!, trackId, { trackName, artistName, artworkUrl, fullTrack: track });
     }
   }
 

@@ -33,8 +33,10 @@ export function addRecentlyPlayed(track: ItunesTrack): void {
     const filtered = existing.filter((t) => t.trackId !== track.trackId);
     const updated = [track, ...filtered].slice(0, MAX_RECENTLY_PLAYED);
     localStorage.setItem(RECENTLY_PLAYED_KEY, JSON.stringify(updated));
-  } catch {
-    // Silently handle quota exceeded or other write failures
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded when saving recently played tracks. Some data may not be persisted.");
+    }
   }
 }
 
@@ -57,8 +59,10 @@ export function addFavoriteArtist(artist: ItunesArtist): void {
   artists.push(artist);
   try {
     localStorage.setItem(FAVORITE_ARTISTS_KEY, JSON.stringify(artists));
-  } catch {
-    // Silently handle quota exceeded
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded when saving favorite artists. Some data may not be persisted.");
+    }
   }
 }
 
@@ -68,8 +72,10 @@ export function removeFavoriteArtist(artistId: number): void {
   const updated = artists.filter((a) => a.artistId !== artistId);
   try {
     localStorage.setItem(FAVORITE_ARTISTS_KEY, JSON.stringify(updated));
-  } catch {
-    // Silently handle write failures
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
+    }
   }
 }
 
@@ -96,8 +102,10 @@ export function addFavoriteAlbum(album: ItunesAlbum): void {
   albums.push(album);
   try {
     localStorage.setItem(FAVORITE_ALBUMS_KEY, JSON.stringify(albums));
-  } catch {
-    // Silently handle quota exceeded
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded when saving favorite albums. Some data may not be persisted.");
+    }
   }
 }
 
@@ -107,8 +115,10 @@ export function removeFavoriteAlbum(collectionId: number): void {
   const updated = albums.filter((a) => a.collectionId !== collectionId);
   try {
     localStorage.setItem(FAVORITE_ALBUMS_KEY, JSON.stringify(updated));
-  } catch {
-    // Silently handle write failures
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
+    }
   }
 }
 
@@ -139,8 +149,10 @@ export function createPlaylist(name: string): Playlist {
   playlists.push(playlist);
   try {
     localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(playlists));
-  } catch {
-    // Silently handle quota exceeded
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded when creating playlist. Some data may not be persisted.");
+    }
   }
   return playlist;
 }
@@ -151,8 +163,10 @@ export function deletePlaylist(playlistId: string): void {
   const updated = playlists.filter((p) => p.id !== playlistId);
   try {
     localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(updated));
-  } catch {
-    // Silently handle write failures
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
+    }
   }
 }
 
@@ -168,8 +182,10 @@ export function addTrackToPlaylist(
   playlist.tracks.push(track);
   try {
     localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(playlists));
-  } catch {
-    // Silently handle quota exceeded
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded when adding track to playlist. Some data may not be persisted.");
+    }
   }
 }
 
@@ -184,8 +200,10 @@ export function removeTrackFromPlaylist(
   playlist.tracks = playlist.tracks.filter((t) => t.trackId !== trackId);
   try {
     localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(playlists));
-  } catch {
-    // Silently handle write failures
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
+    }
   }
 }
 

@@ -10,6 +10,7 @@ import {
   ReactNode,
 } from "react";
 import { usePathname } from "next/navigation";
+import { ItunesTrack } from "@/lib/types";
 
 interface AudioPlayerContextType {
   play: (url: string, id: number, metadata?: TrackMetadata) => void;
@@ -24,12 +25,14 @@ interface AudioPlayerContextType {
   trackName: string | null;
   artistName: string | null;
   artworkUrl: string | null;
+  currentTrack: ItunesTrack | null;
 }
 
 interface TrackMetadata {
   trackName?: string;
   artistName?: string;
   artworkUrl?: string;
+  fullTrack?: ItunesTrack;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
@@ -48,6 +51,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [trackName, setTrackName] = useState<string | null>(null);
   const [artistName, setArtistName] = useState<string | null>(null);
   const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<ItunesTrack | null>(null);
 
   const resetPlaybackState = useCallback(() => {
     setCurrentTime(0);
@@ -66,6 +70,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     setTrackName(null);
     setArtistName(null);
     setArtworkUrl(null);
+    setCurrentTrack(null);
     resetPlaybackState();
   }, [resetPlaybackState]);
 
@@ -109,6 +114,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
           setTrackName(null);
           setArtistName(null);
           setArtworkUrl(null);
+          setCurrentTrack(null);
           resetPlaybackState();
         }
       };
@@ -148,6 +154,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       setTrackName(metadata?.trackName || null);
       setArtistName(metadata?.artistName || null);
       setArtworkUrl(metadata?.artworkUrl || null);
+      setCurrentTrack(metadata?.fullTrack || null);
 
       const audio = new Audio(url);
       audio.volume = volumeRef.current;
@@ -166,6 +173,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
           setTrackName(null);
           setArtistName(null);
           setArtworkUrl(null);
+          setCurrentTrack(null);
           resetPlaybackState();
         }
       });
@@ -207,6 +215,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         trackName,
         artistName,
         artworkUrl,
+        currentTrack,
       }}
     >
       {children}

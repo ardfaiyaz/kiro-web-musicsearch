@@ -43,6 +43,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(externalTheme);
 
   useEffect(() => {
+    setTheme(externalTheme);
+  }, [externalTheme]);
+
+  useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");

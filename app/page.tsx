@@ -113,6 +113,9 @@ async function TrackResults({
         initialTracks={sortedTracks}
         query={query}
         entity={entity}
+        genre={genre}
+        year={year}
+        explicit={explicit}
       />
     </section>
   );

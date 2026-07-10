@@ -153,6 +153,7 @@ export default async function TrackPage({
                 trackName={track.trackName}
                 artistName={track.artistName}
                 artworkUrl={track.artworkUrl100?.replace("100x100", "200x200")}
+                track={track}
               />
             </div>
 
