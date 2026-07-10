@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { useAudioPlayer } from "./AudioPlayerContext";
 
 function formatTime(seconds: number): string {
@@ -37,6 +38,7 @@ export default function AudioPlayer({
   } = useAudioPlayer();
 
   const isPlaying = currentlyPlayingId === trackId;
+  const previousVolumeRef = useRef(1);
 
   if (!previewUrl) {
     return (
@@ -82,9 +84,10 @@ export default function AudioPlayer({
 
   function handleMuteToggle() {
     if (volume > 0) {
+      previousVolumeRef.current = volume;
       setVolume(0);
     } else {
-      setVolume(1);
+      setVolume(previousVolumeRef.current);
     }
   }
 

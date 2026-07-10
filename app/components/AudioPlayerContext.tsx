@@ -27,12 +27,14 @@ const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
 
 export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(
     null
   );
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolumeState] = useState(1);
+  const volumeRef = useRef(1);
   const [progress, setProgress] = useState(0);
 
   const resetPlaybackState = useCallback(() => {
@@ -42,6 +44,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const stopAudio = useCallback(() => {
+    cleanupRef.current?.();
+    cleanupRef.current = null;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -110,6 +114,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
   const play = useCallback(
     (url: string, id: number) => {
+      // Clean up listeners on the old element before discarding it
+      cleanupRef.current?.();
+      cleanupRef.current = null;
+
       // Stop any currently playing audio and clean up old element
       if (audioRef.current) {
         audioRef.current.pause();
@@ -119,27 +127,30 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       resetPlaybackState();
 
       const audio = new Audio(url);
-      audio.volume = volume;
+      audio.volume = volumeRef.current;
       audioRef.current = audio;
       setCurrentlyPlayingId(id);
 
-      attachListeners(audio);
+      cleanupRef.current = attachListeners(audio);
 
       audio.play().catch(() => {
         // Browser blocked autoplay or URL failed - reset state
         if (audioRef.current === audio) {
+          cleanupRef.current?.();
+          cleanupRef.current = null;
           audioRef.current = null;
           setCurrentlyPlayingId(null);
           resetPlaybackState();
         }
       });
     },
-    [volume, attachListeners, resetPlaybackState]
+    [attachListeners, resetPlaybackState]
   );
 
   const setVolume = useCallback((v: number) => {
     const clamped = Math.max(0, Math.min(1, v));
     setVolumeState(clamped);
+    volumeRef.current = clamped;
     if (audioRef.current) {
       audioRef.current.volume = clamped;
     }
