@@ -1,14 +1,41 @@
 import { Suspense } from "react";
 import SearchBar from "./components/SearchBar";
+import SearchFilters from "./components/SearchFilters";
 import TrackGrid from "./components/TrackGrid";
 import EmptyState from "./components/EmptyState";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { searchTracks } from "@/lib/itunes";
+import { ItunesTrack } from "@/lib/types";
 
-async function SearchResults({ query }: { query: string }) {
-  const tracks = await searchTracks(query);
+function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
+  if (sort === "releaseDate") {
+    return [...tracks].sort(
+      (a, b) =>
+        new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime()
+    );
+  }
+  if (sort === "artistName") {
+    return [...tracks].sort((a, b) =>
+      a.artistName.localeCompare(b.artistName)
+    );
+  }
+  return tracks;
+}
 
-  if (tracks.length === 0) {
+async function SearchResults({
+  query,
+  filter,
+  sort,
+}: {
+  query: string;
+  filter: string;
+  sort: string;
+}) {
+  const entity = filter !== "all" ? filter : undefined;
+  const tracks = await searchTracks(query, entity);
+  const sortedTracks = sortTracks(tracks, sort);
+
+  if (sortedTracks.length === 0) {
     return <EmptyState query={query} />;
   }
 
@@ -17,18 +44,31 @@ async function SearchResults({ query }: { query: string }) {
       <h2 className="mb-4 text-lg font-semibold text-foreground">
         Results for &ldquo;{query}&rdquo;
       </h2>
-      <TrackGrid tracks={tracks} />
+      <TrackGrid tracks={sortedTracks} />
     </section>
   );
+}
+
+const VALID_FILTERS = ["all", "song", "artist", "album"] as const;
+const VALID_SORTS = ["relevance", "releaseDate", "artistName"] as const;
+
+function isValidFilter(value: string): value is (typeof VALID_FILTERS)[number] {
+  return (VALID_FILTERS as readonly string[]).includes(value);
+}
+
+function isValidSort(value: string): value is (typeof VALID_SORTS)[number] {
+  return (VALID_SORTS as readonly string[]).includes(value);
 }
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; filter?: string; sort?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, filter, sort } = await searchParams;
   const query = q?.trim() || "";
+  const activeFilter = filter && isValidFilter(filter) ? filter : "all";
+  const activeSort = sort && isValidSort(sort) ? sort : "relevance";
 
   return (
     <div className="flex flex-1 flex-col">
@@ -76,9 +116,17 @@ export default async function Home({
         </section>
 
         {query && (
+          <section className="py-4" aria-label="Filters">
+            <Suspense fallback={null}>
+              <SearchFilters />
+            </Suspense>
+          </section>
+        )}
+
+        {query && (
           <section className="mt-8">
             <Suspense fallback={<LoadingSpinner message="Searching for music..." />}>
-              <SearchResults query={query} />
+              <SearchResults query={query} filter={activeFilter} sort={activeSort} />
             </Suspense>
           </section>
         )}

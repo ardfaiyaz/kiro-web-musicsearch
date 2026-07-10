@@ -1,0 +1,24 @@
+{
+  "project_type": "Next.js App Router with TypeScript and Tailwind CSS v4",
+  "language": "TypeScript",
+  "build_system": "bun (npm scripts via bun run). No node/npm available directly, use bun.",
+  "test_framework": "No test framework configured. Verification via build and lint only.",
+  "build_command": "bun run build",
+  "test_command": "bun run lint",
+  "verification_instructions": "1. Run 'bun run build' - should compile and generate pages without errors. 2. Run 'bun run lint' - should pass with no errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/kiro-web-musicsearch && bun install",
+  "environment_constraints": "No node/npm binary directly available, use bun. bun v1.2.14 is installed. Next.js 16.2.4 with App Router. AGENTS.md warns about breaking changes in this Next version - check node_modules/next/dist/docs/ for guidance (currently empty). searchParams in page.tsx is a Promise that must be awaited.",
+  "contribution_requirements": "Use responsive Tailwind CSS utility classes. Use Semantic HTML for all layout sections. Follow patterns in existing components.",
+  "key_patterns": "Server components for data fetching (page.tsx). Client components with 'use client' directive for interactivity (SearchBar.tsx). URL search params for state (q param). Tailwind v4 with CSS custom properties for theming (globals.css). ItunesTrack type in lib/types.ts. API functions in lib/itunes.ts. Components in app/components/.",
+  "relevant_files": [
+    "app/page.tsx",
+    "app/components/SearchBar.tsx",
+    "app/components/TrackGrid.tsx",
+    "app/components/TrackCard.tsx",
+    "lib/itunes.ts",
+    "lib/types.ts",
+    "app/globals.css"
+  ],
+  "directory_structure": "app/ - Next.js App Router pages and components. app/components/ - reusable UI components. lib/ - utility functions and types (itunes.ts, types.ts). public/ - static assets."
+}
