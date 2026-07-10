@@ -15,6 +15,7 @@ export default function CollectionsManager() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const listenersRef = useRef(new Set<() => void>());
   const snapshotRef = useRef<Collection[]>(emptyCollections);
@@ -61,8 +62,19 @@ export default function CollectionsManager() {
   }
 
   function handleDelete(collectionId: string) {
-    deleteCollection(collectionId);
-    notify();
+    setPendingDeleteId(collectionId);
+  }
+
+  function confirmDelete() {
+    if (pendingDeleteId) {
+      deleteCollection(pendingDeleteId);
+      notify();
+      setPendingDeleteId(null);
+    }
+  }
+
+  function cancelDelete() {
+    setPendingDeleteId(null);
   }
 
   function formatDate(timestamp: number): string {
@@ -272,6 +284,47 @@ export default function CollectionsManager() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {pendingDeleteId && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="Confirm deletion"
+        >
+          <div
+            className="absolute inset-0 bg-background/60 backdrop-blur-sm"
+            onClick={cancelDelete}
+            aria-hidden="true"
+          />
+          <div className="relative w-full max-w-sm glass-dialog p-6 animate-scale-in">
+            <h3 className="mb-2 text-lg font-bold text-foreground">
+              Delete Collection
+            </h3>
+            <p className="mb-6 text-sm text-muted">
+              Are you sure you want to delete this collection? This action cannot
+              be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={cancelDelete}
+                className="rounded-xl px-5 py-2.5 text-sm font-medium text-muted transition-colors hover:text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -89,8 +89,11 @@ function applySettingsToDOM(settings: Settings) {
 // External store for settings - allows useSyncExternalStore to read without effects
 let listeners: Array<() => void> = [];
 let currentSettings: Settings = defaultSettings;
+let initialized = false;
 
-function getSettingsSnapshot(): Settings {
+function initializeSettings(): void {
+  if (initialized) return;
+  initialized = true;
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -100,6 +103,10 @@ function getSettingsSnapshot(): Settings {
   } catch {
     // Use defaults on parse errors
   }
+}
+
+function getSettingsSnapshot(): Settings {
+  initializeSettings();
   return currentSettings;
 }
 
@@ -109,6 +116,8 @@ function getServerSnapshot(): Settings {
 
 function subscribe(callback: () => void) {
   listeners.push(callback);
+  // Ensure settings are loaded from localStorage on first subscribe
+  initializeSettings();
   return () => {
     listeners = listeners.filter((l) => l !== callback);
   };

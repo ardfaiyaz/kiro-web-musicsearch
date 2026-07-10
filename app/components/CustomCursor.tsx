@@ -33,6 +33,9 @@ export default function CustomCursor() {
     container.style.display = "block";
     document.body.classList.add("custom-cursor-active");
 
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+    const IDLE_DELAY = 100;
+
     function animate() {
       if (cursor) {
         cursor.style.transform = `translate(${positionRef.current.x}px, ${positionRef.current.y}px)`;
@@ -48,11 +51,41 @@ export default function CustomCursor() {
         trail.style.transform = `translate(${trailPositionRef.current.x}px, ${trailPositionRef.current.y}px)`;
       }
 
+      // Stop loop once trail has caught up (distance < 0.5px)
+      const remainingDx = positionRef.current.x - trailPositionRef.current.x;
+      const remainingDy = positionRef.current.y - trailPositionRef.current.y;
+      if (
+        Math.abs(remainingDx) < 0.5 &&
+        Math.abs(remainingDy) < 0.5
+      ) {
+        rafRef.current = null;
+        return;
+      }
+
       rafRef.current = requestAnimationFrame(animate);
+    }
+
+    function startAnimationLoop() {
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(animate);
+      }
     }
 
     const handleMouseMove = (e: MouseEvent) => {
       positionRef.current = { x: e.clientX, y: e.clientY };
+
+      // Start animation loop on movement
+      startAnimationLoop();
+
+      // Clear any existing idle timeout
+      if (idleTimeout) {
+        clearTimeout(idleTimeout);
+      }
+      // Set idle timeout - after IDLE_DELAY ms of no movement, loop will
+      // naturally stop once trail catches up
+      idleTimeout = setTimeout(() => {
+        // The animate loop will self-terminate once trail catches cursor
+      }, IDLE_DELAY);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -81,6 +114,10 @@ export default function CustomCursor() {
 
     const handleMouseLeave = () => {
       container.style.display = "none";
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
 
     const handleMouseEnter = () => {
@@ -91,8 +128,6 @@ export default function CustomCursor() {
     document.addEventListener("mouseover", handleMouseOver, { passive: true });
     document.documentElement.addEventListener("mouseleave", handleMouseLeave);
     document.documentElement.addEventListener("mouseenter", handleMouseEnter);
-
-    rafRef.current = requestAnimationFrame(animate);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -109,6 +144,10 @@ export default function CustomCursor() {
       container.style.display = "none";
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      if (idleTimeout) {
+        clearTimeout(idleTimeout);
       }
     };
   }, [settings.reducedMotion]);

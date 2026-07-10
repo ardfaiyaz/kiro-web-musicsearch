@@ -119,8 +119,6 @@ export default function MusicInsights(props: MusicInsightsProps) {
               <span className="text-sm font-bold text-foreground">{releaseYear}</span>
             </div>
           </div>
-
-          <PopularityBar value={75} label="Popularity" />
         </div>
       </section>
     );

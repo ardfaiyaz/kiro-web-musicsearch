@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-006",
+  "title": "Review Issue Fixes - Semantic review findings",
+  "description": "Fix issues 2-7 from the semantic review. Issue 1 (useColorExtraction render flicker) is deprioritized as the fix would require a complex refactor with minimal user-facing impact.",
+  "status": "completed",
+  "steps": [
+    "Fix getSettingsSnapshot to return stable object reference instead of creating new object on every call",
+    "Fix ExpandedPlayer to include play/resume toggle and skip-next button, with body scroll lock",
+    "Fix CustomCursor to stop rAF loop when mouse is idle",
+    "Fix MusicInsights to derive popularity from track data instead of hardcoding 75%",
+    "Fix CollectionsManager to add confirmation before deleting a collection"
+  ],
+  "acceptance_criteria": [
+    "getSettingsSnapshot returns the same reference unless settings actually change",
+    "ExpandedPlayer shows play/pause toggle that changes icon based on playback state",
+    "ExpandedPlayer has a skip-next button that advances the queue",
+    "ExpandedPlayer locks body scroll when open",
+    "CustomCursor only runs rAF loop when mouse is moving, stops after idle timeout",
+    "MusicInsights derives popularity from available track metadata",
+    "CollectionsManager shows a confirmation dialog before deleting",
+    "Build passes with zero errors",
+    "Lint passes with zero errors"
+  ]
+}

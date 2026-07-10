@@ -17,7 +17,9 @@ export default function MiniPlayer() {
     artistName,
     artworkUrl,
     progress,
+    isPlaying,
     pause,
+    resume,
     isExpanded,
     toggleExpanded,
   } = useAudioPlayer();
@@ -126,20 +128,31 @@ export default function MiniPlayer() {
               </svg>
             </button>
 
-            {/* Pause button */}
+            {/* Play/Pause button */}
             <button
-              onClick={pause}
+              onClick={isPlaying ? pause : resume}
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background transition-premium hover:scale-105 hover:bg-foreground/90"
-              aria-label="Pause"
+              aria-label={isPlaying ? "Pause" : "Play"}
             >
-              <svg
-                className="h-4 w-4"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-              </svg>
+              {isPlaying ? (
+                <svg
+                  className="h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                </svg>
+              ) : (
+                <svg
+                  className="h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
             </button>
           </div>
         </aside>

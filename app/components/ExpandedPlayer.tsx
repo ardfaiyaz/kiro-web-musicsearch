@@ -91,13 +91,16 @@ export default function ExpandedPlayer() {
     duration,
     volume,
     progress,
+    isPlaying,
     pause,
+    resume,
     seekTo,
     setVolume,
     isExpanded,
     toggleExpanded,
     queue,
     removeFromQueue,
+    playNext,
   } = useAudioPlayer();
   const { colors } = useDynamicColors();
   const seekBarRef = useRef<HTMLInputElement>(null);
@@ -126,6 +129,16 @@ export default function ExpandedPlayer() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isExpanded, toggleExpanded]);
+
+  // Lock body scroll when expanded
+  useEffect(() => {
+    if (!isExpanded) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isExpanded]);
 
   if (!isExpanded || !currentlyPlayingId) return null;
 
@@ -241,7 +254,7 @@ export default function ExpandedPlayer() {
 
           {/* Waveform Visualization */}
           <div className="w-full max-w-sm" style={{ color: dominantColor }}>
-            <WaveformVisualization isPlaying={!!currentlyPlayingId} />
+            <WaveformVisualization isPlaying={isPlaying} />
           </div>
 
           {/* Seek bar */}
@@ -265,18 +278,47 @@ export default function ExpandedPlayer() {
 
           {/* Playback controls */}
           <div className="flex items-center gap-6">
+            {/* Play/Pause toggle */}
             <button
-              onClick={pause}
+              onClick={isPlaying ? pause : resume}
               className="flex h-14 w-14 items-center justify-center rounded-full bg-foreground text-background transition-premium hover:scale-105"
-              aria-label="Pause"
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? (
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                </svg>
+              ) : (
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
+            </button>
+
+            {/* Skip next */}
+            <button
+              onClick={playNext}
+              disabled={queue.length === 0}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-premium hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Skip to next track"
             >
               <svg
-                className="h-6 w-6"
+                className="h-5 w-5"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
-                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                <path d="M5 4l10 8-10 8V4zm11 0h3v16h-3V4z" />
               </svg>
             </button>
           </div>
