@@ -1,0 +1,46 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Build the complete Music Search & Discovery application with all core features: search functionality, results display, song detail view with audio preview, and artist-based recommendations. This is the main implementation feature covering the full user flow.",
+  "status": "completed",
+  "steps": [
+    "Step 1 - Configure next.config.ts: Add images.remotePatterns for iTunes artwork domains (is1-ssl.mzstatic.com, is2-ssl.mzstatic.com, is3-ssl.mzstatic.com, is4-ssl.mzstatic.com, is5-ssl.mzstatic.com). These serve album artwork from the iTunes API.",
+    "Step 2 - Create TypeScript types in lib/types.ts: Define interfaces for iTunes API response (ItunesSearchResponse, ItunesTrack) covering all fields needed: trackId, trackName, artistName, collectionName, artworkUrl100, previewUrl, primaryGenreName, releaseDate, trackTimeMillis, artistId, etc.",
+    "Step 3 - Create API utility functions in lib/itunes.ts: (a) searchTracks(query: string) - calls https://itunes.apple.com/search?term={query}&media=music&limit=25 (b) getArtistTracks(artistId: number, excludeTrackId: number) - calls https://itunes.apple.com/lookup?id={artistId}&entity=song&limit=10 for recommendations. Both should handle errors gracefully and return typed results.",
+    "Step 4 - Update app/globals.css: Replace the default styles with a clean music-app theme. Keep the @import 'tailwindcss' and @theme inline block. Add custom scrollbar styles and any utility classes needed. Support dark mode.",
+    "Step 5 - Update app/layout.tsx: Update metadata (title: 'Music Search & Discovery', description: 'Search songs, artists, and albums. Play previews and discover new music.'). Keep the Geist font setup. Ensure semantic HTML with proper structure.",
+    "Step 6 - Create reusable components in app/components/: (a) SearchBar.tsx - 'use client' component with search input, form submission, loading state indicator. Clean modern design with search icon. (b) TrackCard.tsx - displays a single track result with artwork thumbnail, track name, artist name, album name, and duration. Clickable to navigate to detail. (c) AudioPlayer.tsx - 'use client' component with play/pause for 30-second preview. Only one preview plays at a time (use a context or ref pattern). Show graceful message when previewUrl is null. (d) TrackGrid.tsx - responsive grid layout for displaying multiple TrackCards. (e) LoadingSpinner.tsx - reusable loading indicator. (f) ErrorMessage.tsx - reusable error state display. (g) EmptyState.tsx - shown when search returns no results.",
+    "Step 7 - Create the search page at app/page.tsx: This is the landing page with: (a) A hero section with app title and description (b) The SearchBar component (c) When a search query is present (via searchParams), display results in TrackGrid. Use server-side data fetching. (d) Show LoadingSpinner via loading.tsx or Suspense while fetching. (e) Show EmptyState when no results. (f) Show ErrorMessage on API failure. The search should use URL search params (?q=query) so results are shareable/bookmarkable.",
+    "Step 8 - Create app/loading.tsx: A loading UI component that shows while the page is fetching data (Next.js file convention for Suspense boundary).",
+    "Step 9 - Create the song detail page at app/track/[id]/page.tsx: (a) Fetch track details from iTunes lookup API: https://itunes.apple.com/lookup?id={trackId} (b) Display full-size album artwork, song title, artist name, album name, genre, release date (formatted), duration (formatted from ms to mm:ss) (c) Include AudioPlayer component for 30-second preview (d) Fetch and display recommendations (more songs by same artist, excluding current track) using getArtistTracks (e) Display recommendations in a grid of clickable TrackCards (f) Include a back button/link to return to search results (g) Use semantic HTML (article, section, header, etc.)",
+    "Step 10 - Create app/track/[id]/loading.tsx: Loading UI for the track detail page with skeleton placeholders.",
+    "Step 11 - Create an AudioPlayerProvider context in app/components/AudioPlayerContext.tsx: 'use client' context provider that ensures only one audio preview plays at a time across the entire app. Wrap the app in this provider from layout.tsx or a client wrapper.",
+    "Step 12 - Ensure responsive design: All layouts must work on mobile (320px+), tablet (768px+), and desktop (1024px+). Use Tailwind responsive prefixes (sm:, md:, lg:). The search results grid should be 1 column on mobile, 2 on tablet, 3-4 on desktop.",
+    "Step 13 - Add app/not-found.tsx: A custom 404 page with a link back to home.",
+    "Step 14 - Add error.tsx files: Create app/error.tsx and app/track/[id]/error.tsx as 'use client' error boundary components that display user-friendly error messages with a retry button."
+  ],
+  "acceptance_criteria": [
+    "npm run lint passes with no errors",
+    "npm run build succeeds and generates all routes (/, /track/[id])",
+    "The landing page renders with a search bar and hero section",
+    "Searching with a query term shows results from iTunes API",
+    "Each result card displays artwork, track name, artist, and album",
+    "Clicking a result navigates to /track/[id] with full song details",
+    "Song detail page shows artwork, title, artist, album, genre, release date, and duration",
+    "Audio preview player has play/pause controls",
+    "Only one audio preview plays at a time",
+    "Recommendations section shows more songs by the same artist",
+    "Clicking a recommendation navigates to that track's detail page",
+    "Empty state shown when search returns no results",
+    "Error states shown gracefully on API failures",
+    "UI is responsive across mobile, tablet, and desktop",
+    "Semantic HTML used throughout (header, main, nav, article, section, footer)",
+    "All components use Tailwind CSS utility classes for styling"
+  ],
+  "verification": [
+    "Run: export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && cd /projects/sandbox/kiro-web-musicsearch && npm run lint",
+    "Run: export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && cd /projects/sandbox/kiro-web-musicsearch && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 14 steps implemented successfully. Lint passes with no errors. Build succeeds generating routes: / (dynamic), /_not-found (static), /track/[id] (dynamic). Used Next.js 16 Promise-based searchParams and params patterns. Tailwind v4 @theme inline block used for custom colors. AudioPlayerContext ensures single playback. No test framework in project so verification limited to lint and build."
+}

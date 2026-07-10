@@ -1,0 +1,28 @@
+{
+  "project_type": "Next.js App Router web application - Music Search & Discovery using iTunes Search API",
+  "language": "TypeScript",
+  "build_system": "npm with Next.js 16.2.4. AGENTS.md warns that this version may have breaking changes vs training data - docs are in node_modules/next/dist/docs/",
+  "test_framework": "No test framework installed yet. Linting via ESLint with eslint-config-next.",
+  "build_command": "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && cd /projects/sandbox/kiro-web-musicsearch && npm run build",
+  "test_command": "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && cd /projects/sandbox/kiro-web-musicsearch && npm run lint",
+  "verification_instructions": "1. Run npm run lint to check for linting errors. 2. Run npm run build to confirm production build succeeds. 3. Verify all pages are generated without errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && cd /projects/sandbox/kiro-web-musicsearch && npm install",
+  "environment_constraints": "OPEN_INTERNET network mode - full access to npm registry and iTunes API. Node.js v22.22.3 via nvm (must source nvm.sh before using node/npm). No test framework installed - only lint and build available for verification.",
+  "contribution_requirements": "Use responsive Tailwind CSS utility classes. Use Semantic HTML for all layout sections. Follow Next.js App Router best practices. Read node_modules/next/dist/docs/ for API guidance as version 16.2.4 may differ from training data.",
+  "key_patterns": "- App Router with app/ directory. Path alias @/* maps to project root. Tailwind v4 with @import 'tailwindcss' in globals.css and @theme inline block for custom properties. PostCSS with @tailwindcss/postcss plugin. Geist font family loaded via next/font/google. Dark mode support via prefers-color-scheme media query. ESLint flat config with eslint-config-next core-web-vitals and typescript configs.",
+  "relevant_files": [
+    "app/layout.tsx",
+    "app/page.tsx",
+    "app/globals.css",
+    "next.config.ts",
+    "tsconfig.json",
+    "package.json",
+    "postcss.config.mjs",
+    "eslint.config.mjs",
+    "node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md",
+    "node_modules/next/dist/docs/01-app/01-getting-started/06-fetching-data.md",
+    "node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md"
+  ],
+  "directory_structure": "app/ - App Router pages and layouts. public/ - static assets. Top-level config: next.config.ts, tsconfig.json, package.json, postcss.config.mjs, eslint.config.mjs"
+}
