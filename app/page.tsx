@@ -49,6 +49,17 @@ async function SearchResults({
   );
 }
 
+const VALID_FILTERS = ["all", "song", "artist", "album"] as const;
+const VALID_SORTS = ["relevance", "releaseDate", "artistName"] as const;
+
+function isValidFilter(value: string): value is (typeof VALID_FILTERS)[number] {
+  return (VALID_FILTERS as readonly string[]).includes(value);
+}
+
+function isValidSort(value: string): value is (typeof VALID_SORTS)[number] {
+  return (VALID_SORTS as readonly string[]).includes(value);
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -56,8 +67,8 @@ export default async function Home({
 }) {
   const { q, filter, sort } = await searchParams;
   const query = q?.trim() || "";
-  const activeFilter = filter || "all";
-  const activeSort = sort || "relevance";
+  const activeFilter = filter && isValidFilter(filter) ? filter : "all";
+  const activeSort = sort && isValidSort(sort) ? sort : "relevance";
 
   return (
     <div className="flex flex-1 flex-col">

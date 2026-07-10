@@ -6,14 +6,14 @@ export async function searchTracks(
 ): Promise<ItunesTrack[]> {
   try {
     const encodedQuery = encodeURIComponent(query);
-    let url = `https://itunes.apple.com/search?term=${encodedQuery}&media=music&limit=25`;
+    let url = `https://itunes.apple.com/search?term=${encodedQuery}&media=music&limit=25&entity=musicTrack`;
 
-    if (entity === "song") {
-      url += "&entity=musicTrack";
-    } else if (entity === "artist") {
-      url += "&entity=musicArtist";
+    if (entity === "artist") {
+      url += "&attribute=artistTerm";
     } else if (entity === "album") {
-      url += "&entity=album";
+      url += "&attribute=albumTerm";
+    } else if (entity === "song") {
+      url += "&attribute=songTerm";
     }
 
     const response = await fetch(url, { next: { revalidate: 60 } });
@@ -24,9 +24,6 @@ export async function searchTracks(
 
     const data: ItunesSearchResponse = await response.json();
 
-    if (entity === "artist" || entity === "album") {
-      return data.results as ItunesTrack[];
-    }
     return data.results.filter((item) => item.wrapperType === "track");
   } catch (error) {
     console.error("Failed to search tracks:", error);
