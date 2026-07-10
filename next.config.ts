@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "is5-ssl.mzstatic.com",
       },
+      {
+        protocol: "https",
+        hostname: "lastfm.freetls.fastly.net",
+      },
     ],
   },
 };

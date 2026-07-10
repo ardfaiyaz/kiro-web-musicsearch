@@ -1,13 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { ItunesArtist } from "@/lib/types";
 
 export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
   return (
-    <a
-      href={artist.artistLinkUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/artist/${artist.artistId}`}
       className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-1 hover:scale-[1.02]"
     >
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
@@ -45,9 +44,9 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={1.5}
-          d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+          d="M8.25 4.5l7.5 7.5-7.5 7.5"
         />
       </svg>
-    </a>
+    </Link>
   );
 }

@@ -22,12 +22,14 @@ export default function AudioPlayer({
   trackName,
   artistName,
   artworkUrl,
+  compact = false,
 }: {
   previewUrl: string | null;
   trackId: number;
   trackName: string;
   artistName?: string;
   artworkUrl?: string;
+  compact?: boolean;
 }) {
   const {
     play,
@@ -45,6 +47,13 @@ export default function AudioPlayer({
   const previousVolumeRef = useRef(1);
 
   if (!previewUrl) {
+    if (compact) {
+      return (
+        <span className="text-xs text-muted" aria-label="Preview not available">
+          --
+        </span>
+      );
+    }
     return (
       <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
         <svg
@@ -93,6 +102,26 @@ export default function AudioPlayer({
     } else {
       setVolume(previousVolumeRef.current);
     }
+  }
+
+  if (compact) {
+    return (
+      <button
+        onClick={handleToggle}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover"
+        aria-label={isPlaying ? `Pause ${trackName}` : `Play ${trackName} preview`}
+      >
+        {isPlaying ? (
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+          </svg>
+        ) : (
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
+      </button>
+    );
   }
 
   return (

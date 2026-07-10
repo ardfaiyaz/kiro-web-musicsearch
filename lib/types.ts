@@ -3,6 +3,7 @@ export interface ItunesTrack {
   trackName: string;
   artistName: string;
   artistId: number;
+  collectionId?: number;
   collectionName: string;
   artworkUrl100: string;
   previewUrl: string | null;
@@ -13,8 +14,11 @@ export interface ItunesTrack {
   collectionViewUrl: string;
   kind: string;
   wrapperType: string;
+  trackNumber?: number;
   trackExplicitness?: string;
   collectionExplicitness?: string;
+  discNumber?: number;
+  discCount?: number;
 }
 
 export interface ItunesArtist {
@@ -51,4 +55,48 @@ export interface ItunesSearchResponse {
 export interface RecentSearch {
   query: string;
   timestamp: number;
+}
+
+// Last.fm types
+export interface LastFmArtist {
+  name: string;
+  mbid?: string;
+  url: string;
+  image: { "#text": string; size: string }[];
+  bio?: {
+    summary: string;
+    content: string;
+  };
+  tags?: {
+    tag: { name: string; url: string }[];
+  };
+  stats?: {
+    listeners: string;
+    playcount: string;
+  };
+  similar?: {
+    artist: LastFmSimilarArtist[];
+  };
+}
+
+export interface LastFmSimilarArtist {
+  name: string;
+  url: string;
+  image: { "#text": string; size: string }[];
+  match?: string;
+}
+
+export interface LastFmAlbum {
+  name: string;
+  artist: string;
+  url: string;
+  image: { "#text": string; size: string }[];
+  listeners?: string;
+  playcount?: string;
+}
+
+// Extended iTunes types for album detail
+export interface AlbumDetail {
+  album: ItunesAlbum;
+  tracks: ItunesTrack[];
 }

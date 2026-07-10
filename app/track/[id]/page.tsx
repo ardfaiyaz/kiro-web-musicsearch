@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTrackById, getArtistTracks } from "@/lib/itunes";
+import { getTrackById, getArtistTracks, searchTracksByGenre } from "@/lib/itunes";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
+import ExplicitBadge from "@/app/components/ExplicitBadge";
 import ThemeToggle from "@/app/components/ThemeToggle";
 
 function formatDuration(ms: number): string {
@@ -39,6 +40,7 @@ export default async function TrackPage({
   }
 
   const recommendationsResult = await getArtistTracks(track.artistId, track.trackId);
+  const similarTracks = await searchTracksByGenre(track.primaryGenreName, track.trackId);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "600x600");
 
   return (
@@ -136,10 +138,20 @@ export default async function TrackPage({
           {/* Details */}
           <section className="flex flex-1 flex-col gap-6" aria-label="Track details">
             <header>
-              <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-                {track.trackName}
-              </h2>
-              <p className="mt-1 text-lg text-muted">{track.artistName}</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+                  {track.trackName}
+                </h2>
+                {track.trackExplicitness === "explicit" && <ExplicitBadge />}
+              </div>
+              <p className="mt-1 text-lg text-muted">
+                <Link
+                  href={`/artist/${track.artistId}`}
+                  className="transition-colors hover:text-accent"
+                >
+                  {track.artistName}
+                </Link>
+              </p>
             </header>
 
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -148,7 +160,16 @@ export default async function TrackPage({
                   Album
                 </dt>
                 <dd className="text-sm text-foreground">
-                  {track.collectionName}
+                  {track.collectionId ? (
+                    <Link
+                      href={`/album/${track.collectionId}`}
+                      className="transition-colors hover:text-accent"
+                    >
+                      {track.collectionName}
+                    </Link>
+                  ) : (
+                    track.collectionName
+                  )}
                 </dd>
               </div>
               <div className="flex flex-col gap-1">
@@ -208,6 +229,16 @@ export default async function TrackPage({
               <TrackGrid tracks={recommendationsResult.tracks} />
             </section>
           )
+        )}
+
+        {/* Similar Tracks by Genre */}
+        {similarTracks.length > 0 && (
+          <section className="mt-12" aria-label="Similar tracks">
+            <h2 className="mb-6 text-xl font-bold text-foreground">
+              Similar Tracks in {track.primaryGenreName}
+            </h2>
+            <TrackGrid tracks={similarTracks} />
+          </section>
         )}
       </main>
 

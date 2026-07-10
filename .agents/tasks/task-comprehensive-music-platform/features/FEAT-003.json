@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Artist profile page, album detail page with full track listing, enriched song details (explicit badge, track number), and music recommendations based on genre/artist similarity. Integrates Last.fm API for artist bios and similar artists.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create lib/lastfm.ts - API utility for Last.fm: getArtistInfo (bio, image, tags, similar artists), getArtistTopAlbums, getSimilarArtists. Use a free Last.fm API key (can use a placeholder env var NEXT_PUBLIC_LASTFM_API_KEY or hardcode a free key). Handle API failures gracefully with fallbacks.",
     "Update lib/types.ts to add types for: LastFmArtist, LastFmAlbum, LastFmSimilarArtist, AlbumDetail (with full track list from iTunes lookup).",
