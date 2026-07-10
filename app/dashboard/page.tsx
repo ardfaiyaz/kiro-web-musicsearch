@@ -52,7 +52,6 @@ export default function DashboardPage() {
 
   const recentSearches = getRecentSearches();
 
-  // Compute analytics
   const totalFavoriteSongs = favorites.length;
   const totalFavoriteArtists = favoriteArtists.length;
   const totalFavoriteAlbums = favoriteAlbums.length;
@@ -68,7 +67,6 @@ export default function DashboardPage() {
 
   const lastTenPlayed = recentlyPlayed.slice(0, 10);
 
-  // Most searched - derive from recent searches
   const mostSearchedTerm =
     recentSearches.length > 0 ? recentSearches[0].query : null;
 
@@ -76,35 +74,41 @@ export default function DashboardPage() {
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-        <header className="mb-8">
-          <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
+        <header className="mb-12">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Dashboard
           </h2>
-          <p className="mt-2 text-muted">
+          <p className="mt-3 text-lg text-muted">
             Your music insights and listening activity
           </p>
         </header>
 
         {/* Stats Grid */}
         <section
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
           aria-label="Music statistics"
         >
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/10">
+          <div className="rounded-2xl border border-border bg-card p-7">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5">
                 <svg
-                  className="h-5 w-5 text-red-500"
-                  fill="currentColor"
+                  className="h-6 w-6 text-foreground"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
-                  <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21.75 8.25c0-3.15-2.7-5.25-5.437-5.25A5.5 5.5 0 0012 5.052 5.5 5.5 0 007.688 3C4.95 3 2.25 5.1 2.25 8.25c0 7.22 9.75 12.75 9.75 12.75s9.75-5.53 9.75-12.75z"
+                  />
                 </svg>
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-3xl font-bold text-foreground">
                   {totalFavoriteSongs}
                 </p>
                 <p className="text-sm text-muted">Favorite Songs</p>
@@ -112,11 +116,11 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+          <div className="rounded-2xl border border-border bg-card p-7">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5">
                 <svg
-                  className="h-5 w-5 text-accent"
+                  className="h-6 w-6 text-foreground"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
@@ -131,7 +135,7 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-3xl font-bold text-foreground">
                   {totalFavoriteArtists}
                 </p>
                 <p className="text-sm text-muted">Favorite Artists</p>
@@ -139,11 +143,11 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10">
+          <div className="rounded-2xl border border-border bg-card p-7">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5">
                 <svg
-                  className="h-5 w-5 text-purple-500"
+                  className="h-6 w-6 text-foreground"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
@@ -158,7 +162,7 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-3xl font-bold text-foreground">
                   {totalFavoriteAlbums}
                 </p>
                 <p className="text-sm text-muted">Favorite Albums</p>
@@ -166,11 +170,11 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+          <div className="rounded-2xl border border-border bg-card p-7">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5">
                 <svg
-                  className="h-5 w-5 text-green-500"
+                  className="h-6 w-6 text-foreground"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
@@ -185,7 +189,7 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-3xl font-bold text-foreground">
                   {recentlyPlayed.length}
                 </p>
                 <p className="text-sm text-muted">Recently Played</p>
@@ -195,37 +199,35 @@ export default function DashboardPage() {
         </section>
 
         {/* Insights */}
-        <section className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2" aria-label="Insights">
-          {/* Favorite Genre & Most Played Artist */}
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="mb-4 text-lg font-semibold text-foreground">
+        <section className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2" aria-label="Insights">
+          <div className="rounded-2xl border border-border bg-card p-8">
+            <h3 className="mb-6 text-xl font-bold text-foreground">
               Insights
             </h3>
-            <dl className="space-y-4">
+            <dl className="space-y-6">
               <div>
                 <dt className="text-sm text-muted">Favorite Genre</dt>
-                <dd className="mt-1 text-lg font-medium text-foreground">
+                <dd className="mt-1 text-lg font-semibold text-foreground">
                   {favoriteGenre || "No data yet"}
                 </dd>
               </div>
               <div>
                 <dt className="text-sm text-muted">Most Listened Artist</dt>
-                <dd className="mt-1 text-lg font-medium text-foreground">
+                <dd className="mt-1 text-lg font-semibold text-foreground">
                   {mostPlayedArtist || "No data yet"}
                 </dd>
               </div>
               <div>
                 <dt className="text-sm text-muted">Most Recent Search</dt>
-                <dd className="mt-1 text-lg font-medium text-foreground">
+                <dd className="mt-1 text-lg font-semibold text-foreground">
                   {mostSearchedTerm || "No searches yet"}
                 </dd>
               </div>
             </dl>
           </div>
 
-          {/* Recently Played Summary */}
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="mb-4 text-lg font-semibold text-foreground">
+          <div className="rounded-2xl border border-border bg-card p-8">
+            <h3 className="mb-6 text-xl font-bold text-foreground">
               Recently Played
             </h3>
             {lastTenPlayed.length === 0 ? (
@@ -238,9 +240,9 @@ export default function DashboardPage() {
                   <li key={`${track.trackId}-${track.trackName}`}>
                     <Link
                       href={`/track/${track.trackId}`}
-                      className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent/5"
+                      className="flex items-center gap-3 rounded-xl p-2.5 transition-colors hover:bg-foreground/[0.03]"
                     >
-                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-border">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-border">
                         {track.artworkUrl100 ? (
                           <Image
                             src={track.artworkUrl100}

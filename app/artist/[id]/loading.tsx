@@ -1,56 +1,72 @@
-import {
-  SkeletonText,
-  SkeletonCircle,
-  SkeletonCard,
-} from "@/app/components/Skeleton";
-
 export default function ArtistLoading() {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <SkeletonText width="w-16" />
-            <SkeletonText width="w-48" className="h-6" />
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-        {/* Artist Header */}
-        <div className="flex flex-col items-center gap-6 sm:flex-row">
-          <SkeletonCircle size="h-40 w-40 sm:h-48 sm:w-48" />
-          <div className="flex flex-col gap-3">
-            <SkeletonText width="w-64" className="h-8" />
-            <SkeletonText width="w-32" className="h-5" />
-            <div className="flex gap-4">
-              <SkeletonText width="w-24" className="h-4" />
-              <SkeletonText width="w-24" className="h-4" />
+      <div className="glass sticky top-0 z-50 border-b border-border/50">
+        <div className="mx-auto max-w-7xl px-6 py-4 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-5 w-16 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+              <div className="h-7 w-20 animate-pulse rounded-lg bg-border" aria-hidden="true" />
             </div>
             <div className="flex gap-2">
-              <SkeletonText width="w-16" className="h-6 rounded-full" />
-              <SkeletonText width="w-20" className="h-6 rounded-full" />
-              <SkeletonText width="w-14" className="h-6 rounded-full" />
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-8 w-8 animate-pulse rounded-full bg-border sm:w-20" aria-hidden="true" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="flex-1">
+        {/* Hero skeleton */}
+        <div className="bg-card">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
+            <div className="flex flex-col items-center gap-8 text-center">
+              <div className="h-40 w-40 animate-pulse rounded-full bg-border sm:h-52 sm:w-52 lg:h-60 lg:w-60" aria-hidden="true" />
+              <div className="flex flex-col items-center gap-3">
+                <div className="h-12 w-64 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                <div className="h-5 w-32 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+              </div>
+              <div className="flex gap-8">
+                <div className="flex flex-col items-center gap-1">
+                  <div className="h-8 w-24 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                  <div className="h-3 w-16 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <div className="h-8 w-24 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                  <div className="h-3 w-16 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bio Section */}
-        <div className="mt-10">
-          <SkeletonText width="w-24" className="mb-4 h-6" />
-          <SkeletonText width="w-full" className="mb-2" />
-          <SkeletonText width="w-full" className="mb-2" />
-          <SkeletonText width="w-3/4" />
-        </div>
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Bio skeleton */}
+          <section className="mb-16">
+            <div className="mb-6 h-7 w-24 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+            <div className="space-y-3">
+              <div className="h-4 w-full animate-pulse rounded-lg bg-border" aria-hidden="true" />
+              <div className="h-4 w-full animate-pulse rounded-lg bg-border" aria-hidden="true" />
+              <div className="h-4 w-3/4 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+            </div>
+          </section>
 
-        {/* Top Songs */}
-        <div className="mt-10">
-          <SkeletonText width="w-32" className="mb-6 h-6" />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-          </div>
+          {/* Tracks skeleton */}
+          <section className="mb-16">
+            <div className="mb-8 h-7 w-36 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="overflow-hidden rounded-2xl border border-border bg-card">
+                  <div className="aspect-square w-full animate-pulse bg-border" aria-hidden="true" />
+                  <div className="p-4">
+                    <div className="h-4 w-3/4 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                    <div className="mt-2 h-3 w-1/2 animate-pulse rounded-lg bg-border" aria-hidden="true" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
     </div>

@@ -7,7 +7,7 @@ export function SkeletonText({
 }) {
   return (
     <div
-      className={`h-4 animate-pulse rounded bg-border ${width} ${className}`}
+      className={`h-4 animate-pulse rounded-lg bg-border ${width} ${className}`}
       aria-hidden="true"
     />
   );
@@ -31,11 +31,11 @@ export function SkeletonCircle({
 export function SkeletonCard({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`overflow-hidden rounded-xl border border-border bg-card ${className}`}
+      className={`overflow-hidden rounded-2xl border border-border bg-card ${className}`}
       aria-hidden="true"
     >
       <div className="aspect-square w-full animate-pulse bg-border" />
-      <div className="flex flex-col gap-2 p-3">
+      <div className="flex flex-col gap-2.5 p-4">
         <SkeletonText width="w-3/4" />
         <SkeletonText width="w-1/2" className="h-3" />
         <div className="mt-1 flex items-center justify-between">
@@ -56,7 +56,7 @@ export function SkeletonGrid({
 }) {
   return (
     <div
-      className={`grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${className}`}
+      className={`grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${className}`}
       role="status"
       aria-label="Loading content"
     >

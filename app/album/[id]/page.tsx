@@ -52,112 +52,130 @@ export default async function AlbumPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-        <article>
-          {/* Album Header */}
-          <header className="flex flex-col gap-8 lg:flex-row lg:gap-12">
-            <div className="shrink-0">
-              <div className="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-2xl shadow-xl lg:w-72">
-                {artworkUrl ? (
-                  <Image
-                    src={artworkUrl}
-                    alt={`${album.collectionName} album artwork`}
-                    fill
-                    sizes="(max-width: 1024px) 320px, 288px"
-                    className="object-cover"
-                    priority
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-card">
-                    <svg
-                      className="h-20 w-20 text-muted"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </div>
+      <main className="flex-1">
+        {/* Cinematic Hero */}
+        <section className="relative overflow-hidden bg-card" aria-label="Album hero">
+          {artworkUrl && (
+            <div className="absolute inset-0 opacity-20">
+              <Image
+                src={artworkUrl}
+                alt=""
+                fill
+                sizes="100vw"
+                className="object-cover blur-3xl scale-110"
+                aria-hidden="true"
+              />
             </div>
-
-            <section className="flex flex-1 flex-col gap-4" aria-label="Album details">
-              <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-                {album.collectionName}
-              </h2>
-              <p className="text-lg text-muted">
-                <Link
-                  href={`/artist/${album.artistId}`}
-                  className="transition-colors hover:text-accent"
-                >
-                  {album.artistName}
-                </Link>
-              </p>
-
-              <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                <div className="flex flex-col gap-1">
-                  <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                    Year
-                  </dt>
-                  <dd className="text-sm text-foreground">
-                    {album.releaseDate ? formatYear(album.releaseDate) : "N/A"}
-                  </dd>
+          )}
+          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+            <article>
+              <header className="flex flex-col gap-8 lg:flex-row lg:items-end lg:gap-12">
+                <div className="shrink-0">
+                  <div className="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-2xl shadow-2xl lg:w-72">
+                    {artworkUrl ? (
+                      <Image
+                        src={artworkUrl}
+                        alt={`${album.collectionName} album artwork`}
+                        fill
+                        sizes="(max-width: 1024px) 320px, 288px"
+                        className="object-cover"
+                        priority
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-foreground/5">
+                        <svg
+                          className="h-20 w-20 text-muted"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1}
+                            d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                    Genre
-                  </dt>
-                  <dd className="text-sm text-foreground">
-                    {album.primaryGenreName}
-                  </dd>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                    Tracks
-                  </dt>
-                  <dd className="text-sm text-foreground">
-                    {tracks.length} songs, {totalDuration(tracks)}
-                  </dd>
-                </div>
-              </dl>
 
-              {album.collectionExplicitness === "explicit" && (
-                <div className="flex items-center gap-2">
-                  <ExplicitBadge />
-                  <span className="text-xs text-muted">Explicit content</span>
-                </div>
-              )}
+                <section className="flex flex-1 flex-col gap-4" aria-label="Album details">
+                  <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                    {album.collectionName}
+                  </h2>
+                  <p className="text-lg text-muted">
+                    <Link
+                      href={`/artist/${album.artistId}`}
+                      className="transition-colors hover:text-foreground"
+                    >
+                      {album.artistName}
+                    </Link>
+                  </p>
 
-              <AlbumActions album={album} />
-            </section>
-          </header>
+                  <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    <div className="flex flex-col gap-1">
+                      <dt className="text-xs font-medium uppercase tracking-wider text-muted">
+                        Year
+                      </dt>
+                      <dd className="text-sm font-medium text-foreground">
+                        {album.releaseDate ? formatYear(album.releaseDate) : "N/A"}
+                      </dd>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <dt className="text-xs font-medium uppercase tracking-wider text-muted">
+                        Genre
+                      </dt>
+                      <dd className="text-sm font-medium text-foreground">
+                        {album.primaryGenreName}
+                      </dd>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <dt className="text-xs font-medium uppercase tracking-wider text-muted">
+                        Tracks
+                      </dt>
+                      <dd className="text-sm font-medium text-foreground">
+                        {tracks.length} songs, {totalDuration(tracks)}
+                      </dd>
+                    </div>
+                  </dl>
 
-          {/* Track Listing */}
-          <section className="mt-10" aria-label="Track listing">
-            <h2 className="mb-4 text-xl font-bold text-foreground">
+                  {album.collectionExplicitness === "explicit" && (
+                    <div className="flex items-center gap-2">
+                      <ExplicitBadge />
+                      <span className="text-xs text-muted">Explicit content</span>
+                    </div>
+                  )}
+
+                  <AlbumActions album={album} />
+                </section>
+              </header>
+            </article>
+          </div>
+        </section>
+
+        {/* Track Listing */}
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <section aria-label="Track listing">
+            <h2 className="mb-6 text-2xl font-bold text-foreground">
               Track Listing
             </h2>
-            <div className="overflow-hidden rounded-xl border border-border">
+            <div className="overflow-hidden rounded-2xl border border-border">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border bg-card/50">
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-12">
+                  <tr className="border-b border-border bg-card/80">
+                    <th className="px-5 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted w-12">
                       #
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
+                    <th className="px-5 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted">
                       Title
                     </th>
-                    <th className="hidden px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted sm:table-cell">
+                    <th className="hidden px-5 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted sm:table-cell">
                       Duration
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted w-20">
+                    <th className="px-5 py-4 text-center text-xs font-medium uppercase tracking-wider text-muted w-20">
                       Play
                     </th>
                   </tr>
@@ -166,16 +184,16 @@ export default async function AlbumPage({
                   {tracks.map((track, index) => (
                     <tr
                       key={track.trackId}
-                      className="border-b border-border last:border-b-0 transition-colors hover:bg-card/50"
+                      className="border-b border-border/50 last:border-b-0 transition-colors hover:bg-foreground/[0.02]"
                     >
-                      <td className="px-4 py-3 text-sm text-muted">
+                      <td className="px-5 py-4 text-sm tabular-nums text-muted">
                         {index + 1}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
                           <Link
                             href={`/track/${track.trackId}`}
-                            className="text-sm font-medium text-foreground transition-colors hover:text-accent truncate"
+                            className="text-sm font-medium text-foreground transition-colors hover:text-muted truncate"
                           >
                             {track.trackName}
                           </Link>
@@ -184,12 +202,12 @@ export default async function AlbumPage({
                           )}
                         </div>
                       </td>
-                      <td className="hidden px-4 py-3 text-right text-sm text-muted sm:table-cell">
+                      <td className="hidden px-5 py-4 text-right text-sm tabular-nums text-muted sm:table-cell">
                         {track.trackTimeMillis
                           ? formatDuration(track.trackTimeMillis)
                           : "--:--"}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-5 py-4 text-center">
                         {track.previewUrl && (
                           <AudioPlayer
                             previewUrl={track.previewUrl}
@@ -211,10 +229,10 @@ export default async function AlbumPage({
               </table>
             </div>
           </section>
-        </article>
+        </div>
       </main>
 
-      <footer className="border-t border-border py-6 text-center text-sm text-muted">
+      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
         <p>Powered by the iTunes Search API</p>
       </footer>
     </div>
