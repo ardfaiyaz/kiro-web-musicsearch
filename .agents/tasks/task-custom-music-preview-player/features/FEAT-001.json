@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Build a custom music preview player with full playback controls including play/pause, progress bar, time display, volume control, and single-track-at-a-time enforcement. Enhance the AudioPlayerContext to expose progress/volume state and the AudioPlayer component to render the rich UI.",
+  "status": "completed",
+  "steps": [
+    "Refactor app/components/AudioPlayerContext.tsx to expose additional state: currentTime, duration, volume, progress percentage, and methods setVolume, seekTo. Add timeupdate and loadedmetadata event listeners on the Audio element. Ensure cleanup of event listeners. Keep the existing play/pause/currentlyPlayingId API intact for backward compatibility. Also expose the currently playing track name and preview URL so the player UI can display them.",
+    "Rewrite app/components/AudioPlayer.tsx as a rich custom player with: (1) Play/Pause button with clear icon states, (2) A progress bar that updates in real-time showing elapsed playback - use an <input type='range'> or a clickable div for seeking, (3) Current playback time displayed as mm:ss, (4) Remaining duration displayed as -mm:ss, (5) Volume control slider with mute/unmute icon. Use responsive Tailwind CSS utility classes. Use semantic HTML (e.g., <figure> or <div role='group'> with aria-labels for the player controls). Ensure the player looks good on mobile (stack controls vertically or wrap) and desktop (single row).",
+    "Ensure that when a new song preview is played (via play()), the previous one stops automatically - this is already handled in the context but verify it still works with the new state management.",
+    "Add route-change cleanup: use Next.js App Router patterns (useEffect cleanup or listening to pathname changes via next/navigation's usePathname) in the AudioPlayerContext or a wrapper so audio stops when the user navigates away from the page.",
+    "Verify the player still works on the track detail page (app/track/[id]/page.tsx) where AudioPlayer is used. The component API (previewUrl, trackId, trackName props) should remain the same."
+  ],
+  "acceptance_criteria": [
+    "Only one song preview can play at a time - starting a new preview stops the previous one",
+    "Progress bar updates in real time during playback",
+    "Play/pause button toggles playback correctly",
+    "Current time and remaining duration are displayed and update during playback",
+    "Volume slider adjusts audio volume",
+    "Audio stops when navigating away from the page (route change)",
+    "The player is responsive and uses semantic HTML with proper aria labels",
+    "The project builds successfully with 'bunx next build'",
+    "Lint passes with 'bunx next lint'"
+  ],
+  "verification": [
+    "Run 'bunx next build' and confirm successful TypeScript compilation and build with no errors",
+    "Run 'bunx next lint' and confirm no lint errors"
+  ],
+  "blocked_reason": null,
+  "findings": "Build and lint pass cleanly. The react-hooks/set-state-in-effect and react-hooks/refs lint rules in this project are strict - direct setState in useEffect body and ref updates during render are both flagged. Used a useEffect to sync the ref value instead. The worker_threads warnings from bun during next build are non-blocking and expected."
+}
