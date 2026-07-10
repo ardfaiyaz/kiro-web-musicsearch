@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Add advanced search filters (entity filter, sort, clear) to the music search app. This includes: updating the iTunes API function to accept an entity parameter, creating a SearchFilters client component with filter-by-entity buttons (Song/Artist/Album), sort-by dropdown (Relevance/Release Date/Artist Name), and a Clear Filters button, integrating filters into the main page via URL search params, and applying client-side sorting to results.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Update lib/itunes.ts: modify searchTracks to accept an optional 'entity' parameter. When entity is 'song', pass entity=musicTrack. When entity is 'artist', pass entity=musicArtist. When entity is 'album', pass entity=album. Default (no filter or 'all') keeps current behavior (media=music).",
     "Create app/components/SearchFilters.tsx as a 'use client' component. It should read current URL search params (filter, sort) and provide: (1) Filter buttons for All/Song/Artist/Album that update the 'filter' URL param, (2) A sort dropdown for Relevance/Release Date/Artist Name that updates the 'sort' URL param, (3) A Clear Filters button that removes filter and sort params. Active filters should be visually indicated with accent styling. Use responsive Tailwind classes - stack vertically on mobile, horizontal on desktop. Use semantic HTML (fieldset/legend or nav with aria labels).",
@@ -25,5 +25,5 @@
     "bun run lint"
   ],
   "blocked_reason": null,
-  "findings": "Build and lint pass cleanly. Fixed review issues: (1) Changed entity filter approach to always use entity=musicTrack with attribute parameter (artistTerm/albumTerm/songTerm) to narrow results. This ensures all API responses are track-shaped objects. (2) Removed the unsafe early return that cast non-track results to ItunesTrack[]. (3) The wrapperType === 'track' filter is now applied for all code paths. (4) Added input validation for filter and sort URL params using const arrays and type guard functions."
+  "findings": "Fixed the core bug: search filters now use the correct iTunes API entity parameter (entity=musicArtist for artist filter, entity=album for album filter) instead of always using entity=musicTrack with different attribute params. Created separate searchArtists() and searchAlbums() API functions, added ItunesArtist and ItunesAlbum types, and created ArtistCard/ArtistGrid and AlbumCard/AlbumGrid components for proper display of each result type. Build and lint pass cleanly."
 }
