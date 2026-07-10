@@ -3,12 +3,44 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import HorizontalScroll from "@/app/components/HorizontalScroll";
 import GenreCard from "@/app/components/GenreCard";
+import DiscoveryMoodSelector from "@/app/components/DiscoveryMoodSelector";
 import {
   getTrendingSongs,
   getNewReleases,
   getTopAlbums,
   GENRES,
 } from "@/lib/discovery";
+
+const EDITOR_PICKS = [
+  {
+    id: "best-of-2024",
+    title: "Best of 2024",
+    subtitle: "The defining tracks of the year",
+    query: "Best of 2024",
+    gradient: "from-violet-500 to-purple-700",
+  },
+  {
+    id: "indie-essentials",
+    title: "Indie Essentials",
+    subtitle: "Underground gems and indie favorites",
+    query: "Indie Essentials",
+    gradient: "from-emerald-500 to-teal-700",
+  },
+  {
+    id: "late-night-vibes",
+    title: "Late Night Vibes",
+    subtitle: "Smooth sounds for after hours",
+    query: "Late Night Vibes",
+    gradient: "from-blue-500 to-indigo-700",
+  },
+  {
+    id: "feel-good-classics",
+    title: "Feel Good Classics",
+    subtitle: "Timeless tracks to lift your mood",
+    query: "Feel Good Classics",
+    gradient: "from-orange-500 to-red-700",
+  },
+];
 
 export default async function DiscoverPage() {
   const [trendingSongs, newReleases, topAlbums] = await Promise.all([
@@ -18,6 +50,13 @@ export default async function DiscoverPage() {
   ]);
 
   const heroSong = trendingSongs[0];
+
+  // Extract unique trending artists from trending songs
+  const trendingArtists = Array.from(
+    new Map(
+      trendingSongs.map((song) => [song.artistName, song])
+    ).values()
+  ).slice(0, 12);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -76,6 +115,52 @@ export default async function DiscoverPage() {
         )}
 
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Editor Picks */}
+          <section aria-label="Editor picks" className="mb-16">
+            <h3 className="mb-6 text-2xl font-bold text-foreground">
+              Editor Picks
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {EDITOR_PICKS.map((pick) => (
+                <Link
+                  key={pick.id}
+                  href={`/?q=${encodeURIComponent(pick.query)}`}
+                  className="group relative overflow-hidden rounded-2xl glass-card p-6 transition-premium hover:border-foreground/10 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${pick.gradient} opacity-15 transition-opacity group-hover:opacity-25`}
+                    aria-hidden="true"
+                  />
+                  <div className="relative">
+                    <h4 className="text-base font-bold text-foreground">
+                      {pick.title}
+                    </h4>
+                    <p className="mt-1.5 text-xs text-muted">
+                      {pick.subtitle}
+                    </p>
+                    <div className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-muted transition-colors group-hover:text-foreground">
+                      Explore
+                      <svg
+                        className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
           {/* Trending Songs */}
           {trendingSongs.length > 0 && (
             <section aria-label="Trending songs" className="mb-16">
@@ -113,6 +198,47 @@ export default async function DiscoverPage() {
               </HorizontalScroll>
             </section>
           )}
+
+          {/* Trending Artists */}
+          {trendingArtists.length > 0 && (
+            <section aria-label="Trending artists" className="mb-16">
+              <h3 className="mb-6 text-2xl font-bold text-foreground">
+                Trending Artists
+              </h3>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                {trendingArtists.map((song) => (
+                  <Link
+                    key={song.artistName}
+                    href={`/?q=${encodeURIComponent(song.artistName)}`}
+                    className="group flex flex-col items-center gap-4 rounded-2xl glass-card p-5 transition-premium hover:border-foreground/10 hover:shadow-xl hover:-translate-y-1"
+                  >
+                    <div className="relative h-20 w-20 overflow-hidden rounded-full bg-border shadow-md sm:h-24 sm:w-24">
+                      {song.artworkUrl100 && (
+                        <Image
+                          src={song.artworkUrl100.replace("100x100", "200x200")}
+                          alt={song.artistName}
+                          fill
+                          sizes="96px"
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      )}
+                    </div>
+                    <span className="truncate text-center text-xs font-medium text-foreground sm:text-sm">
+                      {song.artistName}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Discover by Mood */}
+          <section aria-label="Discover by mood" className="mb-16">
+            <h3 className="mb-6 text-2xl font-bold text-foreground">
+              Discover by Mood
+            </h3>
+            <DiscoveryMoodSelector />
+          </section>
 
           {/* New Releases */}
           {newReleases.length > 0 && (
@@ -186,45 +312,6 @@ export default async function DiscoverPage() {
                     </div>
                   </Link>
                 ))}
-              </div>
-            </section>
-          )}
-
-          {/* Popular Artists */}
-          {trendingSongs.length > 0 && (
-            <section aria-label="Popular artists" className="mb-16">
-              <h3 className="mb-6 text-2xl font-bold text-foreground">
-                Popular Artists
-              </h3>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                {Array.from(
-                  new Map(
-                    trendingSongs.map((song) => [song.artistName, song])
-                  ).values()
-                )
-                  .slice(0, 12)
-                  .map((song) => (
-                    <Link
-                      key={song.artistName}
-                      href={`/?q=${encodeURIComponent(song.artistName)}`}
-                      className="group flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-5 transition-all duration-300 hover:border-foreground/20 hover:shadow-xl hover:-translate-y-1"
-                    >
-                      <div className="relative h-20 w-20 overflow-hidden rounded-full bg-border shadow-md sm:h-24 sm:w-24">
-                        {song.artworkUrl100 && (
-                          <Image
-                            src={song.artworkUrl100.replace("100x100", "200x200")}
-                            alt={song.artistName}
-                            fill
-                            sizes="96px"
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                        )}
-                      </div>
-                      <span className="truncate text-center text-xs font-medium text-foreground sm:text-sm">
-                        {song.artistName}
-                      </span>
-                    </Link>
-                  ))}
               </div>
             </section>
           )}

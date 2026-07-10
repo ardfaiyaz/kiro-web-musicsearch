@@ -4,10 +4,15 @@ import { AudioPlayerProvider } from "./components/AudioPlayerContext";
 import { FavoritesProvider } from "./components/FavoritesContext";
 import { PersonalizationProvider } from "./components/PersonalizationContext";
 import { ThemeProvider } from "./components/ThemeContext";
+import { DynamicColorProvider } from "./components/DynamicColorProvider";
+import { SettingsProvider } from "./components/SettingsContext";
+import AmbientBackground from "./components/AmbientBackground";
 import MiniPlayer from "./components/MiniPlayer";
+import SettingsFab from "./components/SettingsFab";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
+import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,17 +51,26 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
-          <AudioPlayerProvider>
-            <FavoritesProvider>
-              <PersonalizationProvider>
-                <OfflineDetector />
-                <RecentlyPlayedTracker />
-                {children}
-                <MiniPlayer />
-                <KeyboardShortcuts />
-              </PersonalizationProvider>
-            </FavoritesProvider>
-          </AudioPlayerProvider>
+          <SettingsProvider>
+            <AudioPlayerProvider>
+              <DynamicColorProvider>
+                <FavoritesProvider>
+                  <PersonalizationProvider>
+                    <AmbientBackground />
+                    <CustomCursorWrapper />
+                    <div className="relative z-10 flex min-h-full flex-col">
+                      <OfflineDetector />
+                      <RecentlyPlayedTracker />
+                      {children}
+                      <MiniPlayer />
+                      <SettingsFab />
+                      <KeyboardShortcuts />
+                    </div>
+                  </PersonalizationProvider>
+                </FavoritesProvider>
+              </DynamicColorProvider>
+            </AudioPlayerProvider>
+          </SettingsProvider>
         </ThemeProvider>
       </body>
     </html>

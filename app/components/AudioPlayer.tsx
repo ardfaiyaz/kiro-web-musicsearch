@@ -37,6 +37,8 @@ export default function AudioPlayer({
   const {
     play,
     pause,
+    resume,
+    isPlaying: contextIsPlaying,
     currentlyPlayingId,
     currentTime,
     duration,
@@ -46,7 +48,8 @@ export default function AudioPlayer({
     seekTo,
   } = useAudioPlayer();
 
-  const isPlaying = currentlyPlayingId === trackId;
+  const isActiveTrack = currentlyPlayingId === trackId;
+  const isPlaying = isActiveTrack && contextIsPlaying;
   const previousVolumeRef = useRef(1);
 
   if (!previewUrl) {
@@ -81,6 +84,8 @@ export default function AudioPlayer({
   function handleToggle() {
     if (isPlaying) {
       pause();
+    } else if (isActiveTrack) {
+      resume();
     } else {
       play(previewUrl!, trackId, { trackName, artistName, artworkUrl, fullTrack: track });
     }
@@ -157,7 +162,7 @@ export default function AudioPlayer({
                 className="w-10 text-xs tabular-nums text-muted"
                 aria-label="Current playback time"
               >
-                {isPlaying ? formatTime(currentTime) : "0:00"}
+                {isActiveTrack ? formatTime(currentTime) : "0:00"}
               </time>
 
               <label className="sr-only" htmlFor={`progress-${trackId}`}>
@@ -170,13 +175,13 @@ export default function AudioPlayer({
                   min="0"
                   max="100"
                   step="0.1"
-                  value={isPlaying ? progress : 0}
+                  value={isActiveTrack ? progress : 0}
                   onChange={handleSeek}
                   className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-border [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-foreground [&::-moz-range-thumb]:shadow-md [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-foreground [&::-webkit-slider-thumb]:shadow-md"
                   aria-label={`Seek ${trackName} preview`}
                   aria-valuemin={0}
                   aria-valuemax={100}
-                  aria-valuenow={isPlaying ? Math.round(progress) : 0}
+                  aria-valuenow={isActiveTrack ? Math.round(progress) : 0}
                 />
               </div>
 
@@ -184,7 +189,7 @@ export default function AudioPlayer({
                 className="w-12 text-right text-xs tabular-nums text-muted"
                 aria-label="Remaining time"
               >
-                {isPlaying ? formatRemainingTime(currentTime, duration) : "-0:30"}
+                {isActiveTrack ? formatRemainingTime(currentTime, duration) : "-0:30"}
               </time>
             </div>
           </div>
@@ -238,7 +243,7 @@ export default function AudioPlayer({
           />
 
           <span className="ml-auto truncate text-xs text-muted">
-            {isPlaying ? "Now playing" : "30-second preview"}
+            {isActiveTrack ? "Now playing" : "30-second preview"}
           </span>
         </div>
       </div>

@@ -3,8 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrackById, getArtistTracks } from "@/lib/itunes";
 import { getRecommendations } from "@/lib/recommendations";
+import { getSimilarTracks } from "@/lib/ai-discovery";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import TrackGrid from "@/app/components/TrackGrid";
+import RecommendationPanel from "@/app/components/RecommendationPanel";
+import MusicInsights from "@/app/components/MusicInsights";
+import LyricsDisplay from "@/app/components/LyricsDisplay";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
 import ShareMenu from "@/app/components/ShareMenu";
@@ -43,6 +47,7 @@ export default async function TrackPage({
 
   const recommendationsResult = await getArtistTracks(track.artistId, track.trackId);
   const aiRecommendations = await getRecommendations(track);
+  const similarTracksResult = await getSimilarTracks(track);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "600x600");
 
   return (
@@ -189,6 +194,16 @@ export default async function TrackPage({
 
         {/* Recommendations */}
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Insights and Lyrics sidebar */}
+          <div className="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-1">
+              <MusicInsights type="track" track={track} />
+            </div>
+            <div className="lg:col-span-2">
+              <LyricsDisplay trackName={track.trackName} artistName={track.artistName} />
+            </div>
+          </div>
+
           {recommendationsResult.error ? (
             <section className="mb-12" aria-label="Recommendations unavailable">
               <h2 className="mb-4 text-2xl font-bold text-foreground">
@@ -227,6 +242,16 @@ export default async function TrackPage({
                 <TrackGrid tracks={aiRecommendations.tracks} />
               </section>
             )
+          )}
+
+          {/* Enhanced recommendations with reasons */}
+          {!similarTracksResult.error && similarTracksResult.tracks.length > 0 && (
+            <div className="mb-12">
+              <RecommendationPanel
+                title="Similar Tracks"
+                tracks={similarTracksResult.tracks}
+              />
+            </div>
           )}
         </div>
       </main>

@@ -15,6 +15,8 @@ import { ItunesTrack } from "@/lib/types";
 interface AudioPlayerContextType {
   play: (url: string, id: number, metadata?: TrackMetadata) => void;
   pause: () => void;
+  resume: () => void;
+  isPlaying: boolean;
   currentlyPlayingId: number | null;
   currentTime: number;
   duration: number;
@@ -26,6 +28,15 @@ interface AudioPlayerContextType {
   artistName: string | null;
   artworkUrl: string | null;
   currentTrack: ItunesTrack | null;
+  // Queue management
+  queue: ItunesTrack[];
+  addToQueue: (track: ItunesTrack) => void;
+  removeFromQueue: (index: number) => void;
+  playNext: () => void;
+  clearQueue: () => void;
+  // Expanded state
+  isExpanded: boolean;
+  toggleExpanded: () => void;
 }
 
 interface TrackMetadata {
@@ -52,6 +63,9 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [artistName, setArtistName] = useState<string | null>(null);
   const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<ItunesTrack | null>(null);
+  const [queue, setQueue] = useState<ItunesTrack[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const resetPlaybackState = useCallback(() => {
     setCurrentTime(0);
@@ -67,6 +81,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current = null;
     }
     setCurrentlyPlayingId(null);
+    setIsPlaying(false);
     setTrackName(null);
     setArtistName(null);
     setArtworkUrl(null);
@@ -111,6 +126,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         if (audioRef.current === audio) {
           audioRef.current = null;
           setCurrentlyPlayingId(null);
+          setIsPlaying(false);
           setTrackName(null);
           setArtistName(null);
           setArtworkUrl(null);
@@ -133,8 +149,20 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   );
 
   const pause = useCallback(() => {
-    stopAudio();
-  }, [stopAudio]);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  }, []);
+
+  const resume = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.play().catch(() => {
+        // Browser blocked autoplay
+      });
+      setIsPlaying(true);
+    }
+  }, []);
 
   const play = useCallback(
     (url: string, id: number, metadata?: TrackMetadata) => {
@@ -160,6 +188,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       audio.volume = volumeRef.current;
       audioRef.current = audio;
       setCurrentlyPlayingId(id);
+      setIsPlaying(true);
 
       cleanupRef.current = attachListeners(audio);
 
@@ -170,6 +199,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
           cleanupRef.current = null;
           audioRef.current = null;
           setCurrentlyPlayingId(null);
+          setIsPlaying(false);
           setTrackName(null);
           setArtistName(null);
           setArtworkUrl(null);
@@ -200,11 +230,69 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const addToQueue = useCallback((track: ItunesTrack) => {
+    setQueue((prev) => [...prev, track]);
+  }, []);
+
+  const removeFromQueue = useCallback((index: number) => {
+    setQueue((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const clearQueue = useCallback(() => {
+    setQueue([]);
+  }, []);
+
+  const playNext = useCallback(() => {
+    if (queue.length === 0) return;
+    const nextTrack = queue[0];
+    setQueue((prev) => prev.slice(1));
+    if (nextTrack.previewUrl) {
+      // Clean up listeners on the old element before discarding it
+      cleanupRef.current?.();
+      cleanupRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      resetPlaybackState();
+      setTrackName(nextTrack.trackName || null);
+      setArtistName(nextTrack.artistName || null);
+      setArtworkUrl(nextTrack.artworkUrl100 || null);
+      setCurrentTrack(nextTrack);
+      const audio = new Audio(nextTrack.previewUrl);
+      audio.volume = volumeRef.current;
+      audioRef.current = audio;
+      setCurrentlyPlayingId(nextTrack.trackId);
+      setIsPlaying(true);
+      cleanupRef.current = attachListeners(audio);
+      audio.play().catch(() => {
+        if (audioRef.current === audio) {
+          cleanupRef.current?.();
+          cleanupRef.current = null;
+          audioRef.current = null;
+          setCurrentlyPlayingId(null);
+          setIsPlaying(false);
+          setTrackName(null);
+          setArtistName(null);
+          setArtworkUrl(null);
+          setCurrentTrack(null);
+          resetPlaybackState();
+        }
+      });
+    }
+  }, [queue, attachListeners, resetPlaybackState]);
+
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded((prev) => !prev);
+  }, []);
+
   return (
     <AudioPlayerContext.Provider
       value={{
         play,
         pause,
+        resume,
+        isPlaying,
         currentlyPlayingId,
         currentTime,
         duration,
@@ -216,6 +304,13 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         artistName,
         artworkUrl,
         currentTrack,
+        queue,
+        addToQueue,
+        removeFromQueue,
+        playNext,
+        clearQueue,
+        isExpanded,
+        toggleExpanded,
       }}
     >
       {children}

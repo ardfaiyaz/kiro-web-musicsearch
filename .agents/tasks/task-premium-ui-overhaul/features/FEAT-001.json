@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Premium Glass Design System, Dynamic Color Extraction, and Ambient Background. Transform the foundational design system with true frosted glass everywhere, artwork-based dynamic colors, and immersive ambient backgrounds with animated gradients and aurora effects.",
+  "status": "completed",
+  "steps": [
+    "Install color-thief-browser (or implement a lightweight canvas-based color extraction) as a dependency for extracting dominant colors from album artwork. Add to package.json.",
+    "Create lib/color-extraction.ts - a utility that takes an image URL, draws it on a canvas element, and extracts 3-5 dominant colors. Export a React hook useColorExtraction(imageUrl) that returns extracted colors and loading state.",
+    "Create app/components/AmbientBackground.tsx - a client component that renders animated gradient backgrounds with: (1) CSS animated multi-stop gradients that shift position, (2) floating blurred circular shapes using absolute positioned divs with large border-radius and blur, (3) a subtle film grain overlay using a pseudo-element with a noise SVG filter, (4) a vignette effect using radial-gradient overlay, (5) artwork-inspired glow when colors are provided via props. Use reduced-motion media query to disable animations. The component should accept optional color props to tint the background from album artwork.",
+    "Update app/globals.css to enhance the glass design system: (1) Add new CSS custom properties for dynamic accent color (--dynamic-accent, --dynamic-accent-light, --dynamic-accent-muted). (2) Enhance existing .glass classes to use stronger backdrop-blur (min 20px), higher saturation (180%+), layered translucent borders with top highlight, ambient shadows, and rounded corners. (3) Add new glass variants: .glass-card, .glass-tooltip, .glass-sidebar, .glass-dialog, .glass-settings, .glass-recommendation, .glass-stats, .glass-fab. Each must have backdrop-filter, border with translucent highlight on top edge, soft shadow, and rounded corners. (4) Add dynamic theme tinting classes that apply var(--dynamic-accent) as subtle background tint. (5) Add aurora animation keyframes. (6) Add floating shapes animation keyframes. (7) Ensure all glass classes work well in both light and dark themes.",
+    "Create app/components/DynamicColorProvider.tsx - a client context that wraps the app and provides the currently active dynamic colors (extracted from currently playing track artwork or the page's hero artwork). Components can consume this to apply dynamic tinting to their backgrounds, progress bars, and highlights.",
+    "Update app/layout.tsx to include the AmbientBackground component and DynamicColorProvider in the component tree. The ambient background should render behind all content with fixed positioning and z-index below content.",
+    "Update all card components (TrackCard.tsx, AlbumCard.tsx, ArtistCard.tsx, GenreCard.tsx) to use the new .glass-card class instead of plain bg-card with border. Add subtle hover glow effect using box-shadow with the dynamic accent color on hover.",
+    "Update Header.tsx to apply stronger glass effect and dynamic color tinting from DynamicColorProvider. The navigation items should subtly reflect the dynamic accent color when active.",
+    "Update MiniPlayer.tsx to use dynamic colors from DynamicColorProvider for the progress bar fill and add a subtle glow behind the artwork that uses the extracted color.",
+    "Update SearchBar.tsx dropdown and suggestions to apply glass-dropdown with enhanced blur and the new translucent border styling."
+  ],
+  "acceptance_criteria": [
+    "Running `bun run build` passes with zero errors",
+    "Running `bun run lint` passes with zero errors",
+    "All glass classes use backdrop-filter with blur >= 20px and saturation >= 180%, plus translucent borders - never simple opacity-only transparency",
+    "AmbientBackground renders animated gradients and floating shapes behind content",
+    "DynamicColorProvider extracts colors from artwork URLs and provides them via context",
+    "Film grain and vignette overlays are present in AmbientBackground",
+    "Cards, header, player, search dropdown all use glass styling",
+    "prefers-reduced-motion media query disables all animations"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful build with zero TypeScript errors"
+  ],
+  "blocked_reason": null,
+  "findings": "The react-hooks/set-state-in-effect ESLint rule is very strict - does not allow any synchronous setState calls inside useEffect, even for cache hits or initial state setting. Solved by deriving state from cache lookups during render instead of setting state in effects. SearchFilters.tsx has 2 pre-existing unused-vars warnings that are not related to this feature."
+}

@@ -9,6 +9,7 @@ import {
   useCallback,
   useSyncExternalStore,
   FormEvent,
+  KeyboardEvent,
 } from "react";
 import { addRecentSearch, getRecentSearches, clearRecentSearches } from "@/lib/recent-searches";
 import { RecentSearch } from "@/lib/types";
@@ -18,6 +19,14 @@ interface Suggestion {
   trackName: string;
   artistName: string;
 }
+
+const TRENDING_SEARCHES = [
+  "Taylor Swift",
+  "Drake",
+  "BTS",
+  "Billie Eilish",
+  "The Weeknd",
+];
 
 function getSpeechSupported(): boolean {
   if (typeof window === "undefined") return false;
@@ -42,6 +51,7 @@ export default function SearchBar() {
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   const speechSupported = useSyncExternalStore(
     subscribeSpeech,
@@ -64,6 +74,7 @@ export default function SearchBar() {
         !inputRef.current.contains(e.target as Node)
       ) {
         setShowDropdown(false);
+        setActiveIndex(-1);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -98,6 +109,7 @@ export default function SearchBar() {
           artistName: r.artistName,
         }));
       setSuggestions(results);
+      setActiveIndex(-1);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
     }
@@ -105,6 +117,7 @@ export default function SearchBar() {
 
   function handleInputChange(value: string) {
     setQuery(value);
+    setActiveIndex(-1);
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!value.trim()) {
@@ -122,6 +135,7 @@ export default function SearchBar() {
   function handleFocus() {
     setRecentSearches(getRecentSearches());
     setShowDropdown(true);
+    setActiveIndex(-1);
   }
 
   function performSearch(term: string) {
@@ -130,6 +144,7 @@ export default function SearchBar() {
     addRecentSearch(trimmed);
     setRecentSearches(getRecentSearches());
     setShowDropdown(false);
+    setActiveIndex(-1);
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("q", trimmed);
@@ -153,9 +168,66 @@ export default function SearchBar() {
     performSearch(recent.query);
   }
 
+  function handleTrendingClick(term: string) {
+    setQuery(term);
+    performSearch(term);
+  }
+
   function handleClearRecent() {
     clearRecentSearches();
     setRecentSearches([]);
+  }
+
+  // Build flat list of all navigable items for keyboard navigation
+  function getDropdownItems(): { type: "suggestion" | "recent" | "trending"; value: string; data?: Suggestion | RecentSearch }[] {
+    const items: { type: "suggestion" | "recent" | "trending"; value: string; data?: Suggestion | RecentSearch }[] = [];
+
+    if (query.trim() && suggestions.length > 0) {
+      suggestions.forEach((s) => {
+        items.push({ type: "suggestion", value: `${s.trackName} ${s.artistName}`, data: s });
+      });
+    } else if (!query.trim()) {
+      recentSearches.forEach((r) => {
+        items.push({ type: "recent", value: r.query, data: r });
+      });
+      TRENDING_SEARCHES.forEach((term) => {
+        items.push({ type: "trending", value: term });
+      });
+    }
+
+    return items;
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (!showDropdown) return;
+
+    const items = getDropdownItems();
+    const totalItems = items.length;
+
+    if (totalItems === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev < totalItems - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : totalItems - 1));
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      const item = items[activeIndex];
+      if (item.type === "suggestion") {
+        handleSuggestionClick(item.data as Suggestion);
+      } else if (item.type === "recent") {
+        handleRecentClick(item.data as RecentSearch);
+      } else if (item.type === "trending") {
+        handleTrendingClick(item.value);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setShowDropdown(false);
+      setActiveIndex(-1);
+      inputRef.current?.blur();
+    }
   }
 
   function startVoiceSearch() {
@@ -194,8 +266,21 @@ export default function SearchBar() {
   }
 
   const showSuggestions = showDropdown && query.trim() && suggestions.length > 0;
-  const showRecent =
-    showDropdown && !query.trim() && recentSearches.length > 0;
+  const showRecent = showDropdown && !query.trim() && recentSearches.length > 0;
+  const showTrending = showDropdown && !query.trim();
+  const dropdownVisible = showSuggestions || showRecent || showTrending;
+
+  // Calculate offset for active index in the combined list
+  function getItemIndex(sectionType: "suggestion" | "recent" | "trending", indexInSection: number): number {
+    if (sectionType === "suggestion") {
+      return indexInSection;
+    }
+    if (sectionType === "recent") {
+      return indexInSection;
+    }
+    // trending items come after recent items
+    return recentSearches.length + indexInSection;
+  }
 
   return (
     <form
@@ -224,35 +309,40 @@ export default function SearchBar() {
           value={query}
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={handleFocus}
+          onKeyDown={handleKeyDown}
           placeholder="Search songs, artists, or albums..."
           maxLength={200}
           className="w-full rounded-2xl glass-search py-4 pl-12 pr-16 text-base text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           aria-label="Search music"
           aria-autocomplete="list"
           role="combobox"
-          aria-expanded={showSuggestions || showRecent}
+          aria-expanded={dropdownVisible}
           aria-controls="search-dropdown"
+          aria-activedescendant={activeIndex >= 0 ? `search-item-${activeIndex}` : undefined}
         />
         <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden rounded-md border border-border bg-background px-2 py-0.5 font-mono text-xs text-muted sm:inline">
           /
         </span>
 
-        {(showSuggestions || showRecent) && (
+        {dropdownVisible && (
           <div
             ref={dropdownRef}
             id="search-dropdown"
-            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl glass-dropdown animate-scale-in"
+            className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl glass-dropdown border-t border-t-white/10 animate-scale-in"
             role="listbox"
           >
             {showSuggestions &&
-              suggestions.map((s) => (
+              suggestions.map((s, idx) => (
                 <button
                   key={s.trackId}
+                  id={`search-item-${idx}`}
                   type="button"
                   onClick={() => handleSuggestionClick(s)}
-                  className="flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5"
+                  className={`flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
+                    activeIndex === idx ? "bg-foreground/10" : ""
+                  }`}
                   role="option"
-                  aria-selected={false}
+                  aria-selected={activeIndex === idx}
                 >
                   <svg
                     className="h-4 w-4 shrink-0 text-muted"
@@ -273,31 +363,88 @@ export default function SearchBar() {
                 </button>
               ))}
 
-            {showRecent && (
+            {!query.trim() && (
               <>
-                <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-                  <span className="text-xs font-medium uppercase tracking-wider text-muted">
-                    Recent Searches
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleClearRecent}
-                    className="text-xs text-muted transition-colors hover:text-foreground"
+                {showRecent && (
+                  <>
+                    <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+                      <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                        Recent Searches
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleClearRecent}
+                        className="text-xs text-muted transition-colors hover:text-foreground"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    {recentSearches.map((r, idx) => (
+                      <button
+                        key={r.timestamp}
+                        id={`search-item-${getItemIndex("recent", idx)}`}
+                        type="button"
+                        onClick={() => handleRecentClick(r)}
+                        className={`flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
+                          activeIndex === getItemIndex("recent", idx) ? "bg-foreground/10" : ""
+                        }`}
+                        role="option"
+                        aria-selected={activeIndex === getItemIndex("recent", idx)}
+                      >
+                        <svg
+                          className="h-4 w-4 shrink-0 text-muted"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span className="truncate">{r.query}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {/* Trending Searches */}
+                <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
+                  <svg
+                    className="h-4 w-4 text-muted"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
-                    Clear
-                  </button>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
+                    />
+                  </svg>
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                    Trending Searches
+                  </span>
                 </div>
-                {recentSearches.map((r) => (
+                {TRENDING_SEARCHES.map((term, idx) => (
                   <button
-                    key={r.timestamp}
+                    key={term}
+                    id={`search-item-${getItemIndex("trending", idx)}`}
                     type="button"
-                    onClick={() => handleRecentClick(r)}
-                    className="flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5"
+                    onClick={() => handleTrendingClick(term)}
+                    className={`flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
+                      activeIndex === getItemIndex("trending", idx) ? "bg-foreground/10" : ""
+                    }`}
                     role="option"
-                    aria-selected={false}
+                    aria-selected={activeIndex === getItemIndex("trending", idx)}
                   >
                     <svg
-                      className="h-4 w-4 shrink-0 text-muted"
+                      className="h-4 w-4 shrink-0 text-muted/70"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -307,10 +454,16 @@ export default function SearchBar() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={1.5}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1.001A3.75 3.75 0 0012 18z"
                       />
                     </svg>
-                    <span className="truncate">{r.query}</span>
+                    <span className="truncate">{term}</span>
                   </button>
                 ))}
               </>

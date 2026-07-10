@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
+import { useDynamicColors } from "./DynamicColorProvider";
 
 interface HeaderProps {
   showBack?: boolean;
@@ -10,6 +11,7 @@ interface HeaderProps {
 
 export default function Header({ showBack = false }: HeaderProps) {
   const pathname = usePathname();
+  const { colors } = useDynamicColors();
 
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/";
@@ -17,7 +19,7 @@ export default function Header({ showBack = false }: HeaderProps) {
   };
 
   return (
-    <header className="glass sticky top-0 z-50 border-b border-border/50">
+    <header className="glass-elevated sticky top-0 z-50 border-b border-border/50">
       <div className="mx-auto max-w-7xl px-6 py-4 lg:px-8">
         <nav
           className="flex items-center justify-between"
@@ -70,6 +72,16 @@ export default function Header({ showBack = false }: HeaderProps) {
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
+              style={
+                isActive("/") &&
+                !isActive("/discover") &&
+                !isActive("/favorites") &&
+                !isActive("/dashboard") &&
+                !isActive("/playlists") &&
+                colors
+                  ? { backgroundColor: `color-mix(in srgb, ${colors.dominant} 15%, transparent)` }
+                  : undefined
+              }
             >
               <svg
                 className="h-4 w-4"
@@ -94,6 +106,11 @@ export default function Header({ showBack = false }: HeaderProps) {
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
+              style={
+                isActive("/discover") && colors
+                  ? { backgroundColor: `color-mix(in srgb, ${colors.dominant} 15%, transparent)` }
+                  : undefined
+              }
             >
               <svg
                 className="h-4 w-4"
@@ -118,6 +135,11 @@ export default function Header({ showBack = false }: HeaderProps) {
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
+              style={
+                isActive("/dashboard") && colors
+                  ? { backgroundColor: `color-mix(in srgb, ${colors.dominant} 15%, transparent)` }
+                  : undefined
+              }
             >
               <svg
                 className="h-4 w-4"
@@ -142,6 +164,11 @@ export default function Header({ showBack = false }: HeaderProps) {
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
+              style={
+                isActive("/playlists") && colors
+                  ? { backgroundColor: `color-mix(in srgb, ${colors.dominant} 15%, transparent)` }
+                  : undefined
+              }
             >
               <svg
                 className="h-4 w-4"
@@ -166,6 +193,11 @@ export default function Header({ showBack = false }: HeaderProps) {
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
+              style={
+                isActive("/favorites") && colors
+                  ? { backgroundColor: `color-mix(in srgb, ${colors.dominant} 15%, transparent)` }
+                  : undefined
+              }
               aria-label="Favorites"
             >
               <svg

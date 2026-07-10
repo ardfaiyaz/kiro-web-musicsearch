@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-005",
+  "type": "feat",
+  "description": "Micro-interactions, Custom Cursor, Page Transitions, Performance Optimization, and Delightful Details. Add hover glow, card tilt, icon animations, heart burst, shimmer loading skeletons, custom cursor with trailing animation, shared element transitions, lazy loading, and decorative details like animated equalizer and floating particles.",
+  "status": "completed",
+  "steps": [
+    "Create app/components/MicroInteractions.css (or add to globals.css) with: (1) .hover-glow - on hover, adds a soft colored glow via box-shadow transition, (2) .card-tilt - uses CSS perspective and rotateX/rotateY on hover to create a subtle 3D tilt (max 3-5deg), (3) .heart-burst - a keyframe animation for the favorite button that creates a burst of small hearts/particles using pseudo-elements on click, (4) .shimmer-loading - a skeleton loading animation using a gradient that sweeps across (linear-gradient animated via background-position), (5) .icon-bounce - a subtle bounce animation for interactive icons on hover.",
+    "Create app/components/ShimmerSkeleton.tsx - a reusable skeleton component that accepts shape (rectangle, circle, line) and dimensions. Uses the shimmer-loading animation class. Replace the LoadingSpinner.tsx usage in key places with shimmer skeletons that match the layout shape of the content being loaded.",
+    "Update app/components/TrackCard.tsx, AlbumCard.tsx, ArtistCard.tsx to apply: (1) .hover-glow on hover, (2) .card-tilt subtle 3D tilt effect on hover (use a lightweight CSS-only approach with transform on hover rather than mouse tracking for performance), (3) Ensure the Image component uses Next.js lazy loading (loading='lazy' is default).",
+    "Update app/components/FavoriteButton.tsx to trigger the heart-burst animation when adding to favorites. Add the animation class temporarily on click using state.",
+    "Create app/components/CustomCursor.tsx - a client component that renders a custom cursor: (1) A main cursor dot (small circle, 8px) that follows mouse position with transform, (2) A trailing circle (larger, 32px, semi-transparent) that follows with a slight delay using CSS transition on transform, (3) On hover over interactive elements (buttons, links, cards), the cursor enlarges and changes color to the dynamic accent, (4) Uses requestAnimationFrame for smooth updates, (5) Only renders on non-touch devices (check matchMedia for pointer: fine), (6) Respects reduced motion preference. Add cursor: none to body when custom cursor is active.",
+    "Create app/components/AnimatedEqualizer.tsx - a small decorative component showing animated vertical bars (3-5 bars) that bounce at different heights, simulating an audio equalizer. Use CSS keyframes with different animation-duration per bar. Display this in the MiniPlayer next to the currently playing indicator.",
+    "Create app/components/FloatingParticles.tsx - a client component that renders subtle floating particle dots in the background of hero sections. Use CSS animations with different speeds and paths (translateY + slight translateX drift). Keep particle count low (8-12) for performance. Respect reduced-motion.",
+    "Update app/loading.tsx to use ShimmerSkeleton components that approximate the page layout instead of the current LoadingSpinner.",
+    "Update app/layout.tsx to include CustomCursor component.",
+    "Add performance optimizations across the app: (1) Ensure all Image components use appropriate sizes prop (already mostly done), (2) Add loading='lazy' explicitly to non-above-fold images, (3) Verify that dynamic imports are used for heavy client components where appropriate (ExpandedPlayer, SettingsPanel, CustomCursor can be dynamically imported with next/dynamic and ssr: false).",
+    "Update app/components/MiniPlayer.tsx to include the AnimatedEqualizer when a track is playing."
+  ],
+  "acceptance_criteria": [
+    "Running `bun run build` passes with zero errors",
+    "Running `bun run lint` passes with zero errors",
+    "Cards have visible hover glow and subtle 3D tilt effect on hover",
+    "Favorite button shows a burst animation when clicked",
+    "Shimmer skeleton loading replaces spinner in loading.tsx",
+    "Custom cursor renders on desktop with trailing effect and enlarges on hover over interactive elements",
+    "AnimatedEqualizer shows animated bars in the mini player during playback",
+    "FloatingParticles renders subtle animated dots in hero sections",
+    "Heavy client components (ExpandedPlayer, SettingsPanel, CustomCursor) are dynamically imported",
+    "prefers-reduced-motion disables all animations including cursor, particles, equalizer"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful build with zero TypeScript errors"
+  ],
+  "blocked_reason": null,
+  "findings": "Used DOM manipulation in CustomCursor instead of React state to satisfy React compiler lint rules (no setState in effects, no state-driven animations). FloatingParticles uses deterministic particle positions (no Math.random) to satisfy purity lint rules. Dynamic imports with ssr:false must be in client components only - created CustomCursorWrapper client component for this. SettingsFab already a client component so it uses dynamic import for SettingsPanel internally. Pre-existing lint warnings in SearchFilters.tsx (unused variables GENRE_OPTIONS, YEAR_OPTIONS) unrelated to this feature."
+}
