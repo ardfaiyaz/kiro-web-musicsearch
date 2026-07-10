@@ -137,6 +137,52 @@ export default function SearchFilters() {
           ))}
         </select>
 
+        <label htmlFor="genre-select" className="text-sm font-medium text-muted">
+          Genre:
+        </label>
+        <select
+          id="genre-select"
+          value={currentGenre}
+          onChange={(e) => updateParams("genre", e.target.value)}
+          className="w-full cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
+        >
+          {GENRE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <label htmlFor="year-select" className="text-sm font-medium text-muted">
+          Year:
+        </label>
+        <select
+          id="year-select"
+          value={currentYear}
+          onChange={(e) => updateParams("year", e.target.value)}
+          className="w-full cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
+        >
+          {YEAR_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <label htmlFor="explicit-select" className="text-sm font-medium text-muted">
+          Explicit:
+        </label>
+        <select
+          id="explicit-select"
+          value={currentExplicit}
+          onChange={(e) => updateParams("explicit", e.target.value)}
+          className="w-full cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
+        >
+          <option value="">Show All</option>
+          <option value="hide">Hide Explicit</option>
+          <option value="only">Only Explicit</option>
+        </select>
+
         {hasActiveFilters && (
           <button
             type="button"

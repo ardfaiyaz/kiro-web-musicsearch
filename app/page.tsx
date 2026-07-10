@@ -6,7 +6,6 @@ import ArtistGrid from "./components/ArtistGrid";
 import AlbumGrid from "./components/AlbumGrid";
 import EmptyState from "./components/EmptyState";
 import LoadingSpinner from "./components/LoadingSpinner";
-import Header from "./components/Header";
 import InfiniteScrollResults from "./components/InfiniteScrollResults";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { ItunesTrack } from "@/lib/types";
