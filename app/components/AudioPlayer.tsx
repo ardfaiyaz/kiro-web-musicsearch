@@ -102,7 +102,7 @@ export default function AudioPlayer({
           {/* Play/Pause Button */}
           <button
             onClick={handleToggle}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover"
+            className="cursor-pointer flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover"
             aria-label={isPlaying ? `Pause ${trackName}` : `Play ${trackName} preview`}
           >
             {isPlaying ? (
@@ -166,7 +166,7 @@ export default function AudioPlayer({
           {/* Mute/Unmute button */}
           <button
             onClick={handleMuteToggle}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:text-foreground"
+            className="cursor-pointer flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:text-foreground"
             aria-label={volume === 0 ? "Unmute" : "Mute"}
           >
             {volume === 0 ? (

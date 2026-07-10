@@ -52,7 +52,7 @@ export default function SearchBar() {
       <button
         type="submit"
         disabled={isPending || !query.trim()}
-        className="rounded-xl bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        className="cursor-pointer rounded-xl bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? (
           <span className="flex items-center gap-2">

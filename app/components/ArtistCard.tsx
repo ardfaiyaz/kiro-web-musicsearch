@@ -8,7 +8,7 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
       href={artist.artistLinkUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
+      className="cursor-pointer group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5"
     >
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
         <svg

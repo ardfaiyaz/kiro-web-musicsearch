@@ -1,0 +1,29 @@
+{
+  "project_type": "Next.js 16 app with React 19, Tailwind CSS 4, TypeScript",
+  "language": "TypeScript / TSX",
+  "build_system": "bun (bun.lock present), Next.js build system. No npm/node available, use bun instead.",
+  "test_framework": "No test framework configured (no test files or test runner in package.json)",
+  "build_command": "bun run build",
+  "test_command": "bun run lint",
+  "verification_instructions": "Run `bun run build` to verify compilation and static generation succeed. Run `bun run lint` for linting.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "Run `bun install` in the project root to install dependencies.",
+  "environment_constraints": "Only `bun` is available as runtime (no npm/node). Build works with bun. Worker thread warnings appear but don't block the build.",
+  "contribution_requirements": "Follow AGENTS.md - this is Next.js 16 with breaking changes from prior versions. Use responsive Tailwind CSS utility classes. Ensure Semantic HTML for all layout sections.",
+  "key_patterns": "Components live in app/components/. Pages use App Router (app/page.tsx, app/favorites/page.tsx, app/track/[id]/page.tsx). Custom Tailwind theme colors defined in globals.css using @theme inline. Dark mode via prefers-color-scheme. Client components marked with 'use client'. Links use next/link, images use next/image.",
+  "relevant_files": [
+    "app/components/SearchFilters.tsx",
+    "app/components/SearchBar.tsx",
+    "app/components/TrackCard.tsx",
+    "app/components/AlbumCard.tsx",
+    "app/components/ArtistCard.tsx",
+    "app/components/FavoriteButton.tsx",
+    "app/components/AudioPlayer.tsx",
+    "app/components/ErrorMessage.tsx",
+    "app/page.tsx",
+    "app/favorites/page.tsx",
+    "app/track/[id]/page.tsx",
+    "app/globals.css"
+  ],
+  "directory_structure": "app/ - App Router pages and components. app/components/ - Shared UI components. app/favorites/ - Favorites page. app/track/[id]/ - Track detail page. lib/ - Utility/API functions. public/ - Static assets."
+}

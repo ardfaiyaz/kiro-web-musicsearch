@@ -13,13 +13,13 @@ export default function FavoritesPage() {
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between">
             <h1 className="text-lg font-bold text-foreground sm:text-xl">
-              <Link href="/" className="hover:text-accent transition-colors">
+              <Link href="/" className="cursor-pointer hover:text-accent transition-colors">
                 Music Search &amp; Discovery
               </Link>
             </h1>
             <Link
               href="/favorites"
-              className="flex items-center gap-1.5 text-sm font-medium text-red-500 transition-colors hover:text-red-400"
+              className="cursor-pointer flex items-center gap-1.5 text-sm font-medium text-red-500 transition-colors hover:text-red-400"
               aria-label="Favorites"
             >
               <svg
@@ -67,7 +67,7 @@ export default function FavoritesPage() {
               </p>
               <Link
                 href="/"
-                className="mt-4 rounded-lg bg-accent px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+                className="cursor-pointer mt-4 rounded-lg bg-accent px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
               >
                 Search for music
               </Link>

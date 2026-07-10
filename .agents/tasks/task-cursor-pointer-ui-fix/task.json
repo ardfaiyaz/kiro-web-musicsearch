@@ -1,0 +1,14 @@
+{
+  "task_id": "task-cursor-pointer-ui-fix",
+  "task_description": "Add cursor-pointer to all clickable elements (buttons, links, interactive cards, selects) across all components to ensure the pointer cursor appears on hover, fixing the UI/UX issue.",
+  "status": "completed",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "skipped",
+    "docker_build": "skipped",
+    "summary": "bun run build succeeds (all pages compile and generate). bun run lint passes with no errors. cursor-pointer class verified present on all clickable elements across 11 files."
+  }
+}
