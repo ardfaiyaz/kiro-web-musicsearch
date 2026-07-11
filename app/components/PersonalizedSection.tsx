@@ -19,11 +19,14 @@ export default function PersonalizedSection({
   const [activeMood, setActiveMood] = useState(initialMood);
   const [tracks, setTracks] = useState<RecommendedTrack[]>(initialTracks);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleMoodChange = async (moodId: string) => {
     if (moodId === activeMood) return;
+    const previousMood = activeMood;
     setActiveMood(moodId);
     setLoading(true);
+    setError(null);
 
     try {
       const res = await fetch(
@@ -34,9 +37,13 @@ export default function PersonalizedSection({
         if (data.tracks && data.tracks.length > 0) {
           setTracks(data.tracks);
         }
+      } else {
+        setActiveMood(previousMood);
+        setError("Failed to load recommendations. Please try again.");
       }
     } catch {
-      // Keep existing tracks on error
+      setActiveMood(previousMood);
+      setError("Failed to load recommendations. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -77,6 +84,16 @@ export default function PersonalizedSection({
           </button>
         ))}
       </div>
+
+      {/* Error feedback */}
+      {error && (
+        <div
+          className="mb-4 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-400"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
       {/* Tracks grid */}
       <div
