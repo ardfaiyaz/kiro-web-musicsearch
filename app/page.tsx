@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import SearchBar from "./components/SearchBar";
-import SearchFilters from "./components/SearchFilters";
+import SearchFilterChips from "./components/SearchFilterChips";
+import SearchResultsLayout from "./components/SearchResultsLayout";
+import AIDiscoveryPanel from "./components/AIDiscoveryPanel";
 import ArtistGrid from "./components/ArtistGrid";
 import AlbumGrid from "./components/AlbumGrid";
 import EmptyState from "./components/EmptyState";
@@ -86,6 +88,57 @@ function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
     );
   }
   return tracks;
+}
+
+async function CategorizedResults({
+  query,
+  sort,
+  genre,
+  year,
+  explicit,
+}: {
+  query: string;
+  sort: string;
+  genre: string;
+  year: string;
+  explicit: string;
+}) {
+  const unified = await unifiedSearch(query);
+  let tracks = unified.tracks;
+
+  tracks = filterByGenre(tracks, genre);
+  tracks = filterByYear(tracks, year);
+  tracks = filterByExplicit(tracks, explicit);
+  tracks = sortTracks(tracks, sort);
+
+  if (tracks.length === 0 && unified.artists.length === 0 && unified.albums.length === 0) {
+    return <EmptyState query={query} />;
+  }
+
+  return (
+    <section aria-label="Search results" className="animate-fade-in">
+      <div className="mb-6 flex items-center gap-3">
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          Results for &ldquo;{query}&rdquo;
+        </h2>
+        {(unified.spotifyArtist || unified.spotifyAlbum) && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted">
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+            Multi-source
+          </span>
+        )}
+      </div>
+      <SearchResultsLayout
+        tracks={tracks}
+        artists={unified.artists}
+        albums={unified.albums}
+        spotifyArtist={unified.spotifyArtist}
+        query={query}
+      />
+    </section>
+  );
 }
 
 async function TrackResults({
@@ -326,29 +379,27 @@ export default async function Home({
 
           <section className="pb-4" aria-label="Filters">
             <Suspense fallback={null}>
-              <SearchFilters />
+              <SearchFilterChips />
             </Suspense>
           </section>
 
-          {activeFilter === "artist" && (
-            <section className="mt-6 pb-12">
-              <Suspense fallback={<LoadingSpinner message="Searching for artists..." />}>
-                <ArtistResults query={query} />
+          {activeFilter === "all" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching across all categories..." />}>
+                <CategorizedResults
+                  query={query}
+                  sort={activeSort}
+                  genre={activeGenre}
+                  year={activeYear}
+                  explicit={activeExplicit}
+                />
               </Suspense>
             </section>
           )}
 
-          {activeFilter === "album" && (
-            <section className="mt-6 pb-12">
-              <Suspense fallback={<LoadingSpinner message="Searching for albums..." />}>
-                <AlbumResults query={query} />
-              </Suspense>
-            </section>
-          )}
-
-          {(activeFilter === "all" || activeFilter === "song") && (
-            <section className="mt-6 pb-12">
-              <Suspense fallback={<LoadingSpinner message="Searching for music..." />}>
+          {activeFilter === "song" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching for songs..." />}>
                 <TrackResults
                   query={query}
                   filter={activeFilter}
@@ -360,6 +411,29 @@ export default async function Home({
               </Suspense>
             </section>
           )}
+
+          {activeFilter === "artist" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching for artists..." />}>
+                <ArtistResults query={query} />
+              </Suspense>
+            </section>
+          )}
+
+          {activeFilter === "album" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching for albums..." />}>
+                <AlbumResults query={query} />
+              </Suspense>
+            </section>
+          )}
+
+          {/* AI Discovery Panel */}
+          <section className="pb-12">
+            <Suspense fallback={null}>
+              <AIDiscoveryPanel query={query} />
+            </Suspense>
+          </section>
         </div>
       )}
 

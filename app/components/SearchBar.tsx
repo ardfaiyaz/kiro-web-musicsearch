@@ -11,6 +11,8 @@ import {
   FormEvent,
   KeyboardEvent,
 } from "react";
+import Image from "next/image";
+import { Search, Mic, Clock, TrendingUp, Music, User, Disc3 } from "lucide-react";
 import { addRecentSearch, getRecentSearches, clearRecentSearches } from "@/lib/recent-searches";
 import { RecentSearch } from "@/lib/types";
 
@@ -18,8 +20,9 @@ interface Suggestion {
   trackId: number;
   trackName: string;
   artistName: string;
-  type: "track" | "artist";
+  type: "track" | "artist" | "album";
   imageUrl?: string;
+  albumName?: string;
 }
 
 const TRENDING_SEARCHES = [
@@ -44,6 +47,18 @@ function getServerSnapshot(): boolean {
   return false;
 }
 
+const CATEGORY_BADGE_STYLES: Record<string, string> = {
+  track: "bg-primary/10 text-primary border-primary/20",
+  artist: "bg-secondary/10 text-secondary border-secondary/20",
+  album: "bg-info/10 text-info border-info/20",
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  track: "Song",
+  artist: "Artist",
+  album: "Album",
+};
+
 export default function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,6 +69,7 @@ export default function SearchBar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [isFetching, setIsFetching] = useState(false);
 
   const speechSupported = useSyncExternalStore(
     subscribeSpeech,
@@ -83,6 +99,18 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Global Cmd+K / Ctrl+K shortcut
+  useEffect(() => {
+    function handleGlobalKeydown(e: globalThis.KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", handleGlobalKeydown);
+    return () => document.removeEventListener("keydown", handleGlobalKeydown);
+  }, []);
+
   const fetchSuggestions = useCallback(async (term: string) => {
     if (!term.trim()) {
       setSuggestions([]);
@@ -94,6 +122,7 @@ export default function SearchBar() {
     }
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    setIsFetching(true);
 
     try {
       // Only fetch Spotify artist suggestions when query is 3+ characters
@@ -139,19 +168,31 @@ export default function SearchBar() {
         const tracks: Suggestion[] = data.results
           .filter((r: { wrapperType: string }) => r.wrapperType === "track")
           .slice(0, 4)
-          .map((r: { trackId: number; trackName: string; artistName: string }) => ({
-            trackId: r.trackId,
-            trackName: r.trackName,
-            artistName: r.artistName,
-            type: "track" as const,
-          }));
+          .map(
+            (r: {
+              trackId: number;
+              trackName: string;
+              artistName: string;
+              artworkUrl100?: string;
+              collectionName?: string;
+            }) => ({
+              trackId: r.trackId,
+              trackName: r.trackName,
+              artistName: r.artistName,
+              type: "track" as const,
+              imageUrl: r.artworkUrl100 ?? undefined,
+              albumName: r.collectionName ?? undefined,
+            })
+          );
         results.push(...tracks);
       }
 
-      setSuggestions(results.slice(0, 5));
+      setSuggestions(results.slice(0, 6));
       setActiveIndex(-1);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
+    } finally {
+      setIsFetching(false);
     }
   }, []);
 
@@ -163,9 +204,11 @@ export default function SearchBar() {
     if (!value.trim()) {
       setSuggestions([]);
       setShowDropdown(true);
+      setIsFetching(false);
       return;
     }
 
+    setIsFetching(true);
     debounceRef.current = setTimeout(() => {
       fetchSuggestions(value);
       setShowDropdown(true);
@@ -308,10 +351,11 @@ export default function SearchBar() {
     setIsListening(false);
   }
 
-  const showSuggestions = showDropdown && query.trim() && suggestions.length > 0;
-  const showRecent = showDropdown && !query.trim() && recentSearches.length > 0;
-  const showTrending = showDropdown && !query.trim();
-  const dropdownVisible = showSuggestions || showRecent || showTrending;
+  const showSuggestions = showDropdown && query.trim().length > 0 && suggestions.length > 0;
+  const showRecent = showDropdown && query.trim().length === 0 && recentSearches.length > 0;
+  const showTrending = showDropdown && query.trim().length === 0;
+  const showShimmer = showDropdown && query.trim().length > 0 && isFetching && suggestions.length === 0;
+  const dropdownVisible = showSuggestions || showRecent || showTrending || showShimmer;
 
   // Calculate offset for active index in the combined list
   function getItemIndex(sectionType: "suggestion" | "recent" | "trending", indexInSection: number): number {
@@ -332,20 +376,11 @@ export default function SearchBar() {
       role="search"
     >
       <div className="relative flex-1">
-        <svg
-          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+        <Search
+          size={20}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
           aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
+        />
         <input
           ref={inputRef}
           type="text"
@@ -355,7 +390,7 @@ export default function SearchBar() {
           onKeyDown={handleKeyDown}
           placeholder="Search songs, artists, or albums..."
           maxLength={200}
-          className="w-full rounded-2xl glass-search py-4 pl-12 pr-16 text-base text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+          className="w-full rounded-2xl glass-search py-4 pl-12 pr-20 text-base text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           aria-label="Search music"
           aria-autocomplete="list"
           role="combobox"
@@ -363,8 +398,9 @@ export default function SearchBar() {
           aria-controls="search-dropdown"
           aria-activedescendant={activeIndex >= 0 ? `search-item-${activeIndex}` : undefined}
         />
-        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden rounded-md border border-border bg-background px-2 py-0.5 font-mono text-xs text-muted sm:inline">
-          /
+        {/* Keyboard shortcut hint */}
+        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden items-center gap-0.5 rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-xs text-muted sm:inline-flex">
+          <span className="text-[10px]">&#8984;</span>K
         </span>
 
         {dropdownVisible && (
@@ -374,83 +410,99 @@ export default function SearchBar() {
             className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl glass-dropdown border-t border-t-white/10 animate-scale-in"
             role="listbox"
           >
-            {showSuggestions &&
-              suggestions.map((s, idx) => (
-                <button
-                  key={`${s.type}-${s.trackId}-${idx}`}
-                  id={`search-item-${idx}`}
-                  type="button"
-                  onClick={() => handleSuggestionClick(s)}
-                  className={`flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
-                    activeIndex === idx ? "bg-foreground/10" : ""
-                  }`}
-                  role="option"
-                  aria-selected={activeIndex === idx}
-                >
-                  {s.type === "artist" && s.imageUrl ? (
-                    <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-border">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={s.imageUrl}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
+            {/* Loading shimmer */}
+            {showShimmer && (
+              <div className="px-5 py-3" aria-busy="true" aria-label="Loading suggestions">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2.5">
+                    <div className="h-9 w-9 rounded-lg shimmer-wave" />
+                    <div className="flex flex-1 flex-col gap-1.5">
+                      <div className="h-3.5 w-3/4 rounded shimmer-wave" />
+                      <div className="h-2.5 w-1/2 rounded shimmer-wave" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Suggestions with artwork and badges */}
+            {showSuggestions && (
+              <>
+                {/* Top result highlight */}
+                {suggestions.length > 0 && (
+                  <div className="border-b border-border px-5 py-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">
+                      Top Result
                     </span>
-                  ) : s.type === "artist" ? (
-                    <svg
-                      className="h-4 w-4 shrink-0 text-muted"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="h-4 w-4 shrink-0 text-muted"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  )}
-                  {s.type === "artist" ? (
-                    <>
-                      <span className="truncate font-medium">{s.artistName}</span>
-                      <span className="shrink-0 rounded-full border border-border px-1.5 py-0.5 text-[10px] font-medium text-muted">
-                        Artist
+                  </div>
+                )}
+                {suggestions.map((s, idx) => (
+                  <button
+                    key={`${s.type}-${s.trackId}-${idx}`}
+                    id={`search-item-${idx}`}
+                    type="button"
+                    onClick={() => handleSuggestionClick(s)}
+                    className={`flex w-full items-center gap-3 px-5 py-3 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
+                      activeIndex === idx ? "bg-foreground/10" : ""
+                    } ${idx === 0 ? "bg-foreground/[0.03]" : ""}`}
+                    role="option"
+                    aria-selected={activeIndex === idx}
+                  >
+                    {/* Artwork thumbnail */}
+                    {s.imageUrl ? (
+                      <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-border">
+                        <Image
+                          src={s.imageUrl}
+                          alt=""
+                          fill
+                          sizes="36px"
+                          className="object-cover"
+                        />
                       </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="truncate font-medium">{s.trackName}</span>
-                      <span className="truncate text-muted">- {s.artistName}</span>
-                    </>
-                  )}
-                </button>
-              ))}
+                    ) : (
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-foreground/5">
+                        {s.type === "artist" ? (
+                          <User size={14} className="text-muted" aria-hidden="true" />
+                        ) : s.type === "album" ? (
+                          <Disc3 size={14} className="text-muted" aria-hidden="true" />
+                        ) : (
+                          <Music size={14} className="text-muted" aria-hidden="true" />
+                        )}
+                      </span>
+                    )}
+
+                    {/* Text content */}
+                    <div className="flex flex-1 flex-col overflow-hidden">
+                      <span className="truncate font-medium text-sm">
+                        {s.type === "artist" ? s.artistName : s.trackName}
+                      </span>
+                      {s.type !== "artist" && (
+                        <span className="truncate text-xs text-muted">{s.artistName}</span>
+                      )}
+                    </div>
+
+                    {/* Category badge */}
+                    <span
+                      className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${CATEGORY_BADGE_STYLES[s.type]}`}
+                    >
+                      {CATEGORY_LABELS[s.type]}
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
 
             {!query.trim() && (
               <>
                 {showRecent && (
                   <>
                     <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-                      <span className="text-xs font-medium uppercase tracking-wider text-muted">
-                        Recent Searches
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <Clock size={12} className="text-muted" aria-hidden="true" />
+                        <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                          Recent Searches
+                        </span>
+                      </div>
                       <button
                         type="button"
                         onClick={handleClearRecent}
@@ -465,26 +517,13 @@ export default function SearchBar() {
                         id={`search-item-${getItemIndex("recent", idx)}`}
                         type="button"
                         onClick={() => handleRecentClick(r)}
-                        className={`flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
+                        className={`flex w-full items-center gap-3 px-5 py-3 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
                           activeIndex === getItemIndex("recent", idx) ? "bg-foreground/10" : ""
                         }`}
                         role="option"
                         aria-selected={activeIndex === getItemIndex("recent", idx)}
                       >
-                        <svg
-                          className="h-4 w-4 shrink-0 text-muted"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
+                        <Clock size={14} className="shrink-0 text-muted" aria-hidden="true" />
                         <span className="truncate">{r.query}</span>
                       </button>
                     ))}
@@ -493,20 +532,7 @@ export default function SearchBar() {
 
                 {/* Trending Searches */}
                 <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
-                  <svg
-                    className="h-4 w-4 text-muted"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
-                    />
-                  </svg>
+                  <TrendingUp size={12} className="text-muted" aria-hidden="true" />
                   <span className="text-xs font-medium uppercase tracking-wider text-muted">
                     Trending Searches
                   </span>
@@ -517,32 +543,13 @@ export default function SearchBar() {
                     id={`search-item-${getItemIndex("trending", idx)}`}
                     type="button"
                     onClick={() => handleTrendingClick(term)}
-                    className={`flex w-full items-center gap-3 px-5 py-3.5 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
+                    className={`flex w-full items-center gap-3 px-5 py-3 text-left text-sm text-foreground transition-colors hover:bg-foreground/5 ${
                       activeIndex === getItemIndex("trending", idx) ? "bg-foreground/10" : ""
                     }`}
                     role="option"
                     aria-selected={activeIndex === getItemIndex("trending", idx)}
                   >
-                    <svg
-                      className="h-4 w-4 shrink-0 text-muted/70"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1.001A3.75 3.75 0 0012 18z"
-                      />
-                    </svg>
+                    <TrendingUp size={14} className="shrink-0 text-muted/70" aria-hidden="true" />
                     <span className="truncate">{term}</span>
                   </button>
                 ))}
@@ -564,20 +571,7 @@ export default function SearchBar() {
           aria-label={isListening ? "Stop voice search" : "Start voice search"}
           title={isListening ? "Stop listening" : "Voice search"}
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z"
-            />
-          </svg>
+          <Mic size={20} aria-hidden="true" />
         </button>
       )}
 
