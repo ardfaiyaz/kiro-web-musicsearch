@@ -1,11 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import HorizontalScroll from "@/app/components/HorizontalScroll";
 import GenreCard from "@/app/components/GenreCard";
 import DiscoveryMoodSelector from "@/app/components/DiscoveryMoodSelector";
 import RecommendationPanel from "@/app/components/RecommendationPanel";
+import BrowseByMood from "@/app/components/discover/BrowseByMood";
+import BrowseByDecade from "@/app/components/discover/BrowseByDecade";
+import BrowseByCountry from "@/app/components/discover/BrowseByCountry";
+import BrowseByActivity from "@/app/components/discover/BrowseByActivity";
+import BrowseByTheme from "@/app/components/discover/BrowseByTheme";
+import HiddenGems from "@/app/components/discover/HiddenGems";
+import PopularThisWeek from "@/app/components/discover/PopularThisWeek";
 import {
   getTrendingSongs,
   getNewReleases,
@@ -45,6 +53,18 @@ const EDITOR_PICKS = [
     gradient: "from-orange-500 to-red-700",
   },
 ];
+
+function LoadingSkeleton() {
+  return (
+    <div className="py-8" aria-busy="true" aria-label="Loading section">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="aspect-square rounded-2xl shimmer-wave" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default async function DiscoverPage() {
   const [trendingSongs, newReleases, topAlbums, moodRecs] = await Promise.all([
@@ -200,6 +220,11 @@ export default async function DiscoverPage() {
             </section>
           )}
 
+          {/* Popular This Week */}
+          <Suspense fallback={<LoadingSkeleton />}>
+            <PopularThisWeek />
+          </Suspense>
+
           {/* Trending Songs */}
           {trendingSongs.length > 0 && (
             <section aria-label="Trending songs" className="mb-16">
@@ -271,13 +296,33 @@ export default async function DiscoverPage() {
             </section>
           )}
 
-          {/* Discover by Mood */}
+          {/* Hidden Gems */}
+          <Suspense fallback={<LoadingSkeleton />}>
+            <HiddenGems />
+          </Suspense>
+
+          {/* Discover by Mood (existing interactive component) */}
           <section aria-label="Discover by mood" className="mb-16">
             <h3 className="mb-6 text-2xl font-bold text-foreground">
               Discover by Mood
             </h3>
             <DiscoveryMoodSelector />
           </section>
+
+          {/* Browse by Mood (link cards) */}
+          <BrowseByMood />
+
+          {/* Browse by Decade */}
+          <BrowseByDecade />
+
+          {/* Browse by Country */}
+          <BrowseByCountry />
+
+          {/* Browse by Activity */}
+          <BrowseByActivity />
+
+          {/* Browse by Theme */}
+          <BrowseByTheme />
 
           {/* New Releases */}
           {newReleases.length > 0 && (

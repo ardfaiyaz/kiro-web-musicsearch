@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Enhanced Discovery Page and Search - Expand the discover page (app/discover/page.tsx) with comprehensive browsing categories (genre, mood, decade, country, activity, theme), hidden gems section, popular this week, community favorites. Enhance search with advanced filters, search suggestions/history from lib/recent-searches.ts, trending searches, instant results dropdown, and fuzzy matching.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create lib/browse-categories.ts: Define category data for mood (happy, sad, energetic, calm, romantic, melancholic, upbeat, dark), decade (50s-2020s), country (US, UK, Japan, Korea, Latin, Africa, India, France), activity (workout, study, sleep, commute, cooking, gaming, meditation), theme (summer, winter, road trip, party, breakup, nostalgia). Each with name, gradient color, search query, and icon name (from Lucide).",
     "Create app/components/discover/BrowseByMood.tsx: Grid of mood cards with gradient backgrounds and Lucide icons, links to search with mood filter.",
