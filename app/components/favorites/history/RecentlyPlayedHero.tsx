@@ -116,6 +116,7 @@ export default function RecentlyPlayedHero({ history }: RecentlyPlayedHeroProps)
             src={lastPlayed.artworkUrl.replace("100x100", "600x600")}
             alt=""
             fill
+            sizes="100vw"
             className="object-cover opacity-30 blur-3xl scale-110"
             unoptimized
           />
@@ -162,6 +163,7 @@ export default function RecentlyPlayedHero({ history }: RecentlyPlayedHeroProps)
                 src={lastPlayed.artworkUrl.replace("100x100", "300x300")}
                 alt={`${lastPlayed.trackName} artwork`}
                 fill
+                sizes="(max-width: 640px) 112px, 144px"
                 className="object-cover"
                 unoptimized
               />

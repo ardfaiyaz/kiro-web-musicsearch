@@ -44,6 +44,7 @@ export default function TopSongsChart({ history }: TopSongsChartProps) {
                 src={song.artworkUrl.replace("100x100", "100x100")}
                 alt={`${song.trackName} artwork`}
                 fill
+                sizes="40px"
                 className="object-cover"
                 unoptimized
               />

@@ -137,6 +137,7 @@ export default function InsightsHero({ history }: InsightsHeroProps) {
             src={topAlbumArtwork.replace("100x100", "600x600")}
             alt=""
             fill
+            sizes="100vw"
             className="object-cover opacity-25 blur-3xl scale-110"
             unoptimized
           />

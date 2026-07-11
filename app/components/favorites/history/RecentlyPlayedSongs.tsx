@@ -98,6 +98,7 @@ export default function RecentlyPlayedSongs({ history, onRemove }: RecentlyPlaye
                   src={entry.artworkUrl}
                   alt=""
                   fill
+                  sizes="40px"
                   className="object-cover"
                   unoptimized
                   aria-hidden="true"
