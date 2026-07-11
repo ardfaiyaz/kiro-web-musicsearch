@@ -1,7 +1,8 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import SearchBar from "./components/SearchBar";
-import SearchFilters from "./components/SearchFilters";
+import SearchFilterChips from "./components/SearchFilterChips";
+import SearchResultsLayout from "./components/SearchResultsLayout";
+import AIDiscoveryPanel from "./components/AIDiscoveryPanel";
 import ArtistGrid from "./components/ArtistGrid";
 import AlbumGrid from "./components/AlbumGrid";
 import EmptyState from "./components/EmptyState";
@@ -9,8 +10,16 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import InfiniteScrollResults from "./components/InfiniteScrollResults";
+import HeroSection from "./components/HeroSection";
+import FeaturedArtistsCarousel from "./components/FeaturedArtistsCarousel";
+import TrendingSection from "./components/TrendingSection";
+import EditorialPicks from "./components/EditorialPicks";
+import NewReleasesGrid from "./components/NewReleasesGrid";
+import PersonalizedSection from "./components/PersonalizedSection";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { unifiedSearch } from "@/lib/music-service";
+import { getTrendingSongs, getNewReleases } from "@/lib/discovery";
+import { getRecommendationsByMood } from "@/lib/ai-discovery";
 import { ItunesTrack } from "@/lib/types";
 
 function filterByGenre(tracks: ItunesTrack[], genre: string): ItunesTrack[] {
@@ -79,6 +88,57 @@ function sortTracks(tracks: ItunesTrack[], sort: string): ItunesTrack[] {
     );
   }
   return tracks;
+}
+
+async function CategorizedResults({
+  query,
+  sort,
+  genre,
+  year,
+  explicit,
+}: {
+  query: string;
+  sort: string;
+  genre: string;
+  year: string;
+  explicit: string;
+}) {
+  const unified = await unifiedSearch(query);
+  let tracks = unified.tracks;
+
+  tracks = filterByGenre(tracks, genre);
+  tracks = filterByYear(tracks, year);
+  tracks = filterByExplicit(tracks, explicit);
+  tracks = sortTracks(tracks, sort);
+
+  if (tracks.length === 0 && unified.artists.length === 0 && unified.albums.length === 0) {
+    return <EmptyState query={query} />;
+  }
+
+  return (
+    <section aria-label="Search results" className="animate-fade-in">
+      <div className="mb-6 flex items-center gap-3">
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          Results for &ldquo;{query}&rdquo;
+        </h2>
+        {(unified.spotifyArtist || unified.spotifyAlbum) && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted">
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+            Multi-source
+          </span>
+        )}
+      </div>
+      <SearchResultsLayout
+        tracks={tracks}
+        artists={unified.artists}
+        albums={unified.albums}
+        spotifyArtist={unified.spotifyArtist}
+        query={query}
+      />
+    </section>
+  );
 }
 
 async function TrackResults({
@@ -200,6 +260,83 @@ function isValidSort(value: string): value is (typeof VALID_SORTS)[number] {
   return (VALID_SORTS as readonly string[]).includes(value);
 }
 
+/* Skeleton loading shimmer for editorial sections */
+function EditorialSkeleton() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8" aria-busy="true" aria-label="Loading content">
+      {/* Hero skeleton */}
+      <div className="mb-12 flex flex-col items-center gap-8 sm:flex-row sm:items-end sm:gap-12">
+        <div className="h-56 w-56 rounded-2xl shimmer-wave sm:h-64 sm:w-64" />
+        <div className="flex flex-col gap-4">
+          <div className="h-4 w-24 rounded shimmer-wave" />
+          <div className="h-10 w-64 rounded shimmer-wave" />
+          <div className="h-5 w-40 rounded shimmer-wave" />
+        </div>
+      </div>
+      {/* Grid skeleton */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex flex-col gap-3">
+            <div className="aspect-square rounded-2xl shimmer-wave" />
+            <div className="h-4 w-3/4 rounded shimmer-wave" />
+            <div className="h-3 w-1/2 rounded shimmer-wave" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+async function EditorialHomepage() {
+  const [trendingSongs, newReleases, moodRecs] = await Promise.all([
+    getTrendingSongs(),
+    getNewReleases(),
+    getRecommendationsByMood("chill"),
+  ]);
+
+  const heroSong = trendingSongs[0];
+
+  // Extract unique featured artists from trending songs
+  const featuredArtists = Array.from(
+    new Map(
+      trendingSongs.map((song) => [song.artistName, song])
+    ).values()
+  ).slice(0, 12);
+
+  return (
+    <>
+      {/* Hero Section */}
+      {heroSong && <HeroSection featured={heroSong} />}
+
+      {/* Featured Artists Carousel */}
+      {featuredArtists.length > 0 && (
+        <FeaturedArtistsCarousel artists={featuredArtists} />
+      )}
+
+      {/* Trending Section */}
+      {trendingSongs.length > 0 && (
+        <TrendingSection tracks={trendingSongs} />
+      )}
+
+      {/* Editorial Picks */}
+      <EditorialPicks />
+
+      {/* New Releases Grid */}
+      {newReleases.length > 0 && (
+        <NewReleasesGrid releases={newReleases} />
+      )}
+
+      {/* Personalized Recommendations */}
+      {moodRecs.tracks.length > 0 && (
+        <PersonalizedSection
+          initialTracks={moodRecs.tracks}
+          initialMood="chill"
+        />
+      )}
+    </>
+  );
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -224,97 +361,81 @@ export default async function Home({
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
-        {!query && (
-          <section
-            className="flex flex-col items-center justify-center gap-8 py-24 text-center sm:py-32 lg:py-40"
-            aria-label="Hero"
-          >
-            <div className="animate-slide-up">
-              <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Discover Music
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-lg text-muted sm:text-xl">
-                Search millions of songs, explore artists, and find your next
-                favorite track.
-              </p>
-            </div>
-            <div className="w-full max-w-2xl animate-fade-in">
-              <Suspense fallback={null}>
-                <SearchBar />
-              </Suspense>
-            </div>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm text-muted animate-fade-in">
-              <span>Try:</span>
-              <Link
-                href="/?q=Taylor+Swift"
-                className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground"
-              >
-                Taylor Swift
-              </Link>
-              <Link
-                href="/?q=The+Weeknd"
-                className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground"
-              >
-                The Weeknd
-              </Link>
-              <Link
-                href="/?q=Kendrick+Lamar"
-                className="rounded-full border border-border px-3 py-1 transition-premium hover:border-foreground/30 hover:text-foreground"
-              >
-                Kendrick Lamar
-              </Link>
-            </div>
-          </section>
-        )}
+      {/* Editorial homepage when no search query */}
+      {!query && (
+        <Suspense fallback={<EditorialSkeleton />}>
+          <EditorialHomepage />
+        </Suspense>
+      )}
 
-        {query && (
+      {/* Search experience when query is present */}
+      {query && (
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
           <section className="flex justify-center py-8" aria-label="Search">
             <Suspense fallback={null}>
               <SearchBar />
             </Suspense>
           </section>
-        )}
 
-        {query && (
           <section className="pb-4" aria-label="Filters">
             <Suspense fallback={null}>
-              <SearchFilters />
+              <SearchFilterChips />
             </Suspense>
           </section>
-        )}
 
-        {query && activeFilter === "artist" && (
-          <section className="mt-6 pb-12">
-            <Suspense fallback={<LoadingSpinner message="Searching for artists..." />}>
-              <ArtistResults query={query} />
-            </Suspense>
-          </section>
-        )}
+          {activeFilter === "all" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching across all categories..." />}>
+                <CategorizedResults
+                  query={query}
+                  sort={activeSort}
+                  genre={activeGenre}
+                  year={activeYear}
+                  explicit={activeExplicit}
+                />
+              </Suspense>
+            </section>
+          )}
 
-        {query && activeFilter === "album" && (
-          <section className="mt-6 pb-12">
-            <Suspense fallback={<LoadingSpinner message="Searching for albums..." />}>
-              <AlbumResults query={query} />
-            </Suspense>
-          </section>
-        )}
+          {activeFilter === "song" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching for songs..." />}>
+                <TrackResults
+                  query={query}
+                  filter={activeFilter}
+                  sort={activeSort}
+                  genre={activeGenre}
+                  year={activeYear}
+                  explicit={activeExplicit}
+                />
+              </Suspense>
+            </section>
+          )}
 
-        {query && (activeFilter === "all" || activeFilter === "song") && (
-          <section className="mt-6 pb-12">
-            <Suspense fallback={<LoadingSpinner message="Searching for music..." />}>
-              <TrackResults
-                query={query}
-                filter={activeFilter}
-                sort={activeSort}
-                genre={activeGenre}
-                year={activeYear}
-                explicit={activeExplicit}
-              />
+          {activeFilter === "artist" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching for artists..." />}>
+                <ArtistResults query={query} />
+              </Suspense>
+            </section>
+          )}
+
+          {activeFilter === "album" && (
+            <section className="mt-6 pb-8">
+              <Suspense fallback={<LoadingSpinner message="Searching for albums..." />}>
+                <AlbumResults query={query} />
+              </Suspense>
+            </section>
+          )}
+
+          {/* AI Discovery Panel */}
+          <section className="pb-12">
+            <Suspense fallback={null}>
+              <AIDiscoveryPanel query={query} />
             </Suspense>
           </section>
-        )}
-      </div>
+        </div>
+      )}
 
       <Footer />
     </div>
