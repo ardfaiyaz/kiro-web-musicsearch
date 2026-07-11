@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, RefreshCw, Music, Gem, TrendingUp } from "lucide-react";
@@ -32,15 +32,24 @@ export default function AIDiscoveryPanel({ query }: AIDiscoveryPanelProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [activeMood, setActiveMood] = useState("chill");
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchDiscovery = useCallback(async (mood: string) => {
+    // Abort any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setLoading(true);
     setError(false);
 
     try {
-      const searchTerm = `${mood} ${query}`;
       const response = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&media=music&entity=musicTrack&limit=8`
+        `/api/recommendations?mood=${encodeURIComponent(mood)}&query=${encodeURIComponent(query)}`,
+        { signal: controller.signal }
       );
 
       if (!response.ok) {
@@ -50,8 +59,7 @@ export default function AIDiscoveryPanel({ query }: AIDiscoveryPanelProps) {
       }
 
       const data = await response.json();
-      const results: DiscoveryTrack[] = data.results
-        .filter((r: { wrapperType: string }) => r.wrapperType === "track")
+      const results: DiscoveryTrack[] = (data.tracks || [])
         .slice(0, 6)
         .map(
           (r: {
@@ -59,19 +67,22 @@ export default function AIDiscoveryPanel({ query }: AIDiscoveryPanelProps) {
             trackName: string;
             artistName: string;
             artworkUrl100: string;
-            primaryGenreName: string;
+            primaryGenreName?: string;
           }) => ({
             trackId: r.trackId,
             trackName: r.trackName,
             artistName: r.artistName,
             artworkUrl100: r.artworkUrl100,
-            primaryGenreName: r.primaryGenreName,
+            primaryGenreName: r.primaryGenreName || "",
             reason: `${mood.charAt(0).toUpperCase() + mood.slice(1)} vibes related to "${query}"`,
           })
         );
 
       setTracks(results);
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
       setError(true);
       setTracks([]);
     } finally {
@@ -83,6 +94,12 @@ export default function AIDiscoveryPanel({ query }: AIDiscoveryPanelProps) {
     if (query) {
       fetchDiscovery(activeMood);
     }
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [query, activeMood, fetchDiscovery]);
 
   if (!query) return null;
