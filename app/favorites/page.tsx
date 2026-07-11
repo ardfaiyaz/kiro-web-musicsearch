@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import TrackGrid from "@/app/components/TrackGrid";
-import AlbumCard from "@/app/components/AlbumCard";
 import CollectionsManager from "@/app/components/CollectionsManager";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
+import FavoriteAlbumsPage from "@/app/components/favorites/albums/FavoriteAlbumsPage";
 
 type TabId = "songs" | "artists" | "albums" | "collections";
 
@@ -130,25 +130,7 @@ export default function FavoritesPage() {
               role="tabpanel"
               aria-label="Favorite albums"
             >
-              {favoriteAlbums.length === 0 ? (
-                <EmptyState
-                  icon={
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                    />
-                  }
-                  title="No favorite albums yet"
-                  description="Visit album pages and add them to your favorites to see them here."
-                />
-              ) : (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {favoriteAlbums.map((album) => (
-                    <AlbumCard key={album.collectionId} album={album} />
-                  ))}
-                </div>
-              )}
+              <FavoriteAlbumsPage />
             </div>
           )}
 
