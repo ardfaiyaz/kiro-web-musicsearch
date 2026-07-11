@@ -24,6 +24,12 @@ interface YouTubeSearchResponse {
 /**
  * Search for music videos on YouTube.
  * Returns an empty array if the API key is missing or on error.
+ *
+ * NOTE: The YouTube Data API v3 requires the API key as a URL query parameter.
+ * Header-based authentication is not supported for simple API keys. The key will
+ * appear in the request URL, which means it could be captured by error-reporting
+ * tools (e.g., Sentry, Datadog) that log request URLs. Ensure error reporters
+ * are configured to redact the `key` parameter from logged URLs in production.
  */
 export async function searchMusicVideos(
   query: string,
@@ -35,6 +41,7 @@ export async function searchMusicVideos(
 
   try {
     const encodedQuery = encodeURIComponent(`${query} official music video`);
+    // API key must be in URL - YouTube Data API v3 does not support header-based key auth
     const url = `${YOUTUBE_API_BASE}/search?part=snippet&q=${encodedQuery}&type=video&videoCategoryId=10&maxResults=${limit}&key=${YOUTUBE_API_KEY}`;
 
     const response = await fetch(url, { next: { revalidate: 3600 } });

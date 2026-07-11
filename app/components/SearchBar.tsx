@@ -96,22 +96,31 @@ export default function SearchBar() {
     abortControllerRef.current = controller;
 
     try {
-      // Fetch iTunes suggestions and Spotify artist in parallel
+      // Only fetch Spotify artist suggestions when query is 3+ characters
+      // to reduce quota pressure for very short/generic queries
+      const shouldFetchSpotify = term.trim().length >= 3;
+
       const [itunesRes, spotifyRes] = await Promise.allSettled([
         fetch(
           `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=musicTrack&limit=4`,
           { signal: controller.signal }
         ),
-        fetch(
-          `/api/spotify/artist?name=${encodeURIComponent(term)}`,
-          { signal: controller.signal }
-        ),
+        shouldFetchSpotify
+          ? fetch(
+              `/api/spotify/artist?name=${encodeURIComponent(term)}`,
+              { signal: controller.signal }
+            )
+          : Promise.resolve(null),
       ]);
 
       const results: Suggestion[] = [];
 
       // Add Spotify artist suggestion if available
-      if (spotifyRes.status === "fulfilled" && spotifyRes.value.ok) {
+      if (
+        spotifyRes.status === "fulfilled" &&
+        spotifyRes.value &&
+        spotifyRes.value.ok
+      ) {
         const spotifyData = await spotifyRes.value.json();
         if (spotifyData.artist) {
           results.push({

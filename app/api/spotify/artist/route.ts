@@ -12,6 +12,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Basic input validation to prevent abuse with excessively long queries
+  if (name.length > 200) {
+    return NextResponse.json(
+      { error: "name parameter must not exceed 200 characters" },
+      { status: 400 }
+    );
+  }
+
   try {
     const artist = await searchSpotifyArtist(name);
 

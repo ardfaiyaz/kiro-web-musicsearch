@@ -5,24 +5,17 @@ const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
 
 import type { SpotifyArtist, SpotifyAlbum, SpotifyTrack } from "./types";
 
-// Token cache
+// Token cache with in-flight promise to prevent race conditions under concurrency.
+// A single promise is shared among all concurrent callers so only one token request
+// is in flight at a time (thundering-herd prevention).
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0;
+let tokenPromise: Promise<string | null> | null = null;
 
 /**
- * Get a Spotify access token using the client_credentials flow.
- * Tokens are cached until expiry.
+ * Fetch a fresh token from Spotify (internal helper).
  */
-export async function getSpotifyAccessToken(): Promise<string | null> {
-  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
-    return null;
-  }
-
-  // Return cached token if still valid (with 60s buffer)
-  if (cachedToken && Date.now() < tokenExpiresAt - 60000) {
-    return cachedToken;
-  }
-
+async function fetchNewToken(): Promise<string | null> {
   try {
     const credentials = Buffer.from(
       `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
@@ -55,6 +48,31 @@ export async function getSpotifyAccessToken(): Promise<string | null> {
     console.error("Failed to get Spotify access token:", error);
     return null;
   }
+}
+
+/**
+ * Get a Spotify access token using the client_credentials flow.
+ * Tokens are cached until expiry. Concurrent callers share a single
+ * in-flight request to prevent race conditions in serverless environments.
+ */
+export async function getSpotifyAccessToken(): Promise<string | null> {
+  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+    return null;
+  }
+
+  // Return cached token if still valid (with 60s buffer)
+  if (cachedToken && Date.now() < tokenExpiresAt - 60000) {
+    return cachedToken;
+  }
+
+  // Deduplicate concurrent token requests with a shared promise
+  if (!tokenPromise) {
+    tokenPromise = fetchNewToken().finally(() => {
+      tokenPromise = null;
+    });
+  }
+
+  return tokenPromise;
 }
 
 /**

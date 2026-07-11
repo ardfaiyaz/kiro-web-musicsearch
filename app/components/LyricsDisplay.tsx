@@ -82,17 +82,20 @@ export default function LyricsDisplay({
     }
   }, [currentLine, isAutoScrolling]);
 
+  // Deterministic widths for loading skeleton to avoid hydration mismatches
+  const skeletonWidths = [75, 60, 85, 70, 65, 80, 55, 90];
+
   // Loading skeleton
   if (isLoading) {
     return (
       <section className="glass-stats p-6" aria-label="Lyrics loading">
         <h3 className="mb-4 text-lg font-bold text-foreground">Lyrics</h3>
         <div className="flex flex-col gap-3 py-4" aria-busy="true">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {skeletonWidths.map((width, i) => (
             <div
               key={i}
               className="h-4 animate-pulse rounded bg-surface"
-              style={{ width: `${60 + Math.random() * 30}%` }}
+              style={{ width: `${width}%` }}
               aria-hidden="true"
             />
           ))}

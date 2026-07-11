@@ -13,6 +13,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Basic input validation to prevent abuse with excessively long queries
+  if (query.length > 200) {
+    return NextResponse.json(
+      { error: "query parameter must not exceed 200 characters" },
+      { status: 400 }
+    );
+  }
+
   const limit = limitParam ? parseInt(limitParam, 10) : 5;
 
   if (isNaN(limit) || limit < 1 || limit > 20) {
