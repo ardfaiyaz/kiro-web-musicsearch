@@ -84,7 +84,7 @@ export default async function AlbumPage({
         />
 
         {/* Server-rendered sections */}
-        <AlbumCredits album={album} tracks={tracks} spotify={spotifyAlbum} />
+        <AlbumCredits album={album} tracks={tracks} />
 
         <AlbumDetails
           album={album}

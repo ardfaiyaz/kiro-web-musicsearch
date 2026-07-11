@@ -1,17 +1,15 @@
 import Link from "next/link";
-import { User, Building2 } from "lucide-react";
-import type { ItunesAlbum, ItunesTrack, SpotifyAlbum } from "@/lib/types";
+import { User } from "lucide-react";
+import type { ItunesAlbum, ItunesTrack } from "@/lib/types";
 
 interface AlbumCreditsProps {
   album: ItunesAlbum;
   tracks: ItunesTrack[];
-  spotify?: SpotifyAlbum;
 }
 
 export default function AlbumCredits({
   album,
   tracks,
-  spotify,
 }: AlbumCreditsProps) {
   // Extract featured artists from track names (artists different from album artist)
   const featuredArtists = [
@@ -72,20 +70,6 @@ export default function AlbumCredits({
           </div>
         ))}
 
-        {/* Record Label (from Spotify or iTunes metadata) */}
-        {spotify && (
-          <div className="glass-light flex items-center gap-4 rounded-2xl p-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-foreground/5">
-              <Building2 className="h-5 w-5 text-muted" aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {spotify.artistName}
-              </p>
-              <p className="text-xs text-muted">Distributed by</p>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

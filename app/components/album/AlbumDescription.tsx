@@ -28,10 +28,9 @@ export default function AlbumDescription({
                 expanded ? "max-h-[2000px]" : "max-h-24"
               }`}
             >
-              <p
-                className="text-sm leading-relaxed text-muted"
-                dangerouslySetInnerHTML={{ __html: description }}
-              />
+              <p className="text-sm leading-relaxed text-muted whitespace-pre-line">
+                {description}
+              </p>
               {!expanded && (
                 <div
                   className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-card to-transparent"

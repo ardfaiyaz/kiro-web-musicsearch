@@ -32,6 +32,18 @@ export default function AlbumHero({
 
   const previewCount = tracks.filter((t) => t.previewUrl).length;
 
+  // Derive genre count from unique genres across album and tracks
+  const uniqueGenres = new Set<string>();
+  if (album.primaryGenreName) {
+    uniqueGenres.add(album.primaryGenreName);
+  }
+  for (const track of tracks) {
+    if (track.primaryGenreName) {
+      uniqueGenres.add(track.primaryGenreName);
+    }
+  }
+  const genreCount = Math.max(uniqueGenres.size, 1);
+
   return (
     <>
       <section
@@ -92,8 +104,7 @@ export default function AlbumHero({
                   releaseYear={releaseYear}
                   trackCount={tracks.length}
                   totalDuration={totalDuration}
-                  popularity={spotify ? undefined : undefined}
-                  genreCount={1}
+                  genreCount={genreCount}
                   previewCount={previewCount}
                 />
               </div>
