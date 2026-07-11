@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Enhanced Music Player System - Upgrade the existing AudioPlayerContext, MiniPlayer, and ExpandedPlayer with premium features: shuffle/repeat modes, previous track, sleep timer, Media Session API, interactive progress bar with scrubbing visual feedback, animated volume slider, queue drag-and-drop reorder, lyrics display in expanded player, playback gestures (swipe on mini player), and keyboard shortcuts for playback (space=play/pause, left/right=seek, up/down=volume). Also add continue listening / smart resume from localStorage.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Enhance app/components/AudioPlayerContext.tsx: Add shuffle mode (boolean), repeat mode (off/one/all), previousTrack function (track history stack), sleepTimer (setTimeout-based countdown), playbackRate, and persist last played track to localStorage for smart resume. Add reorderQueue(fromIndex, toIndex) function.",
     "Create app/components/player/ProgressBar.tsx: Interactive progress bar with scrubbing - shows time tooltip on hover, wider hit area, smooth animated fill using the dynamic accent color from DynamicColorProvider, drag-to-seek.",
@@ -31,5 +31,5 @@
     "eval \"$(mise activate bash)\" && bun run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "React 19 compiler lint rules are extremely strict: cannot update refs during render, cannot call setState in effects synchronously, cannot modify module-level state during render. Solution was to use a signal-based pattern (endedCounter state) that increments in the audio ended event handler (which is allowed since it comes from an external system event callback), then an effect responds to the counter change. The eslint-disable-next-line comment was needed for the ended effect since it intentionally reads stale deps. Also fixed ContinueListening to use useSyncExternalStore instead of setState-in-useEffect."
 }
