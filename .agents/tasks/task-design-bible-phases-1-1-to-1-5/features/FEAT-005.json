@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-005",
+  "type": "refactor",
+  "description": "Phase 1.5 - Engineering, Accessibility and Performance: Add proper skip-to-content link, ensure all interactive elements have visible focus indicators meeting WCAG 2.2 AA, add focus-visible ring utility, audit and fix any missing alt text or ARIA labels, add proper meta viewport and color-scheme, and ensure responsive breakpoints are properly utilized. Fix the 2 existing lint warnings.",
+  "status": "pending",
+  "steps": [
+    "Fix the 2 existing lint warnings in app/components/SearchFilters.tsx (unused GENRE_OPTIONS and YEAR_OPTIONS variables - remove them or prefix with underscore if needed for future use)",
+    "Add a skip-to-content link as the first focusable element in app/layout.tsx body. It should be visually hidden but appear on focus. Link target: main content area with id='main-content'. Style: fixed top-left, bg-foreground text-background, rounded, z-[100].",
+    "Add a global focus-visible utility in globals.css: a .focus-ring class and a global *:focus-visible rule that adds a 2px ring offset with ring color of --primary or --foreground. This ensures all interactive elements have visible focus indicators per WCAG 2.2 AA.",
+    "In app/layout.tsx, add id='main-content' to the main content wrapper div (the div with className 'relative z-10 flex min-h-full flex-col'). Also add <meta name='color-scheme' content='light dark' /> in the head.",
+    "Audit and add aria-label to the main landmark elements. Ensure the <main> in app/page.tsx has role='main'. Ensure all pages' main content areas use <main> element with appropriate aria-label.",
+    "Add prefers-reduced-motion: reduce media query that disables all CSS animations and transitions universally (enhance the existing one which only targets some animations)",
+    "Run 'bun run lint' and 'bun run build' to confirm everything passes with 0 errors and 0 warnings"
+  ],
+  "acceptance_criteria": [
+    "bun run lint passes with 0 errors AND 0 warnings",
+    "Skip-to-content link is present and works on Tab press",
+    "All interactive elements have visible focus indicators (focus-visible ring)",
+    "color-scheme meta tag is present",
+    "main content has proper id for skip link target",
+    "prefers-reduced-motion disables all animations",
+    "bun run build passes"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-003",
+  "type": "refactor",
+  "description": "Phase 1.3 - Glassmorphism and Motion Design: Enhance the existing glass utility system to align with the 5-level glass hierarchy from the design bible. Add proper spring easing curves, page transition animations, scroll-triggered entrance animations, and standardize motion timing (150ms micro, 250ms standard, 350ms complex). Update existing glass classes to use the 5-level system (subtle, light, medium, heavy, ultra).",
+  "status": "pending",
+  "steps": [
+    "In app/globals.css, refine the existing glass utilities to clearly define 5 glass levels per the design bible: .glass-subtle (blur 4px, opacity 40%), .glass-light (blur 8px, opacity 55%), .glass-medium (blur 16px, opacity 70% - current .glass), .glass-heavy (blur 24px, opacity 80% - current .glass-elevated), .glass-ultra (blur 32px, opacity 90%). Keep existing class names as aliases/maps to the new levels so nothing breaks.",
+    "Add CSS custom properties for motion timing: --duration-micro (150ms), --duration-standard (250ms), --duration-complex (350ms), --duration-page (500ms). Add spring easing: --ease-spring (cubic-bezier(0.34, 1.56, 0.64, 1)), --ease-smooth (cubic-bezier(0.4, 0, 0.2, 1)), --ease-bounce (cubic-bezier(0.68, -0.55, 0.265, 1.55))",
+    "Add a .glass-lighting utility that adds a subtle top highlight gradient (simulating overhead lighting per the design bible lighting system)",
+    "Add scroll-triggered entrance animation utility classes: .animate-on-scroll-fade, .animate-on-scroll-slide-up, .animate-on-scroll-scale using CSS @keyframes with animation-timeline: view() for browsers that support it, with a graceful fallback",
+    "Add @keyframes for page transitions: pageEnter (fade + slide up 20px), pageExit (fade out + slide down 10px). Add .animate-page-enter class.",
+    "Update app/loading.tsx skeleton to use proper shimmer with the design bible's skeleton loading pattern (wave effect rather than just background animation)",
+    "Run 'bun run build' to confirm no regressions"
+  ],
+  "acceptance_criteria": [
+    "5 glass levels are defined in globals.css with proper blur/opacity/border values",
+    "Existing glass class names still work (backward compatible)",
+    "Motion timing tokens are defined as CSS custom properties",
+    "Spring easing curves are available as CSS custom properties",
+    "Scroll entrance animations are defined",
+    "Page transition keyframes are defined",
+    "bun run build passes",
+    "bun run lint passes with 0 errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

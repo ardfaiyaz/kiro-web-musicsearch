@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-004",
+  "type": "refactor",
+  "description": "Phase 1.4 - Component Design Language: Refactor the Header/NavBar to use Lucide React icons, add a proper Footer component, add a Toast notification system, and add a CommandPalette (Cmd+K) component. These are the key missing components from the design bible's 25-component specification that don't currently exist.",
+  "status": "pending",
+  "steps": [
+    "Refactor app/components/Header.tsx to replace all inline SVG icons with lucide-react icons (Search, Mic, BarChart3, ListMusic, Heart, Moon, Sun, ChevronLeft). Keep the same visual sizing and behavior. The nav items should use the lucide-react Icon component.",
+    "Create app/components/Footer.tsx as a proper reusable Footer component per the design bible: include brand name, navigation links (Search, Discover, Dashboard, Playlists, Favorites), a 'Powered by' section, and social/attribution links. Use glass-subtle styling with proper semantic HTML (footer element, nav for links). Use lucide-react icons (Music2, Github, ExternalLink).",
+    "Update app/page.tsx, app/discover/page.tsx, app/track/[id]/page.tsx, app/artist/[id]/page.tsx, and app/album/[id]/page.tsx to use the new Footer component instead of the inline footer elements.",
+    "Create app/components/Toast.tsx and app/components/ToastContext.tsx: Implement a toast notification system per the design bible. Toast types: success, error, warning, info. Auto-dismiss after 5 seconds with a progress bar. Position: bottom-right. Use glass-light styling with the appropriate color accents. Use lucide-react icons (CheckCircle2, XCircle, AlertTriangle, Info). Export a useToast() hook.",
+    "Create app/components/CommandPalette.tsx: Implement a Cmd+K command palette per the design bible. Use glass-heavy styling as a modal overlay. Include search input, recent searches from lib/recent-searches.ts, quick actions (toggle theme, go to pages). Use lucide-react icons (Search, Command, ArrowRight, Moon, Sun, Home, Compass, BarChart3). Close on Escape or click outside. Animate with scale-in. Must be keyboard navigable (arrow keys, Enter to select).",
+    "Add CommandPalette and ToastProvider to app/layout.tsx (wrap around children, add KeyboardShortcuts integration for Cmd+K)",
+    "Run 'bun run build' to confirm no regressions"
+  ],
+  "acceptance_criteria": [
+    "Header uses lucide-react icons instead of inline SVGs",
+    "Footer component exists and is used across all main pages",
+    "Toast system works with useToast() hook providing show/dismiss methods",
+    "CommandPalette opens on Cmd+K (or Ctrl+K), is keyboard navigable, and allows theme toggle and page navigation",
+    "All new components use proper semantic HTML and ARIA attributes",
+    "bun run build passes",
+    "bun run lint passes with 0 errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
