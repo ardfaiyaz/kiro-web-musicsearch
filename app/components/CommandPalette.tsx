@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -37,68 +37,72 @@ export default function CommandPalette() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
-  const quickActions: QuickAction[] = [
-    {
-      id: "home",
-      label: "Go to Home",
-      icon: Home,
-      description: "Navigate to the homepage",
-      action: () => {
-        router.push("/");
-        setIsOpen(false);
+  const quickActions: QuickAction[] = useMemo(
+    () => [
+      {
+        id: "home",
+        label: "Go to Home",
+        icon: Home,
+        description: "Navigate to the homepage",
+        action: () => {
+          router.push("/");
+          setIsOpen(false);
+        },
       },
-    },
-    {
-      id: "discover",
-      label: "Go to Discover",
-      icon: Compass,
-      description: "Explore trending music",
-      action: () => {
-        router.push("/discover");
-        setIsOpen(false);
+      {
+        id: "discover",
+        label: "Go to Discover",
+        icon: Compass,
+        description: "Explore trending music",
+        action: () => {
+          router.push("/discover");
+          setIsOpen(false);
+        },
       },
-    },
-    {
-      id: "dashboard",
-      label: "Go to Dashboard",
-      icon: BarChart3,
-      description: "View your dashboard",
-      action: () => {
-        router.push("/dashboard");
-        setIsOpen(false);
+      {
+        id: "dashboard",
+        label: "Go to Dashboard",
+        icon: BarChart3,
+        description: "View your dashboard",
+        action: () => {
+          router.push("/dashboard");
+          setIsOpen(false);
+        },
       },
-    },
-    {
-      id: "playlists",
-      label: "Go to Playlists",
-      icon: ListMusic,
-      description: "Manage your playlists",
-      action: () => {
-        router.push("/playlists");
-        setIsOpen(false);
+      {
+        id: "playlists",
+        label: "Go to Playlists",
+        icon: ListMusic,
+        description: "Manage your playlists",
+        action: () => {
+          router.push("/playlists");
+          setIsOpen(false);
+        },
       },
-    },
-    {
-      id: "favorites",
-      label: "Go to Favorites",
-      icon: Heart,
-      description: "View your favorites",
-      action: () => {
-        router.push("/favorites");
-        setIsOpen(false);
+      {
+        id: "favorites",
+        label: "Go to Favorites",
+        icon: Heart,
+        description: "View your favorites",
+        action: () => {
+          router.push("/favorites");
+          setIsOpen(false);
+        },
       },
-    },
-    {
-      id: "toggle-theme",
-      label: theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode",
-      icon: theme === "dark" ? Sun : Moon,
-      description: "Toggle the color theme",
-      action: () => {
-        toggleTheme();
-        setIsOpen(false);
+      {
+        id: "toggle-theme",
+        label:
+          theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode",
+        icon: theme === "dark" ? Sun : Moon,
+        description: "Toggle the color theme",
+        action: () => {
+          toggleTheme();
+          setIsOpen(false);
+        },
       },
-    },
-  ];
+    ],
+    [router, theme, toggleTheme]
+  );
 
   // Filter actions and recent searches based on query
   const filteredActions = query

@@ -155,6 +155,12 @@ html.dark {
 }
 
 @theme inline {
+  /*
+   * NOTE: Tailwind CSS 4's @theme inline does not support var() references for
+   * font sizes, radii, and shadows due to self-referencing constraints.
+   * These values MUST be duplicated as literals here AND in the :root block above.
+   * When updating a design token, change it in BOTH locations.
+   */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -633,6 +639,27 @@ html.reduce-motion .animate-page-exit {
 }
 
 /* ===== Design Bible - 5-Level Glass Hierarchy ===== */
+/*
+ * Glass Utility Mapping
+ * ---------------------
+ * The project maintains two sets of glass classes for backward compatibility.
+ * New code should prefer the 5-level system below.
+ *
+ * Level 1 (glass-subtle)  - Background elements, ambient surfaces
+ *   Legacy equivalents: glass-stats, glass-settings, glass-recommendation
+ *
+ * Level 2 (glass-light)   - Cards, secondary containers
+ *   Legacy equivalents: glass, glass-card, glass-search, glass-tooltip, glass-sidebar
+ *
+ * Level 3 (glass-medium)  - Navigation, prominent containers
+ *   Legacy equivalents: glass-elevated, glass-dropdown, glass-fab, glass-player
+ *
+ * Level 4 (glass-heavy)   - Elevated panels, dropdowns, command palettes
+ *   Legacy equivalents: (none - new tier)
+ *
+ * Level 5 (glass-ultra)   - Modals, dialogs, hero overlays
+ *   Legacy equivalents: glass-dialog
+ */
 
 /* Level 1: Subtle - Background elements, ambient surfaces */
 .glass-subtle {

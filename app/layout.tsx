@@ -73,10 +73,12 @@ export default function RootLayout({
                     <ToastProvider>
                       <AmbientBackground />
                       <CustomCursorWrapper />
-                      <div id="main-content" className="relative z-10 flex min-h-full flex-col">
+                      <div className="relative z-10 flex min-h-full flex-col">
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
-                        {children}
+                        <div id="main-content" tabIndex={-1}>
+                          {children}
+                        </div>
                         <MiniPlayer />
                         <SettingsFab />
                         <KeyboardShortcuts />
