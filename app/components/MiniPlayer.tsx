@@ -102,6 +102,7 @@ export default function MiniPlayer() {
       <ExpandedPlayer />
       {!isExpanded && (
         <aside
+          id="mini-player"
           aria-label="Mini player"
           className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-player shadow-2xl transition-premium"
           onTouchStart={handleTouchStart}
@@ -114,6 +115,12 @@ export default function MiniPlayer() {
                 : undefined,
           }}
         >
+          {/* Screen reader announcement for track changes */}
+          <div className="sr-only" aria-live="polite" aria-atomic="true">
+            {trackName && artistName
+              ? `Now playing: ${trackName} by ${artistName}`
+              : ""}
+          </div>
           {/* Progress bar at top */}
           <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden rounded-t-2xl bg-foreground/10">
             <div

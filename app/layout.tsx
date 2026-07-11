@@ -15,6 +15,7 @@ import { ToastProvider } from "./components/ToastContext";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
+import SkipLinks from "./components/ui/SkipLinks";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -58,12 +59,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only fixed left-4 top-4 z-[100] rounded bg-foreground px-4 py-2 text-background focus:outline-none"
-        >
-          Skip to content
-        </a>
+        <SkipLinks />
         <ThemeProvider>
           <SettingsProvider>
             <AudioPlayerProvider>

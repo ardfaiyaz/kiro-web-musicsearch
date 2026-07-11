@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ItunesTrack } from "@/lib/types";
@@ -12,7 +13,7 @@ function formatDuration(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-export default function TrackCard({ track }: { track: ItunesTrack }) {
+function TrackCardBase({ track }: { track: ItunesTrack }) {
   const { isFavorite } = useFavorites();
   const favorited = isFavorite(track.trackId);
   const artworkUrl = track.artworkUrl100?.replace("100x100", "200x200");
@@ -76,3 +77,6 @@ export default function TrackCard({ track }: { track: ItunesTrack }) {
     </Link>
   );
 }
+
+const TrackCard = memo(TrackCardBase);
+export default TrackCard;
