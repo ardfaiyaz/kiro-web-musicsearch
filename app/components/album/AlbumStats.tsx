@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Calendar, Music, Clock, TrendingUp, Tag, Headphones } from "lucide-react";
+import { Calendar, Music, Clock, Tag, Headphones } from "lucide-react";
 
 interface AlbumStatsProps {
   releaseYear: string | null;
   trackCount: number;
   totalDuration: string;
-  popularity?: number;
   genreCount: number;
   previewCount: number;
 }
@@ -68,7 +67,6 @@ export default function AlbumStats({
   releaseYear,
   trackCount,
   totalDuration,
-  popularity,
   genreCount,
   previewCount,
 }: AlbumStatsProps) {
@@ -91,17 +89,6 @@ export default function AlbumStats({
       value: totalDuration,
       isNumeric: false,
     },
-    ...(popularity !== undefined
-      ? [
-          {
-            icon: TrendingUp,
-            label: "Popularity",
-            value: popularity,
-            isNumeric: true,
-            suffix: "%",
-          },
-        ]
-      : []),
     {
       icon: Tag,
       label: "Genres",
