@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "refactor",
   "description": "Phase 1.2 - Global Design System: Update globals.css with the complete design token system from the Product Design Bible. Add proper typography scale (display/heading/body/caption sizes), 8-point grid spacing tokens, expanded color palette tokens (primary, secondary, success, warning, error, info), proper border-radius tokens (xs through full), elevation/shadow tokens (5 levels), and update the @theme inline block to expose all new tokens to Tailwind.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Update app/globals.css :root and html.dark CSS custom properties to add the full design bible color token set: --primary (brand indigo #6366f1), --primary-hover, --secondary, --success (#22c55e), --warning (#eab308), --error (#ef4444), --info (#3b82f6), --text-primary, --text-secondary, --text-tertiary, --text-inverse",
     "Add typography CSS custom properties for the type scale: --font-size-display-lg (4.5rem), --font-size-display-md (3.75rem), --font-size-display-sm (3rem), --font-size-h1 (2.25rem), --font-size-h2 (1.875rem), --font-size-h3 (1.5rem), --font-size-h4 (1.25rem), --font-size-body-lg (1.125rem), --font-size-body (1rem), --font-size-body-sm (0.875rem), --font-size-caption (0.75rem), --font-size-overline (0.625rem). Add corresponding line-height and letter-spacing tokens.",
