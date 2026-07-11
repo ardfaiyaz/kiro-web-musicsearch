@@ -178,6 +178,7 @@ function TimelineItem({ entry, now }: { entry: HistoryEntry; now: number }) {
           src={entry.artworkUrl.replace("100x100", "100x100")}
           alt=""
           fill
+          sizes="40px"
           className="object-cover"
           unoptimized
           aria-hidden="true"

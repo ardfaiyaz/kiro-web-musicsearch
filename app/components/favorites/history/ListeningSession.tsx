@@ -96,6 +96,7 @@ export default function ListeningSession({ history }: ListeningSessionProps) {
                       src={entry.artworkUrl}
                       alt=""
                       fill
+                      sizes="40px"
                       className="object-cover"
                       unoptimized
                     />

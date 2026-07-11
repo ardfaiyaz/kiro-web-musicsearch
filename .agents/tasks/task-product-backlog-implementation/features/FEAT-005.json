@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "chore",
   "description": "Final Polish Pass - Theme consistency, layout shift fixes, hydration safety, consistent design tokens usage across all components, and integration testing of the full user flow. Ensure glass blur is consistent, border-radius matches design system, shadows use token values, spacing follows 8-point grid, typography uses scale tokens, icon sizes are consistent, animation timing matches motion tokens, and loading states are consistent. Fix any remaining build/lint issues.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Audit and fix theme consistency: Scan all components for hardcoded colors (not using CSS variables) and replace with design token references. Ensure dark mode works correctly on all new components from FEAT-001 through FEAT-004.",
     "Fix potential hydration issues: Audit components that read localStorage or window on initial render. Ensure they use useSyncExternalStore or useEffect patterns (not useState with localStorage in initializer). The ThemeContext, SettingsContext already do this correctly - verify new components follow same pattern.",
