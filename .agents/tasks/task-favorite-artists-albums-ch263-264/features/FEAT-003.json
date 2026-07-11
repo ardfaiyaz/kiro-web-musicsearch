@@ -1,0 +1,49 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Chapter 2.6.5 - Recently Played & Continue Listening Experience. Create a new 'History' tab (or dedicated section) in the favorites/library page with a premium listening timeline, continue listening cards, session grouping, listening statistics, insights, search/filter, and recommendations. Extends existing recently-played localStorage infrastructure in lib/personalization.ts.",
+  "status": "completed",
+  "steps": [
+    "Create app/components/favorites/history/ directory for all new components",
+    "Extend lib/personalization.ts - Add playback progress tracking: store playbackPosition, completionPercentage, lastPlayedAt, sessionId per track. Add helper functions: getListeningHistory(), addHistoryEntry(), removeHistoryEntry(), clearHistory(), getPlaybackProgress(), updatePlaybackProgress(), getListeningSessions(). Use a new localStorage key 'music-search-listening-history'",
+    "Update the FavoritesContext or PersonalizationContext to expose listeningHistory state with the same useSyncExternalStore pattern used for favorites",
+    "Create RecentlyPlayedHero.tsx - Glass Level 5 hero: last played song artwork as blurred background with gradient, listening streak display, hours played this week, quick resume button for last unfinished track",
+    "Create ContinueListening.tsx - Featured section showing unfinished tracks (completion < 100%) with: artwork, song title, artist, album, progress bar showing completion percentage, time remaining, resume button, dismiss button. Glass Level 4 card styling. Always appears first when items exist",
+    "Create ListeningTimeline.tsx - Group entries by: Today, Yesterday, This Week, Last Week, This Month, Older. Sticky date headers. Each item shows: artwork, song, artist, album, time played, duration, progress. Collapsible groups",
+    "Create ListeningSession.tsx - Groups consecutive plays (within 30 min gap) into sessions showing: session duration, songs played, artists, album artwork stack",
+    "Create RecentlyPlayedSongs.tsx - List of recent songs with: artwork, song, artist, album, duration, played time, progress bar, resume/play button, favorite toggle, remove button",
+    "Create RecentlyPlayedAlbums.tsx - Albums derived from recently played tracks: album artwork, album name, artist, tracks played count, completion percentage bar, resume album button, open album link",
+    "Create RecentlyPlayedArtists.tsx - Artists derived from recently played: portrait, artist name, songs played count, listening time, genres, open artist link",
+    "Create HistorySearch.tsx - Instant search with 150ms debounce across song, artist, album, genre",
+    "Create HistoryFilters.tsx - Filter by: Today, This Week, This Month, Songs/Albums/Artists, Completed/Incomplete, Favorites, Genre",
+    "Create HistoryStatistics.tsx - Animated counters: Songs Played, Albums Played, Artists, Listening Sessions, Hours Listened, Average Session Duration, Favorite Genre, Most Played Artist",
+    "Create ListeningInsights.tsx - Display insights like 'You listened for X hours this week', 'Most Played Artist: Y', 'Favorite Genre: Z', 'Longest Session: N minutes'. Glass-light cards",
+    "Create HistoryRecommendations.tsx - Smart recs based on listening history: Continue Listening, Related Albums, Similar Songs, using existing recommendation patterns",
+    "Create RecentlyPlayedSkeleton.tsx - Progressive loading skeleton",
+    "Create EmptyHistory.tsx - Premium empty state: illustration, 'You haven\\'t listened to anything yet', buttons (Browse Music, Trending Songs, Popular Artists)",
+    "Add a 'History' tab to app/favorites/page.tsx alongside songs/artists/albums/collections",
+    "Ensure full keyboard navigation, ARIA labels, semantic HTML, focus-visible, touch targets >= 44px",
+    "Responsive: desktop shows timeline + sidebar layout, tablet responsive timeline, mobile vertical timeline with sticky resume card and bottom sheet filters"
+  ],
+  "acceptance_criteria": [
+    "History tab appears in favorites page tab navigation",
+    "Hero section renders with dynamic background from last played artwork",
+    "Continue Listening section shows unfinished tracks with progress bars",
+    "Listening timeline groups entries by date period with sticky headers",
+    "Session grouping clusters consecutive plays",
+    "Statistics display with animated counters",
+    "Search filters history entries in real-time",
+    "Filter chips work for time periods and content types",
+    "Empty state renders when no history exists",
+    "Loading skeleton appears during hydration",
+    "Remove and clear history functions work correctly",
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful compilation"
+  ],
+  "blocked_reason": null,
+  "findings": "1. React 19 react-hooks/purity rule strictly prevents Date.now() anywhere inside component render paths including useMemo callbacks - fixed by using useSyncExternalStore(subscribeNoop, getClientNow, getServerNow) pattern to obtain stable timestamp. 2. react-hooks/refs rule prevents accessing ref.current during render - must use useSyncExternalStore instead of useRef for values needed during render. 3. The useSyncExternalStore with subscribeNoop pattern works for both hydration detection (returns true on client, false on server) and for obtaining client-side timestamps safely. 4. The PersonalizationContext now exports listeningHistory, addHistoryEntry, removeHistoryEntry, clearHistory alongside existing favorites state. 5. PERSONALIZATION_STORAGE_KEYS.listeningHistory key is 'music-search-listening-history' for cross-tab sync."
+}
