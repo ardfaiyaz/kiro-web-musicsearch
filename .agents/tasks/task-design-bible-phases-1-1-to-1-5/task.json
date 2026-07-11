@@ -9,6 +9,6 @@
     "tests": "pass",
     "test_quality": "pass",
     "docker_build": "skipped",
-    "summary": "bun run lint passes with 0 errors and 0 warnings. bun run build succeeds with all 14 pages compiled and generated successfully. No test framework configured so lint serves as the quality gate."
+    "summary": "bun run lint passes with 0 errors and 0 warnings. bun run build succeeds with all 14 pages compiled and generated successfully. No test framework configured so lint serves as the quality gate. v2 review issues fixed: skip-link now targets a <main> landmark, unconditional animate transition override removed."
   }
 }
