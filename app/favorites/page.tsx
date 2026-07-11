@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import TrackGrid from "@/app/components/TrackGrid";
-import ArtistCard from "@/app/components/ArtistCard";
 import AlbumCard from "@/app/components/AlbumCard";
 import CollectionsManager from "@/app/components/CollectionsManager";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
 
 type TabId = "songs" | "artists" | "albums" | "collections";
 
@@ -119,25 +119,7 @@ export default function FavoritesPage() {
               role="tabpanel"
               aria-label="Favorite artists"
             >
-              {favoriteArtists.length === 0 ? (
-                <EmptyState
-                  icon={
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                    />
-                  }
-                  title="No favorite artists yet"
-                  description="Visit artist pages and add them to your favorites to see them here."
-                />
-              ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {favoriteArtists.map((artist) => (
-                    <ArtistCard key={artist.artistId} artist={artist} />
-                  ))}
-                </div>
-              )}
+              <FavoriteArtistsPage />
             </div>
           )}
 
