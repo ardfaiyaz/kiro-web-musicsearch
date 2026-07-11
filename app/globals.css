@@ -238,6 +238,18 @@ html.dark {
   transition-timing-function: ease;
 }
 
+/* ===== Design Bible - Focus Visible Indicators (WCAG 2.2 AA) ===== */
+
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.focus-ring {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 [class*="animate-"] {
   transition: none;
 }
@@ -246,7 +258,12 @@ html.dark {
   *,
   *::before,
   *::after {
-    transition-duration: 0ms;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
