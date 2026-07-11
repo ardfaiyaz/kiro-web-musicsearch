@@ -50,6 +50,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <meta name="color-scheme" content="light dark" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&!window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();`,
@@ -57,6 +58,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only fixed left-4 top-4 z-[100] rounded bg-foreground px-4 py-2 text-background focus:outline-none"
+        >
+          Skip to content
+        </a>
         <ThemeProvider>
           <SettingsProvider>
             <AudioPlayerProvider>
@@ -66,7 +73,7 @@ export default function RootLayout({
                     <ToastProvider>
                       <AmbientBackground />
                       <CustomCursorWrapper />
-                      <div className="relative z-10 flex min-h-full flex-col">
+                      <div id="main-content" className="relative z-10 flex min-h-full flex-col">
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
                         {children}

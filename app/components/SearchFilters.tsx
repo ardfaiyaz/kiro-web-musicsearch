@@ -17,32 +17,7 @@ const SORT_OPTIONS = [
   { value: "albumName", label: "Album Name" },
 ] as const;
 
-const GENRE_OPTIONS = [
-  { value: "", label: "All Genres" },
-  { value: "Pop", label: "Pop" },
-  { value: "Rock", label: "Rock" },
-  { value: "Hip-Hop/Rap", label: "Hip-Hop" },
-  { value: "Electronic", label: "Electronic" },
-  { value: "Jazz", label: "Jazz" },
-  { value: "Classical", label: "Classical" },
-  { value: "Country", label: "Country" },
-  { value: "R&B/Soul", label: "R&B" },
-  { value: "Alternative", label: "Alternative" },
-  { value: "Indie", label: "Indie" },
-] as const;
 
-const YEAR_OPTIONS = [
-  { value: "", label: "All Years" },
-  { value: "2024", label: "2024" },
-  { value: "2023", label: "2023" },
-  { value: "2022", label: "2022" },
-  { value: "2020s", label: "2020-2021" },
-  { value: "2010s", label: "2010s" },
-  { value: "2000s", label: "2000s" },
-  { value: "1990s", label: "1990s" },
-  { value: "1980s", label: "1980s" },
-  { value: "older", label: "Before 1980" },
-] as const;
 
 export default function SearchFilters() {
   const router = useRouter();
