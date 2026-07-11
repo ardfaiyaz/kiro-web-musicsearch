@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -13,45 +13,41 @@ const NAV_ITEMS = [
   { id: "about", label: "About" },
 ] as const;
 
-function useScrollPosition() {
-  const subscribe = (callback: () => void) => {
-    window.addEventListener("scroll", callback, { passive: true });
-    return () => window.removeEventListener("scroll", callback);
-  };
-  const getSnapshot = () => window.scrollY;
-  const getServerSnapshot = () => 0;
-
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-}
-
 export default function ArtistNav() {
-  const scrollY = useScrollPosition();
   const [activeSection, setActiveSection] = useState<string>("overview");
-  const isVisible = scrollY > 500;
+  const [isVisible, setIsVisible] = useState(false);
+  const activeSectionRef = useRef<string>("overview");
+  const isVisibleRef = useRef(false);
+
+  const handleScroll = useCallback(() => {
+    const scrollPos = window.scrollY;
+
+    const nextVisible = scrollPos > 500;
+    if (nextVisible !== isVisibleRef.current) {
+      isVisibleRef.current = nextVisible;
+      setIsVisible(nextVisible);
+    }
+
+    const offset = scrollPos + 200;
+    let nextSection = "overview";
+    for (let i = NAV_ITEMS.length - 1; i >= 0; i--) {
+      const element = document.getElementById(NAV_ITEMS[i].id);
+      if (element && element.offsetTop <= offset) {
+        nextSection = NAV_ITEMS[i].id;
+        break;
+      }
+    }
+
+    if (nextSection !== activeSectionRef.current) {
+      activeSectionRef.current = nextSection;
+      setActiveSection(nextSection);
+    }
+  }, []);
 
   useEffect(() => {
-    const sections = NAV_ITEMS.map((item) => ({
-      id: item.id,
-      element: document.getElementById(item.id),
-    }));
-
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 200;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section.element && section.element.offsetTop <= scrollPos) {
-          setActiveSection(section.id);
-          break;
-        }
-      }
-    };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);

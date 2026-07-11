@@ -21,10 +21,12 @@ export default function ArtistVideos({ query }: ArtistVideosProps) {
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function fetchVideos() {
       setIsLoading(true);
+      setError(false);
       try {
         const response = await fetch(
           `/api/youtube?query=${encodeURIComponent(query)}&limit=8`
@@ -32,9 +34,11 @@ export default function ArtistVideos({ query }: ArtistVideosProps) {
         if (response.ok) {
           const data = await response.json();
           setVideos(data.videos || []);
+        } else {
+          setError(true);
         }
       } catch {
-        // Gracefully handle error
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -43,7 +47,7 @@ export default function ArtistVideos({ query }: ArtistVideosProps) {
     fetchVideos();
   }, [query]);
 
-  if (!isLoading && videos.length === 0) {
+  if (!isLoading && !error && videos.length === 0) {
     return null;
   }
 
@@ -74,6 +78,16 @@ export default function ArtistVideos({ query }: ArtistVideosProps) {
               </div>
             ))}
           </div>
+        </div>
+      ) : error ? (
+        <div
+          className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-surface/50 py-12 text-center"
+          role="alert"
+        >
+          <Play className="h-8 w-8 text-muted" aria-hidden="true" />
+          <p className="text-sm text-muted">
+            Unable to load videos. Please try again later.
+          </p>
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
