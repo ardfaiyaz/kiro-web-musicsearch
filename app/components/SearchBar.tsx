@@ -18,6 +18,8 @@ interface Suggestion {
   trackId: number;
   trackName: string;
   artistName: string;
+  type: "track" | "artist";
+  imageUrl?: string;
 }
 
 const TRENDING_SEARCHES = [
@@ -94,21 +96,50 @@ export default function SearchBar() {
     abortControllerRef.current = controller;
 
     try {
-      const res = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=musicTrack&limit=5`,
-        { signal: controller.signal }
-      );
-      if (!res.ok) return;
-      const data = await res.json();
-      const results: Suggestion[] = data.results
-        .filter((r: { wrapperType: string }) => r.wrapperType === "track")
-        .slice(0, 5)
-        .map((r: { trackId: number; trackName: string; artistName: string }) => ({
-          trackId: r.trackId,
-          trackName: r.trackName,
-          artistName: r.artistName,
-        }));
-      setSuggestions(results);
+      // Fetch iTunes suggestions and Spotify artist in parallel
+      const [itunesRes, spotifyRes] = await Promise.allSettled([
+        fetch(
+          `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=musicTrack&limit=4`,
+          { signal: controller.signal }
+        ),
+        fetch(
+          `/api/spotify/artist?name=${encodeURIComponent(term)}`,
+          { signal: controller.signal }
+        ),
+      ]);
+
+      const results: Suggestion[] = [];
+
+      // Add Spotify artist suggestion if available
+      if (spotifyRes.status === "fulfilled" && spotifyRes.value.ok) {
+        const spotifyData = await spotifyRes.value.json();
+        if (spotifyData.artist) {
+          results.push({
+            trackId: -1,
+            trackName: spotifyData.artist.name,
+            artistName: spotifyData.artist.name,
+            type: "artist",
+            imageUrl: spotifyData.artist.images?.[0]?.url ?? undefined,
+          });
+        }
+      }
+
+      // Add iTunes track suggestions
+      if (itunesRes.status === "fulfilled" && itunesRes.value.ok) {
+        const data = await itunesRes.value.json();
+        const tracks: Suggestion[] = data.results
+          .filter((r: { wrapperType: string }) => r.wrapperType === "track")
+          .slice(0, 4)
+          .map((r: { trackId: number; trackName: string; artistName: string }) => ({
+            trackId: r.trackId,
+            trackName: r.trackName,
+            artistName: r.artistName,
+            type: "track" as const,
+          }));
+        results.push(...tracks);
+      }
+
+      setSuggestions(results.slice(0, 5));
       setActiveIndex(-1);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
@@ -158,7 +189,9 @@ export default function SearchBar() {
   }
 
   function handleSuggestionClick(suggestion: Suggestion) {
-    const term = `${suggestion.trackName} ${suggestion.artistName}`;
+    const term = suggestion.type === "artist"
+      ? suggestion.artistName
+      : `${suggestion.trackName} ${suggestion.artistName}`;
     setQuery(term);
     performSearch(term);
   }
@@ -184,7 +217,8 @@ export default function SearchBar() {
 
     if (query.trim() && suggestions.length > 0) {
       suggestions.forEach((s) => {
-        items.push({ type: "suggestion", value: `${s.trackName} ${s.artistName}`, data: s });
+        const value = s.type === "artist" ? s.artistName : `${s.trackName} ${s.artistName}`;
+        items.push({ type: "suggestion", value, data: s });
       });
     } else if (!query.trim()) {
       recentSearches.forEach((r) => {
@@ -334,7 +368,7 @@ export default function SearchBar() {
             {showSuggestions &&
               suggestions.map((s, idx) => (
                 <button
-                  key={s.trackId}
+                  key={`${s.type}-${s.trackId}-${idx}`}
                   id={`search-item-${idx}`}
                   type="button"
                   onClick={() => handleSuggestionClick(s)}
@@ -344,22 +378,59 @@ export default function SearchBar() {
                   role="option"
                   aria-selected={activeIndex === idx}
                 >
-                  <svg
-                    className="h-4 w-4 shrink-0 text-muted"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                  <span className="truncate font-medium">{s.trackName}</span>
-                  <span className="truncate text-muted">- {s.artistName}</span>
+                  {s.type === "artist" && s.imageUrl ? (
+                    <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-border">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={s.imageUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </span>
+                  ) : s.type === "artist" ? (
+                    <svg
+                      className="h-4 w-4 shrink-0 text-muted"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-4 w-4 shrink-0 text-muted"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  )}
+                  {s.type === "artist" ? (
+                    <>
+                      <span className="truncate font-medium">{s.artistName}</span>
+                      <span className="shrink-0 rounded-full border border-border px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                        Artist
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="truncate font-medium">{s.trackName}</span>
+                      <span className="truncate text-muted">- {s.artistName}</span>
+                    </>
+                  )}
                 </button>
               ))}
 
