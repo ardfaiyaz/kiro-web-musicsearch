@@ -12,6 +12,7 @@ import LyricsDisplay from "@/app/components/LyricsDisplay";
 import VideoSection from "@/app/components/VideoSection";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import ShareMenu from "@/app/components/ShareMenu";
 
 function formatDuration(ms: number): string {
@@ -260,9 +261,7 @@ export default async function TrackPage({
         </div>
       </main>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

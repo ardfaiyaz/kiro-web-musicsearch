@@ -10,6 +10,8 @@ import AmbientBackground from "./components/AmbientBackground";
 import MiniPlayer from "./components/MiniPlayer";
 import SettingsFab from "./components/SettingsFab";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
+import CommandPalette from "./components/CommandPalette";
+import { ToastProvider } from "./components/ToastContext";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
@@ -61,16 +63,19 @@ export default function RootLayout({
               <DynamicColorProvider>
                 <FavoritesProvider>
                   <PersonalizationProvider>
-                    <AmbientBackground />
-                    <CustomCursorWrapper />
-                    <div className="relative z-10 flex min-h-full flex-col">
-                      <OfflineDetector />
-                      <RecentlyPlayedTracker />
-                      {children}
-                      <MiniPlayer />
-                      <SettingsFab />
-                      <KeyboardShortcuts />
-                    </div>
+                    <ToastProvider>
+                      <AmbientBackground />
+                      <CustomCursorWrapper />
+                      <div className="relative z-10 flex min-h-full flex-col">
+                        <OfflineDetector />
+                        <RecentlyPlayedTracker />
+                        {children}
+                        <MiniPlayer />
+                        <SettingsFab />
+                        <KeyboardShortcuts />
+                        <CommandPalette />
+                      </div>
+                    </ToastProvider>
                   </PersonalizationProvider>
                 </FavoritesProvider>
               </DynamicColorProvider>

@@ -7,6 +7,7 @@ import AlbumGrid from "./components/AlbumGrid";
 import EmptyState from "./components/EmptyState";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import InfiniteScrollResults from "./components/InfiniteScrollResults";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { unifiedSearch } from "@/lib/music-service";
@@ -315,9 +316,7 @@ export default async function Home({
         )}
       </main>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

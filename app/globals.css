@@ -365,6 +365,19 @@ html.dark .glass-player {
 
 /* ===== Design Bible - Page Transition Keyframes ===== */
 
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-toast-progress {
+  animation: toastProgress linear forwards;
+}
+
 @keyframes pageEnter {
   from {
     opacity: 0;
