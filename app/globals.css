@@ -1283,3 +1283,56 @@ html.reduce-motion .shimmer-loading {
 html.reduce-motion .icon-bounce:hover {
   animation: none;
 }
+
+/* ===== Artist Page - Cinematic Parallax & Timeline ===== */
+
+.artist-parallax-bg {
+  will-change: transform;
+  transition: transform 0.05s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artist-parallax-bg {
+    transform: none !important;
+  }
+}
+
+html.reduce-motion .artist-parallax-bg {
+  transform: none !important;
+}
+
+/* Artist portrait animated glow border */
+@keyframes portraitGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px 4px var(--primary);
+    opacity: 0.4;
+  }
+  50% {
+    box-shadow: 0 0 40px 8px var(--secondary);
+    opacity: 0.7;
+  }
+}
+
+.artist-portrait-glow {
+  animation: portraitGlow 4s ease-in-out infinite;
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artist-portrait-glow {
+    animation: none;
+    box-shadow: 0 0 20px 4px var(--primary);
+    opacity: 0.4;
+  }
+}
+
+html.reduce-motion .artist-portrait-glow {
+  animation: none;
+  box-shadow: 0 0 20px 4px var(--primary);
+  opacity: 0.4;
+}
+
+/* Timeline connector styling */
+.timeline-connector {
+  background: linear-gradient(90deg, transparent, var(--border) 10%, var(--border) 90%, transparent);
+}
