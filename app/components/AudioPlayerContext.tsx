@@ -9,7 +9,6 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { usePathname } from "next/navigation";
 import { ItunesTrack } from "@/lib/types";
 import {
   addToPlaybackHistory,
@@ -66,6 +65,7 @@ const AudioPlayerContext = createContext<AudioPlayerContextType | null>(null);
 
 export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -91,6 +91,18 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const historyStackRef = useRef<ItunesTrack[]>([]);
   const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const previousVolumeRef = useRef(1);
+
+  // Refs for values needed in the endedCounter effect to avoid stale closures
+  const queueRef = useRef<ItunesTrack[]>([]);
+  const shuffleModeRef = useRef(false);
+  const repeatModeRef = useRef<RepeatMode>("off");
+  const currentTrackRef = useRef<ItunesTrack | null>(null);
+
+  // Keep refs in sync with state
+  queueRef.current = queue;
+  shuffleModeRef.current = shuffleMode;
+  repeatModeRef.current = repeatMode;
+  currentTrackRef.current = currentTrack;
 
   const resetPlaybackState = useCallback(() => {
     setCurrentTime(0);
@@ -148,7 +160,11 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       audio.volume = isMuted ? 0 : volumeRef.current;
       audio.playbackRate = playbackRate;
 
-      // Clean up old audio first
+      // Clean up old audio and its listeners first
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
       if (audioRef.current) {
         audioRef.current.pause();
       }
@@ -162,89 +178,74 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       setCurrentlyPlayingId(track.trackId);
       setIsPlaying(true);
 
-      // Attach and store cleanup
+      // Attach listeners and store cleanup in ref
       const cleanup = attachCoreListeners(audio);
+      cleanupRef.current = cleanup;
+
       audio.play().catch(() => {
         if (audioRef.current === audio) {
           cleanup();
+          cleanupRef.current = null;
           audioRef.current = null;
           clearPlayerState();
         }
       });
-
-      // Return cleanup for external management
-      return cleanup;
     },
     [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate]
   );
 
-  // Handle ended event via effect - has access to all current state
+  // Handle ended event via effect - uses refs for current state to avoid stale closures
   useEffect(() => {
     if (endedCounter === 0) return;
 
+    const currentRepeatMode = repeatModeRef.current;
+    const currentQueue = queueRef.current;
+    const currentShuffleMode = shuffleModeRef.current;
+    const track = currentTrackRef.current;
+
     // Repeat one: loop current track
-    if (repeatMode === "one" && audioRef.current) {
+    if (currentRepeatMode === "one" && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
       return;
     }
 
     // Play next from queue
-    if (queue.length > 0) {
+    if (currentQueue.length > 0) {
       let nextIndex = 0;
-      if (shuffleMode) {
-        nextIndex = Math.floor(Math.random() * queue.length);
+      if (currentShuffleMode) {
+        nextIndex = Math.floor(Math.random() * currentQueue.length);
       }
-      const nextTrack = queue[nextIndex];
+      const nextTrack = currentQueue[nextIndex];
       setQueue((prev) => prev.filter((_, i) => i !== nextIndex));
       startPlayingTrack(nextTrack);
       return;
     }
 
     // Repeat all: replay current track
-    if (repeatMode === "all" && currentTrack) {
-      startPlayingTrack(currentTrack);
+    if (currentRepeatMode === "all" && track) {
+      startPlayingTrack(track);
       return;
     }
 
     // No more tracks - stop
+    if (cleanupRef.current) {
+      cleanupRef.current();
+      cleanupRef.current = null;
+    }
     audioRef.current = null;
     clearPlayerState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endedCounter]);
 
-  // Stop audio on route change
-  const pathname = usePathname();
-  const previousPathnameRef = useRef(pathname);
-
-  useEffect(() => {
-    if (previousPathnameRef.current !== pathname) {
-      previousPathnameRef.current = pathname;
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      clearPlayerState();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  // Sleep timer countdown
+  // Sleep timer countdown - pure state update only
   useEffect(() => {
     if (sleepTimerRemaining === null || sleepTimerRemaining <= 0) return;
 
     sleepTimerRef.current = setInterval(() => {
       setSleepTimerRemaining((prev) => {
         if (prev === null || prev <= 1) {
-          if (audioRef.current) {
-            audioRef.current.pause();
-            setIsPlaying(false);
-          }
-          if (sleepTimerRef.current) {
-            clearInterval(sleepTimerRef.current);
-            sleepTimerRef.current = null;
-          }
-          return null;
+          return 0;
         }
         return prev - 1;
       });
@@ -256,10 +257,28 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         sleepTimerRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sleepTimerRemaining === null]);
+  }, [sleepTimerRemaining === null]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sleep timer side effects - fires when timer reaches 0
+  useEffect(() => {
+    if (sleepTimerRemaining !== 0) return;
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+    if (sleepTimerRef.current) {
+      clearInterval(sleepTimerRef.current);
+      sleepTimerRef.current = null;
+    }
+    setSleepTimerRemaining(null);
+  }, [sleepTimerRemaining]);
 
   // Media Session API integration
+  // Use refs for handlers to avoid dependency ordering issues
+  const previousTrackRef = useRef<() => void>(() => {});
+  const playNextRef = useRef<() => void>(() => {});
+
   useEffect(() => {
     if (!("mediaSession" in navigator)) return;
 
@@ -292,8 +311,12 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         setIsPlaying(false);
       }
     });
-    navigator.mediaSession.setActionHandler("previoustrack", null);
-    navigator.mediaSession.setActionHandler("nexttrack", null);
+    navigator.mediaSession.setActionHandler("previoustrack", () => {
+      previousTrackRef.current();
+    });
+    navigator.mediaSession.setActionHandler("nexttrack", () => {
+      playNextRef.current();
+    });
 
     return () => {
       navigator.mediaSession.setActionHandler("play", null);
@@ -336,14 +359,20 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
   const play = useCallback(
     (url: string, id: number, metadata?: TrackMetadata) => {
-      // Push current track to history stack
-      if (currentTrack) {
+      // Push current track to history stack using ref for fresh value
+      const trackToPush = currentTrackRef.current;
+      if (trackToPush) {
         historyStackRef.current = [
-          currentTrack,
+          trackToPush,
           ...historyStackRef.current.slice(0, 49),
         ];
       }
 
+      // Clean up old listeners and audio
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
@@ -363,16 +392,19 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       setCurrentlyPlayingId(id);
       setIsPlaying(true);
 
-      attachCoreListeners(audio);
+      const cleanup = attachCoreListeners(audio);
+      cleanupRef.current = cleanup;
 
       audio.play().catch(() => {
         if (audioRef.current === audio) {
+          cleanup();
+          cleanupRef.current = null;
           audioRef.current = null;
           clearPlayerState();
         }
       });
     },
-    [attachCoreListeners, resetPlaybackState, clearPlayerState, currentTrack, isMuted, playbackRate]
+    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate]
   );
 
   const setVolume = useCallback((v: number) => {
@@ -453,6 +485,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     historyStackRef.current = historyStackRef.current.slice(1);
     startPlayingTrack(prevTrack);
   }, [startPlayingTrack]);
+
+  // Keep media session handler refs in sync
+  previousTrackRef.current = previousTrack;
+  playNextRef.current = playNext;
 
   const toggleExpanded = useCallback(() => {
     setIsExpanded((prev) => !prev);

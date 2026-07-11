@@ -9,6 +9,23 @@ export interface PlaybackHistoryEntry {
   progressSeconds: number;
 }
 
+// Event listeners for same-tab change notifications
+type HistoryChangeListener = () => void;
+const historyListeners: Set<HistoryChangeListener> = new Set();
+
+export function subscribeToHistoryChanges(listener: HistoryChangeListener): () => void {
+  historyListeners.add(listener);
+  return () => {
+    historyListeners.delete(listener);
+  };
+}
+
+function notifyHistoryListeners(): void {
+  for (const listener of historyListeners) {
+    listener();
+  }
+}
+
 function getHistory(): PlaybackHistoryEntry[] {
   if (typeof window === "undefined") return [];
   try {
@@ -38,6 +55,7 @@ export function addToPlaybackHistory(
   const filtered = history.filter((e) => e.track.trackId !== track.trackId);
   filtered.unshift({ track, timestamp: Date.now(), progressSeconds });
   saveHistory(filtered);
+  notifyHistoryListeners();
 }
 
 export function updatePlaybackProgress(
@@ -50,6 +68,7 @@ export function updatePlaybackProgress(
     entry.progressSeconds = progressSeconds;
     entry.timestamp = Date.now();
     saveHistory(history);
+    notifyHistoryListeners();
   }
 }
 

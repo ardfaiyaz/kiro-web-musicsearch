@@ -4,11 +4,27 @@ import { useState, useCallback, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
 import { useAudioPlayer } from "../AudioPlayerContext";
-import { getContinueListening, type PlaybackHistoryEntry } from "@/lib/playback-history";
+import {
+  getContinueListening,
+  subscribeToHistoryChanges,
+  type PlaybackHistoryEntry,
+} from "@/lib/playback-history";
 
-function subscribeToContinueListening() {
-  // No-op subscriber since localStorage doesn't fire events for same-tab
-  return () => {};
+function subscribeToContinueListening(callback: () => void) {
+  // Subscribe to same-tab history changes and cross-tab storage events
+  const unsubscribeHistory = subscribeToHistoryChanges(callback);
+
+  const handleStorage = (e: StorageEvent) => {
+    if (e.key === "playback-history") {
+      callback();
+    }
+  };
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    unsubscribeHistory();
+    window.removeEventListener("storage", handleStorage);
+  };
 }
 
 function getContinueListeningSnapshot(): PlaybackHistoryEntry | null {
