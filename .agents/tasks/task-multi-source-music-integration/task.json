@@ -1,0 +1,7 @@
+{
+  "task_id": "task-multi-source-music-integration",
+  "task_description": "Expand the Music Search & Discovery application by integrating multiple public music APIs (Spotify, Last.fm, Lyrics.ovh, YouTube, Color Thief) to provide a richer, more complete music discovery experience. Create a unified data layer that aggregates information from multiple providers into a single cohesive interface.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}

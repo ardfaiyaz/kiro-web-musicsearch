@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Create the unified service layer with Spotify, Lyrics, and YouTube services plus a unified music.service.ts that merges all providers. Also extend types, update .env.example, and update next.config.ts for new image domains.",
+  "status": "pending",
+  "steps": [
+    "Create lib/spotify.ts - Spotify Web API service using server-side credentials (client_credentials flow). Functions: getSpotifyAccessToken(), searchArtist(name), getArtistDetails(spotifyId), getArtistTopTracks(spotifyId), getArtistAlbums(spotifyId), searchAlbum(name, artist), getAlbumDetails(spotifyId). Uses environment variables SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET. Include token caching. Add proper error handling using the existing ApiResult pattern from lib/api-error.ts.",
+    "Create lib/lyrics.ts - Lyrics service using lyrics.ovh API (https://api.lyrics.ovh/v1/{artist}/{title}). Functions: getLyrics(artistName, trackName). Returns lyrics string or null on failure. Handles graceful fallback for unavailable lyrics.",
+    "Create lib/youtube.ts - YouTube Data API service. Functions: searchMusicVideos(query, limit). Uses environment variable YOUTUBE_API_KEY. Returns video IDs, titles, thumbnails. Handles missing API key gracefully by returning empty results.",
+    "Create lib/music-service.ts - Unified data layer that combines all providers. Functions: getUnifiedArtist(artistName, itunesArtistId) merges iTunes, Spotify, Last.fm data. getUnifiedTrack(itunesTrack) enriches with lyrics, Spotify data, YouTube videos. getUnifiedAlbum(itunesAlbum) enriches with Spotify album data. unifiedSearch(query) searches across iTunes and Spotify simultaneously. All functions use Promise.allSettled for parallel requests and graceful fallback when any API is unavailable.",
+    "Extend lib/types.ts with new interfaces: SpotifyArtist, SpotifyAlbum, SpotifyTrack, YouTubeVideo, UnifiedArtist, UnifiedTrack, UnifiedAlbum, UnifiedSearchResults. These should be additive (don't break existing types).",
+    "Update .env.example to include SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, YOUTUBE_API_KEY alongside existing NEXT_PUBLIC_LASTFM_API_KEY.",
+    "Update next.config.ts to add image remote patterns for i.scdn.co (Spotify images), img.youtube.com (YouTube thumbnails), and i.ytimg.com."
+  ],
+  "acceptance_criteria": [
+    "lib/spotify.ts exports all listed functions with proper TypeScript types",
+    "lib/lyrics.ts exports getLyrics function that returns Promise<string | null>",
+    "lib/youtube.ts exports searchMusicVideos function returning YouTube video results",
+    "lib/music-service.ts exports unified functions that combine all providers using Promise.allSettled",
+    "All services handle missing API keys gracefully (return null/empty results, do not throw)",
+    "lib/types.ts contains all new interfaces without breaking existing ones",
+    ".env.example lists all required environment variables",
+    "next.config.ts includes new image domains",
+    "npm run build succeeds with zero errors",
+    "npm run lint passes"
+  ],
+  "verification": [
+    "npm run lint",
+    "npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
