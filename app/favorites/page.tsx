@@ -8,6 +8,7 @@ import ArtistCard from "@/app/components/ArtistCard";
 import AlbumCard from "@/app/components/AlbumCard";
 import CollectionsManager from "@/app/components/CollectionsManager";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 type TabId = "songs" | "artists" | "albums" | "collections";
 
@@ -182,9 +183,7 @@ export default function FavoritesPage() {
         </section>
       </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
