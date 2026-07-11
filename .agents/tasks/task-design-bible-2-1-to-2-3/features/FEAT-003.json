@@ -1,0 +1,39 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Artist Experience - Cinematic Hero, Enhanced Discography & Discovery (Chapters 2.3.1-2.3.5). Transform the artist page into a premium cinematic experience with parallax hero, enhanced track lists, album grid with timeline view, collaboration/similar artist discovery network, rich biography section, and integrated YouTube videos with AI-generated insights.",
+  "status": "pending",
+  "steps": [
+    "Create app/components/ArtistHero.tsx - A cinematic full-viewport hero section for the artist page with: large blurred background image filling the viewport, parallax scroll effect (background scrolls slower than content), gradient overlay transitioning from transparent to background color, artist circular portrait with animated border glow, artist name in display-lg font size, verified badge if high popularity, streaming stats in glass-medium pills, genre tags with colored backgrounds, and action buttons (Play, Follow, Share) with primary button styling. Use dynamic color extraction from artist image for accent theming.",
+    "Create app/components/ArtistNav.tsx - A sticky sub-navigation bar that appears below the header when scrolling past the hero. Contains anchor links: Overview, Top Songs, Discography, Similar Artists, Videos, About. Uses glass-medium styling and highlights active section based on scroll position.",
+    "Create app/components/TopTracksSection.tsx - An enhanced top tracks list with: numbered ranking column, album artwork thumbnails, track name and album name, duration, explicit badge, popularity bar indicator, and hover-to-play preview button. Show top 5 by default with 'Show more' to reveal all. Each row uses hover-glow effect.",
+    "Create app/components/DiscographySection.tsx - An enhanced discography view with two modes: Grid View (album cards in a responsive grid with year badges) and Timeline View (horizontal timeline showing albums chronologically with connecting lines, year markers, and artwork nodes). Include a toggle switch between views. Albums sorted newest first in grid, chronological in timeline.",
+    "Create app/components/ArtistDiscoveryNetwork.tsx - A visual discovery section showing: Similar Artists grid (larger cards with match percentage from Last.fm), Collaborations list (artists who appear on the same tracks), 'Fans Also Listen To' recommendations. Each artist card links to their artist page. Uses glass-light cards with hover-glow.",
+    "Create app/components/ArtistBio.tsx - A rich biography section with: expandable text (show first 3 lines, 'Read more' to expand), career timeline sidebar showing key milestones (first album, biggest hit year, etc.), and tag cloud of associated genres/styles. Pull data from Last.fm bio and albums list.",
+    "Create app/components/ArtistVideos.tsx - An enhanced video section (replacing direct VideoSection usage on artist page) with: featured video player at top (largest/most popular), thumbnail grid below, smooth play/pause transitions, video title and view count overlay. Uses YouTube API data.",
+    "Create app/components/ArtistInsightsPanel.tsx - An AI-insights panel showing: musical style analysis (genres, influences, era), career stats summary (albums count, years active, listener growth), listening context suggestions (moods/activities this artist fits), and related playlist suggestions. Styled as a glass-card sidebar on desktop, full-width section on mobile.",
+    "Rewrite app/artist/[id]/page.tsx to compose the new artist experience: ArtistHero (full viewport) -> ArtistNav (sticky) -> sections in order: TopTracksSection, DiscographySection, ArtistDiscoveryNetwork, ArtistVideos, ArtistBio with ArtistInsightsPanel as a sidebar on desktop. Use Suspense boundaries with loading skeletons for each section. Remove Header showBack prop and integrate navigation into ArtistNav.",
+    "Add CSS for parallax scroll effect, timeline connectors, and section scroll-snap to app/globals.css."
+  ],
+  "acceptance_criteria": [
+    "Artist page shows cinematic full-viewport hero with parallax background scroll",
+    "Sticky sub-navigation appears after scrolling past hero with active section highlighting",
+    "Top tracks section shows ranked list with artwork, duration, popularity indicators",
+    "Discography section has toggle between grid view and timeline view",
+    "Similar artists section shows match percentage and links to artist pages",
+    "Biography section is expandable with career timeline",
+    "Videos section has featured player and thumbnail grid",
+    "AI insights panel shows musical analysis and listening context",
+    "All sections use scroll-triggered entrance animations",
+    "Responsive: single-column mobile, sidebar layout on desktop for insights",
+    "All components use design tokens and glass hierarchy",
+    "bun run build passes with zero errors",
+    "bun run lint passes with zero errors"
+  ],
+  "verification": [
+    "Run 'bun run lint' and confirm zero errors",
+    "Run 'bun run build' and confirm zero errors and all routes compile"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
