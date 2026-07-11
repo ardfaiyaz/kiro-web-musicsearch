@@ -11,8 +11,9 @@ import Footer from "@/app/components/Footer";
 import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
 import FavoriteAlbumsPage from "@/app/components/favorites/albums/FavoriteAlbumsPage";
 import RecentlyPlayedPage from "@/app/components/favorites/history/RecentlyPlayedPage";
+import MusicInsightsPage from "@/app/components/favorites/analytics/MusicInsightsPage";
 
-type TabId = "songs" | "artists" | "albums" | "collections" | "history";
+type TabId = "songs" | "artists" | "albums" | "collections" | "history" | "insights";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "songs", label: "Songs" },
@@ -20,6 +21,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "albums", label: "Albums" },
   { id: "collections", label: "Collections" },
   { id: "history", label: "History" },
+  { id: "insights", label: "Insights" },
 ];
 
 export default function FavoritesPage() {
@@ -159,6 +161,17 @@ export default function FavoritesPage() {
               aria-label="Listening history"
             >
               <RecentlyPlayedPage />
+            </div>
+          )}
+
+          {/* Insights Tab */}
+          {activeTab === "insights" && (
+            <div
+              id="tabpanel-insights"
+              role="tabpanel"
+              aria-label="Music insights and analytics"
+            >
+              <MusicInsightsPage />
             </div>
           )}
         </section>

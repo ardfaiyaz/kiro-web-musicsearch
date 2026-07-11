@@ -1,0 +1,52 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Chapter 2.6.6 - Listening History Analytics & Personal Music Insights. Create a dedicated analytics/insights page (app/insights or as a tab in favorites) that transforms listening history into meaningful stories with visualizations: listening summary, top songs/artists/albums rankings, genre analytics with percentage rings, GitHub-style listening heatmap, music taste evolution timeline, achievements system, and discovery analytics. All local-first using cached calculations from localStorage history data.",
+  "status": "in_progress",
+  "steps": [
+    "Create app/components/favorites/analytics/ directory for all new components",
+    "Create lib/analytics.ts - Analytics calculation engine: computeListeningSummary (today/week/month/year/allTime), computeTopSongs (rank by play count), computeTopArtists, computeTopAlbums, computeGenreAnalytics (share percentages), computeHeatmapData (daily listening mapped to calendar grid), computeTasteEvolution (genre trends over time by month), computeListeningStreak, computeAchievements, computeTimeDistribution (morning/afternoon/evening/night). Cache results in useMemo with dependency on history length/last-entry timestamp to avoid recalculating on every render",
+    "Create InsightsHero.tsx - Glass Level 5 hero dashboard: animated counters for Listening Hours, Songs Played, Albums Explored, Artists Discovered, Genres Explored, Current Streak. Background from top album artwork with dominant colors gradient + blur + glass overlay",
+    "Create ListeningSummary.tsx - Summary cards for Today, This Week, This Month, This Year, All Time. Each shows hours, songs, artists, albums, sessions. Glass-light cards with animated counters (700ms)",
+    "Create ActivityOverview.tsx - Cards for Daily/Weekly/Monthly listening, Average Session Length, Longest Session, Favorite Listening Time (time of day). Glass-subtle styling",
+    "Create TopSongsChart.tsx - Ranked list (top 20) with: rank number, artwork, song, artist, play count, listening time, trend indicator (up/down/stable), preview button. Supports 'Show More' expansion",
+    "Create TopArtistsChart.tsx - Ranked artist cards with: portrait, artist name, play count, hours, albums count, genres, trend indicator, open artist link",
+    "Create TopAlbumsChart.tsx - Ranked albums with: artwork, album, artist, listening hours, completion percentage bar, last played, open album link",
+    "Create GenreAnalytics.tsx - Genre cards with animated SVG percentage rings (CSS-only, no chart library), showing genre share, listening hours, song count, artist count. Sorted by share descending",
+    "Create ListeningHeatmap.tsx - GitHub-style 52-week calendar grid (CSS grid, no external library). Each cell colored by intensity based on songs played that day. Hover tooltip shows date, hours, songs. Color scale from glass-subtle to primary. Responsive: scrollable on mobile",
+    "Create ListeningTimeline.tsx - Monthly activity bars (CSS-only bar chart) showing relative listening volume per month, interactive hover states with details",
+    "Create TasteEvolution.tsx - Visual timeline showing how top genres shifted over months. Simple connected node visualization with month labels and genre pills, showing genre transitions",
+    "Create Achievements.tsx - Achievement cards (Glass Level 4 with gold accent border) for milestones: First Favorite Song, 100/500/1000 Songs Played, 100 Artists Explored, Album Collector, Genre Explorer, Night Owl, Weekend Listener, Discovery Enthusiast. Each shows: icon, title, description, progress bar, unlocked/locked state. Animated unlock shimmer for earned achievements",
+    "Create DiscoveryAnalytics.tsx - Cards showing: New Artists discovered, New Albums, New Songs, Genres Explored count. Glass-light styling",
+    "Create RecommendationInsights.tsx - Based on analytics, show why certain artists/genres are recommended: 'Your fastest-growing genre', 'Artists you might like based on X'",
+    "Create AnalyticsSearch.tsx - Search across songs, artists, albums, genres within analytics rankings",
+    "Create InsightsSkeleton.tsx - Progressive loading skeleton for hero, charts, and cards",
+    "Create EmptyInsights.tsx - Premium empty state: 'Start listening to unlock insights', buttons (Browse Music, Trending Songs, Discover Artists)",
+    "Add an 'Insights' tab to app/favorites/page.tsx alongside existing tabs",
+    "Ensure all chart/visualization elements are accessible: use role='img' with aria-label descriptions, provide text alternatives for visual data",
+    "Ensure full keyboard navigation, ARIA labels, semantic HTML, focus-visible indicators",
+    "Responsive: desktop multi-column dashboard, tablet adaptive grid, mobile single-column with swipeable sections"
+  ],
+  "acceptance_criteria": [
+    "Insights tab appears in favorites page navigation",
+    "Hero dashboard renders with animated counters and dynamic artwork background",
+    "Listening summary cards show correct calculated stats for each time period",
+    "Top songs/artists/albums rankings render in correct order by play count",
+    "Genre analytics shows percentage rings that animate on first render",
+    "Listening heatmap renders a 52-week calendar grid with correct intensity colors",
+    "Taste evolution timeline shows genre shifts over time",
+    "Achievements system shows unlocked/locked state based on actual history data",
+    "Empty state renders when no listening history exists",
+    "Loading skeleton appears during calculation/hydration",
+    "All visualizations are CSS-only (no external chart libraries required)",
+    "Analytics calculations are cached and do not recalculate on every render",
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "verification": [
+    "Run `bun run lint` and confirm zero errors",
+    "Run `bun run build` and confirm successful compilation"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
