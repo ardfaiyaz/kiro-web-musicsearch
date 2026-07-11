@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Play, BadgeCheck } from "lucide-react";
 import type { UnifiedArtist, ItunesArtist } from "@/lib/types";
@@ -13,19 +13,22 @@ interface ArtistHeroProps {
 
 export default function ArtistHero({ artist, unifiedArtist }: ArtistHeroProps) {
   const heroRef = useRef<HTMLElement>(null);
-  const [scrollY, setScrollY] = useState(0);
+  const parallaxRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    if (parallaxRef.current) {
+      const offset = window.scrollY * 0.4;
+      parallaxRef.current.style.transform = `translateY(${offset}px)`;
+    }
+  }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   const artistImage = unifiedArtist.imageUrl || "";
   const isVerified = (unifiedArtist.popularity ?? 0) >= 70;
-  const parallaxOffset = scrollY * 0.4;
 
   return (
     <section
@@ -36,8 +39,8 @@ export default function ArtistHero({ artist, unifiedArtist }: ArtistHeroProps) {
       {/* Parallax background image */}
       {artistImage && (
         <div
+          ref={parallaxRef}
           className="absolute inset-0 artist-parallax-bg"
-          style={{ transform: `translateY(${parallaxOffset}px)` }}
           aria-hidden="true"
         >
           <Image
