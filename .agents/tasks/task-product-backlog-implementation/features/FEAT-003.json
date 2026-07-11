@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Comprehensive Settings Page and Theme System - Replace the existing SettingsPanel slide-out with a full dedicated settings page (app/settings/page.tsx) organized into sections: Appearance (theme, accent color, glass settings, animations), Playback (default volume, crossfade placeholder, autoplay, audio quality placeholder), Privacy (search history toggle, listening data toggle, clear data), Storage (cache info, clear cache), API Providers (show which APIs are active), About (app version, credits, links). Also fix theme system to support auto/system theme, eliminate flickering, and ensure consistent dynamic theming from album artwork.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Update app/components/ThemeContext.tsx: Add 'system' as a third theme mode alongside light/dark. When system is selected, follow prefers-color-scheme media query and update automatically. Ensure no flash of wrong theme on page load (the inline script in layout.tsx already handles dark, extend for system mode).",
     "Create app/settings/page.tsx: Full settings page with Header, sectioned layout using glass-card styling. Sections: Appearance, Playback, Privacy, Storage, About. Each section as a collapsible card.",
