@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-005",
+  "type": "chore",
+  "description": "Final Polish Pass - Theme consistency, layout shift fixes, hydration safety, consistent design tokens usage across all components, and integration testing of the full user flow. Ensure glass blur is consistent, border-radius matches design system, shadows use token values, spacing follows 8-point grid, typography uses scale tokens, icon sizes are consistent, animation timing matches motion tokens, and loading states are consistent. Fix any remaining build/lint issues.",
+  "status": "pending",
+  "steps": [
+    "Audit and fix theme consistency: Scan all components for hardcoded colors (not using CSS variables) and replace with design token references. Ensure dark mode works correctly on all new components from FEAT-001 through FEAT-004.",
+    "Fix potential hydration issues: Audit components that read localStorage or window on initial render. Ensure they use useSyncExternalStore or useEffect patterns (not useState with localStorage in initializer). The ThemeContext, SettingsContext already do this correctly - verify new components follow same pattern.",
+    "Layout shift prevention: Add explicit width/height or aspect-ratio to all Image components. Ensure skeleton loaders match the exact dimensions of the content they replace. Add font-display: swap to font loading.",
+    "Consistent border-radius: Audit all components use rounded-2xl (16px) for cards, rounded-xl (12px) for inner elements, rounded-full for circular elements. Replace any inconsistent values.",
+    "Consistent shadows: Ensure shadow usage follows elevation hierarchy - shadow-sm for subtle elements, shadow-md for cards, shadow-lg for elevated cards, shadow-xl for modals/popovers.",
+    "Consistent spacing: Verify 8-point grid compliance - gap-2(8px), gap-4(16px), gap-6(24px), gap-8(32px) pattern. Padding follows p-4/p-6/p-8 pattern for cards.",
+    "Consistent icon sizes: Lucide icons should be h-4 w-4 (inline), h-5 w-5 (buttons), h-6 w-6 (featured), h-8 w-8 or larger (illustrations).",
+    "Run final build and lint: Fix any remaining TypeScript errors or ESLint warnings. Ensure the full build succeeds cleanly.",
+    "Remove any console.log statements from production code across all files."
+  ],
+  "acceptance_criteria": [
+    "No hardcoded color values - all use CSS variables or Tailwind theme colors",
+    "No hydration mismatches (no localStorage reads during SSR without proper guards)",
+    "No layout shift from images (all have explicit dimensions or aspect-ratio)",
+    "Consistent border-radius usage following design system hierarchy",
+    "Consistent shadow usage following elevation hierarchy",
+    "8-point grid spacing compliance across new components",
+    "No console.log statements in any component or lib file",
+    "bun run lint passes with zero errors",
+    "bun run build passes with zero errors"
+  ],
+  "verification": [
+    "eval \"$(mise activate bash)\" && bun run lint",
+    "eval \"$(mise activate bash)\" && bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

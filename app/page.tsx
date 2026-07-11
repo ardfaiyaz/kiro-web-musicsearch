@@ -16,6 +16,7 @@ import TrendingSection from "./components/TrendingSection";
 import EditorialPicks from "./components/EditorialPicks";
 import NewReleasesGrid from "./components/NewReleasesGrid";
 import PersonalizedSection from "./components/PersonalizedSection";
+import ContinueListening from "./components/player/ContinueListening";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { unifiedSearch } from "@/lib/music-service";
 import { getTrendingSongs, getNewReleases } from "@/lib/discovery";
@@ -363,9 +364,12 @@ export default async function Home({
 
       {/* Editorial homepage when no search query */}
       {!query && (
-        <Suspense fallback={<EditorialSkeleton />}>
-          <EditorialHomepage />
-        </Suspense>
+        <>
+          <ContinueListening />
+          <Suspense fallback={<EditorialSkeleton />}>
+            <EditorialHomepage />
+          </Suspense>
+        </>
       )}
 
       {/* Search experience when query is present */}
