@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ItunesAlbum } from "@/lib/types";
@@ -13,7 +14,7 @@ function formatDate(dateString: string): string {
   });
 }
 
-export default function AlbumCard({ album }: { album: ItunesAlbum }) {
+function AlbumCardBase({ album }: { album: ItunesAlbum }) {
   const artworkUrl = album.artworkUrl100?.replace("100x100", "200x200");
 
   return (
@@ -68,3 +69,6 @@ export default function AlbumCard({ album }: { album: ItunesAlbum }) {
     </Link>
   );
 }
+
+const AlbumCard = memo(AlbumCardBase);
+export default AlbumCard;

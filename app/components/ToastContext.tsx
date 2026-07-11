@@ -16,10 +16,11 @@ export interface ToastMessage {
   type: ToastType;
   title: string;
   description?: string;
+  onUndo?: () => void;
 }
 
 interface ToastContextType {
-  show: (type: ToastType, title: string, description?: string) => void;
+  show: (type: ToastType, title: string, description?: string, onUndo?: () => void) => void;
   dismiss: (id: string) => void;
 }
 
@@ -29,9 +30,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const show = useCallback(
-    (type: ToastType, title: string, description?: string) => {
+    (type: ToastType, title: string, description?: string, onUndo?: () => void) => {
       const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-      setToasts((prev) => [...prev, { id, type, title, description }]);
+      setToasts((prev) => [...prev, { id, type, title, description, onUndo }]);
     },
     []
   );

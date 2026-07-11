@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ItunesArtist } from "@/lib/types";
 
-export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
+function ArtistCardBase({ artist }: { artist: ItunesArtist }) {
   const artworkUrl = artist.artworkUrl100?.replace("100x100", "200x200");
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -68,3 +68,6 @@ export default function ArtistCard({ artist }: { artist: ItunesArtist }) {
     </Link>
   );
 }
+
+const ArtistCard = memo(ArtistCardBase);
+export default ArtistCard;

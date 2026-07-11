@@ -53,6 +53,7 @@ export default function Header({ showBack = false }: HeaderProps) {
 
       <div className="mx-auto max-w-7xl px-6 py-4 lg:px-8">
         <nav
+          id="main-navigation"
           className="flex items-center justify-between"
           aria-label="Main navigation"
         >
@@ -81,7 +82,16 @@ export default function Header({ showBack = false }: HeaderProps) {
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/"
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
+              aria-current={
+                isActive("/") &&
+                !isActive("/discover") &&
+                !isActive("/favorites") &&
+                !isActive("/dashboard") &&
+                !isActive("/playlists")
+                  ? "page"
+                  : undefined
+              }
+              className={`flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/") &&
                 !isActive("/discover") &&
                 !isActive("/favorites") &&
@@ -106,7 +116,8 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/discover"
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
+              aria-current={isActive("/discover") ? "page" : undefined}
+              className={`flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/discover")
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
@@ -122,7 +133,8 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/dashboard"
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
+              aria-current={isActive("/dashboard") ? "page" : undefined}
+              className={`flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/dashboard")
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
@@ -138,7 +150,8 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/playlists"
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
+              aria-current={isActive("/playlists") ? "page" : undefined}
+              className={`flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/playlists")
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
@@ -154,7 +167,8 @@ export default function Header({ showBack = false }: HeaderProps) {
             </Link>
             <Link
               href="/favorites"
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
+              aria-current={isActive("/favorites") ? "page" : undefined}
+              className={`flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
                 isActive("/favorites")
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
