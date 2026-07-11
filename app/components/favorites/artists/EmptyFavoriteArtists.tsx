@@ -36,14 +36,14 @@ export default function EmptyFavoriteArtists() {
           Discover Artists
         </Link>
         <Link
-          href="/?entity=musicArtist"
+          href="/?q=trending+artists"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-2xl glass-medium px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
         >
           <TrendingUp className="h-4 w-4" aria-hidden="true" />
           Trending Artists
         </Link>
         <Link
-          href="/?term=genre"
+          href="/?q=genre"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-2xl glass-medium px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
         >
           <Music className="h-4 w-4" aria-hidden="true" />

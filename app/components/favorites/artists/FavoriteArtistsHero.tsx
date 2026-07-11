@@ -66,14 +66,14 @@ export default function FavoriteArtistsHero({
         {/* Quick Actions */}
         <nav className="flex flex-wrap gap-2" aria-label="Quick actions">
           <Link
-            href="/?entity=musicArtist"
+            href="/?q=artists"
             className="inline-flex min-h-[44px] items-center gap-2 rounded-xl glass-medium px-4 py-2 text-xs font-medium text-foreground transition-colors hover-glow hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-accent/50"
           >
             <Users className="h-4 w-4" aria-hidden="true" />
             Browse All
           </Link>
           <Link
-            href="/?term=similar+artists"
+            href="/?q=similar+artists"
             className="inline-flex min-h-[44px] items-center gap-2 rounded-xl glass-medium px-4 py-2 text-xs font-medium text-foreground transition-colors hover-glow hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-accent/50"
           >
             <Compass className="h-4 w-4" aria-hidden="true" />

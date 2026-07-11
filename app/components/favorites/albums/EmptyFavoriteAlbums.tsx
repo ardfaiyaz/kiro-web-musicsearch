@@ -29,21 +29,21 @@ export default function EmptyFavoriteAlbums() {
 
       <nav className="flex flex-wrap items-center justify-center gap-3" aria-label="Discover albums">
         <Link
-          href="/?entity=album"
+          href="/?q=albums"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-2xl bg-foreground px-6 py-3 text-sm font-medium text-background transition-colors hover:bg-foreground/80"
         >
           <Disc3 className="h-4 w-4" aria-hidden="true" />
           Browse Albums
         </Link>
         <Link
-          href="/?term=trending+albums"
+          href="/?q=trending+albums"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-2xl glass-medium px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
         >
           <TrendingUp className="h-4 w-4" aria-hidden="true" />
           Trending Albums
         </Link>
         <Link
-          href="/?term=hidden+gems+album"
+          href="/?q=hidden+gems+album"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-2xl glass-medium px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
         >
           <Sparkles className="h-4 w-4" aria-hidden="true" />

@@ -54,7 +54,7 @@ export default function AlbumRecommendations({
             {displayGenres.map((g) => (
               <Link
                 key={g}
-                href={`/?term=${encodeURIComponent(g)}&entity=album`}
+                href={`/?q=${encodeURIComponent(g)}`}
                 className="inline-flex min-h-[44px] items-center gap-2 rounded-xl glass-medium px-4 py-2 text-xs font-medium text-foreground transition-colors hover-glow hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-accent/50"
               >
                 <Disc3 className="h-4 w-4" aria-hidden="true" />

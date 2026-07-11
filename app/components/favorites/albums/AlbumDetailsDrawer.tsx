@@ -29,15 +29,15 @@ export default function AlbumDetailsDrawer({
   const [error, setError] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const fetchDetails = useCallback(async (collectionId: number, artistId: number) => {
+  const fetchDetails = useCallback(async (collectionId: number, artistId: number, signal: AbortSignal) => {
     setLoading(true);
     setError(false);
     setDetails(null);
     try {
       // Fetch album tracks and more from artist in parallel
       const [tracksRes, artistAlbumsRes] = await Promise.all([
-        fetch(`https://itunes.apple.com/lookup?id=${collectionId}&entity=song`),
-        fetch(`https://itunes.apple.com/lookup?id=${artistId}&entity=album&limit=10`),
+        fetch(`https://itunes.apple.com/lookup?id=${collectionId}&entity=song`, { signal }),
+        fetch(`https://itunes.apple.com/lookup?id=${artistId}&entity=album&limit=10`, { signal }),
       ]);
 
       let tracks: ItunesTrack[] = [];
@@ -60,7 +60,8 @@ export default function AlbumDetailsDrawer({
       }
 
       setDetails({ tracks, moreAlbums });
-    } catch {
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -69,7 +70,11 @@ export default function AlbumDetailsDrawer({
 
   useEffect(() => {
     if (album) {
-      fetchDetails(album.collectionId, album.artistId);
+      const controller = new AbortController();
+      fetchDetails(album.collectionId, album.artistId, controller.signal);
+      return () => {
+        controller.abort();
+      };
     }
   }, [album, fetchDetails]);
 
@@ -154,7 +159,10 @@ export default function AlbumDetailsDrawer({
               </p>
               <button
                 type="button"
-                onClick={() => fetchDetails(album.collectionId, album.artistId)}
+                onClick={() => {
+                  const controller = new AbortController();
+                  fetchDetails(album.collectionId, album.artistId, controller.signal);
+                }}
                 className="rounded-xl glass-medium px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-accent/50"
               >
                 Retry

@@ -242,10 +242,8 @@ export function addHistoryEntry(entry: HistoryEntry): void {
     const existing = getListeningHistory();
     const updated = [entry, ...existing].slice(0, MAX_LISTENING_HISTORY);
     localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify(updated));
-  } catch (e) {
-    if (e instanceof DOMException && e.name === "QuotaExceededError") {
-      console.warn("[Music Search] localStorage quota exceeded when saving listening history. Some data may not be persisted.");
-    }
+  } catch {
+    // Silently handle QuotaExceededError
   }
 }
 
@@ -257,10 +255,8 @@ export function removeHistoryEntry(trackId: number, playedAt: number): void {
       (entry) => !(entry.trackId === trackId && entry.playedAt === playedAt)
     );
     localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify(updated));
-  } catch (e) {
-    if (e instanceof DOMException && e.name === "QuotaExceededError") {
-      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
-    }
+  } catch {
+    // Silently handle QuotaExceededError
   }
 }
 
@@ -268,10 +264,8 @@ export function clearHistory(): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify([]));
-  } catch (e) {
-    if (e instanceof DOMException && e.name === "QuotaExceededError") {
-      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
-    }
+  } catch {
+    // Silently handle QuotaExceededError
   }
 }
 
@@ -291,10 +285,8 @@ export function updatePlaybackProgress(trackId: number, progress: number): void 
       existing[idx].completed = progress >= 100;
       localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify(existing));
     }
-  } catch (e) {
-    if (e instanceof DOMException && e.name === "QuotaExceededError") {
-      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
-    }
+  } catch {
+    // Silently handle QuotaExceededError
   }
 }
 

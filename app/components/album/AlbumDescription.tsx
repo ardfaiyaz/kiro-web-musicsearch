@@ -29,7 +29,7 @@ export default function AlbumDescription({
               }`}
             >
               <p className="text-sm leading-relaxed text-muted whitespace-pre-line">
-                {description}
+                {description.replace(/<[^>]*>/g, "")}
               </p>
               {!expanded && (
                 <div

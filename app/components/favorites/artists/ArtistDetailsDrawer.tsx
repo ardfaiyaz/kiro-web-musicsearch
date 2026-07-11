@@ -32,14 +32,15 @@ export default function ArtistDetailsDrawer({
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const fetchDetails = useCallback(async (artistName: string) => {
+  const fetchDetails = useCallback(async (artistName: string, signal: AbortSignal) => {
     setLoading(true);
     setError(false);
     setDetails(null);
     setBioExpanded(false);
     try {
       const res = await fetch(
-        `/api/spotify/artist?name=${encodeURIComponent(artistName)}`
+        `/api/spotify/artist?name=${encodeURIComponent(artistName)}`,
+        { signal }
       );
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
@@ -59,7 +60,8 @@ export default function ArtistDetailsDrawer({
           })
         ),
       });
-    } catch {
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") return;
       setError(true);
     } finally {
       setLoading(false);
@@ -68,7 +70,11 @@ export default function ArtistDetailsDrawer({
 
   useEffect(() => {
     if (artist) {
-      fetchDetails(artist.artistName);
+      const controller = new AbortController();
+      fetchDetails(artist.artistName, controller.signal);
+      return () => {
+        controller.abort();
+      };
     }
   }, [artist, fetchDetails]);
 
@@ -150,7 +156,10 @@ export default function ArtistDetailsDrawer({
               </p>
               <button
                 type="button"
-                onClick={() => fetchDetails(artist.artistName)}
+                onClick={() => {
+                  const controller = new AbortController();
+                  fetchDetails(artist.artistName, controller.signal);
+                }}
                 className="rounded-xl glass-medium px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-accent/50"
               >
                 Retry

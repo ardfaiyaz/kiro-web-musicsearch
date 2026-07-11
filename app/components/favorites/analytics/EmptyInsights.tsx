@@ -47,14 +47,14 @@ export default function EmptyInsights() {
           Browse Music
         </Link>
         <Link
-          href="/?term=trending"
+          href="/?q=trending"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-full glass-light px-6 py-3 text-sm font-medium text-foreground transition-premium hover:glass-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 focus-visible:ring-offset-2"
         >
           <TrendingUp className="h-4 w-4" aria-hidden="true" />
           Trending Songs
         </Link>
         <Link
-          href="/?term=top artists"
+          href="/?q=top+artists"
           className="inline-flex min-h-[44px] items-center gap-2 rounded-full glass-light px-6 py-3 text-sm font-medium text-foreground transition-premium hover:glass-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 focus-visible:ring-offset-2"
         >
           <Users className="h-4 w-4" aria-hidden="true" />
