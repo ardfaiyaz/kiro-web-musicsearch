@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Create the unified service layer with Spotify, Lyrics, and YouTube services plus a unified music.service.ts that merges all providers. Also extend types, update .env.example, and update next.config.ts for new image domains.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create lib/spotify.ts - Spotify Web API service using server-side credentials (client_credentials flow). Functions: getSpotifyAccessToken(), searchArtist(name), getArtistDetails(spotifyId), getArtistTopTracks(spotifyId), getArtistAlbums(spotifyId), searchAlbum(name, artist), getAlbumDetails(spotifyId). Uses environment variables SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET. Include token caching. Add proper error handling using the existing ApiResult pattern from lib/api-error.ts.",
     "Create lib/lyrics.ts - Lyrics service using lyrics.ovh API (https://api.lyrics.ovh/v1/{artist}/{title}). Functions: getLyrics(artistName, trackName). Returns lyrics string or null on failure. Handles graceful fallback for unavailable lyrics.",
@@ -29,5 +29,5 @@
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All services created following existing patterns from lib/lastfm.ts and lib/itunes.ts. Spotify uses server-side only env vars (no NEXT_PUBLIC_ prefix) with token caching. All services handle missing API keys gracefully (return null or empty arrays). Build and lint pass cleanly. The UnifiedArtist type references LastFmArtist from types.ts which is already exported. Promise.allSettled used throughout music-service.ts for resilient parallel requests."
 }
