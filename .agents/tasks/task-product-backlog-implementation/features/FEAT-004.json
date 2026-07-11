@@ -1,0 +1,41 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "UI/UX Polish, Accessibility, and Performance - Comprehensive pass to improve premium feel: consistent glass blur, spacing, typography, border-radius, shadows, and animation timing across all pages. Accessibility improvements (ARIA labels audit, focus management, screen reader announcements, touch targets). Performance optimizations (lazy loading heavy components, image optimization patterns, memoization of expensive renders). Premium empty states, loading skeletons, error boundaries, 404 page, and context menus.",
+  "status": "pending",
+  "steps": [
+    "Update app/not-found.tsx: Premium 404 page with animated music note illustration (SVG), search suggestion, and links to discover/home. Use glass-card styling and dynamic gradient background.",
+    "Update app/error.tsx: Premium error boundary with more helpful messaging, animated error illustration, retry button with loading state, and optional 'Report Issue' link.",
+    "Create app/components/ui/Skeleton.tsx: Reusable skeleton loading component system with variants (text, circular, rectangular, card) that use the shimmer animation from globals.css. Export SkeletonCard, SkeletonTrack, SkeletonArtist for consistent loading states.",
+    "Create app/components/ui/ContextMenu.tsx: Right-click context menu component (for tracks: play, add to queue, add to favorites, share; for artists: view artist, add to favorites). Positioned via pointer coordinates, dismissible on click-outside or Escape.",
+    "Create app/components/ui/BottomSheet.tsx: Mobile-friendly bottom sheet component (slides up from bottom) for actions on mobile that would be context menus on desktop. Backdrop, drag-to-dismiss gesture, snap points.",
+    "Update app/components/EmptyState.tsx: Enhance with more specific empty state variants (no results, no favorites, no history, no queue) each with unique illustration (SVG), helpful message, and action button.",
+    "Create app/components/ui/PageTransition.tsx: Wrapper component that adds subtle fade/slide animation on route changes using CSS animations and a key based on pathname.",
+    "Accessibility audit fixes: Update app/components/Header.tsx to use proper nav landmark with aria-label. Update app/components/MiniPlayer.tsx to announce track changes via aria-live region. Update all interactive elements to have minimum 44x44px touch targets on mobile. Add aria-current to active navigation links. Ensure all modals trap focus properly.",
+    "Create app/components/ui/SkipLinks.tsx: Enhanced skip links component (already have skip-to-content in layout, add skip-to-player and skip-to-navigation).",
+    "Performance: Add React.memo() to TrackCard, ArtistCard, AlbumCard components. Add useMemo/useCallback where expensive computations happen in list renders. Use next/dynamic for heavy components that aren't needed on initial render (ExpandedPlayer already does this, apply to ContextMenu, BottomSheet, SettingsPanel).",
+    "Update globals.css: Ensure consistent glass blur levels work well with the user-blur-intensity setting. Add utility classes for consistent spacing (section-spacing, card-gap). Add smooth scroll-behavior. Ensure all animations respect reduced-motion preference via the existing @media query. Add a subtle page-enter animation keyframe.",
+    "Create app/components/ui/Tooltip.tsx: Simple tooltip component for icon buttons that shows on hover/focus with proper aria-describedby pattern.",
+    "Update app/components/Toast.tsx: Ensure toasts have role='alert', are announced to screen readers, support undo actions, and auto-dismiss with progress indicator."
+  ],
+  "acceptance_criteria": [
+    "404 page has premium animated design with search suggestion and navigation links",
+    "Error boundary shows helpful error state with retry functionality",
+    "Skeleton loading components work for cards, tracks, and artists",
+    "Context menu appears on right-click for track items with relevant actions",
+    "Bottom sheet works on mobile as alternative to context menu",
+    "Empty states have unique illustrations and helpful action buttons",
+    "All interactive elements have minimum 44x44px touch targets on mobile",
+    "Focus is properly trapped in modal dialogs",
+    "Screen readers announce track changes and toast notifications",
+    "TrackCard, ArtistCard, AlbumCard are memoized to prevent unnecessary re-renders",
+    "All animations respect prefers-reduced-motion",
+    "Build passes with zero TypeScript errors"
+  ],
+  "verification": [
+    "eval \"$(mise activate bash)\" && bun run lint",
+    "eval \"$(mise activate bash)\" && bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

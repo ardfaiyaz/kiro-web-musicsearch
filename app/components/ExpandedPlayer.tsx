@@ -1,48 +1,71 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
+import {
+  SkipBack,
+  SkipForward,
+  Shuffle,
+  Repeat,
+  Repeat1,
+  GripVertical,
+  Mic2,
+} from "lucide-react";
 import { useAudioPlayer } from "./AudioPlayerContext";
 import { useDynamicColors } from "./DynamicColorProvider";
-
-function formatTime(seconds: number): string {
-  if (!isFinite(seconds) || seconds < 0) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
+import ProgressBar from "./player/ProgressBar";
+import VolumeControl from "./player/VolumeControl";
+import SleepTimerPopover from "./player/SleepTimerPopover";
 
 function WaveformVisualization({ isPlaying }: { isPlaying: boolean }) {
-  const barsRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
+  const barsDataRef = useRef<number[]>(Array.from({ length: 32 }, () => 30));
 
   useEffect(() => {
-    if (!isPlaying || !barsRef.current) {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
-      return;
-    }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const bars = barsRef.current.children;
-    const barCount = bars.length;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
 
-    // Throttle to ~20fps for performance
+    const barCount = 32;
+    const barWidth = rect.width / barCount - 2;
+    const maxHeight = rect.height;
+
     let lastTime = 0;
-    const throttledAnimate = (time: number) => {
+
+    const animate = (time: number) => {
       if (time - lastTime > 50) {
         lastTime = time;
+        ctx.clearRect(0, 0, rect.width, rect.height);
+
         for (let i = 0; i < barCount; i++) {
-          const bar = bars[i] as HTMLElement;
-          const height = 20 + Math.random() * 80;
-          bar.style.height = `${height}%`;
+          const target = isPlaying ? 20 + Math.random() * 80 : 30;
+          barsDataRef.current[i] +=
+            (target - barsDataRef.current[i]) * 0.3;
+
+          const height = (barsDataRef.current[i] / 100) * maxHeight;
+          const x = i * (barWidth + 2);
+          const y = maxHeight - height;
+
+          ctx.fillStyle = "currentColor";
+          ctx.globalAlpha = 0.6;
+          ctx.beginPath();
+          ctx.roundRect(x, y, barWidth, height, barWidth / 2);
+          ctx.fill();
         }
       }
-      animationRef.current = requestAnimationFrame(throttledAnimate);
+
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animationRef.current = requestAnimationFrame(throttledAnimate);
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (animationRef.current) {
@@ -52,31 +75,167 @@ function WaveformVisualization({ isPlaying }: { isPlaying: boolean }) {
     };
   }, [isPlaying]);
 
-  // Reset bars to static state when not playing
-  useEffect(() => {
-    if (!isPlaying && barsRef.current) {
-      const bars = barsRef.current.children;
-      for (let i = 0; i < bars.length; i++) {
-        const bar = bars[i] as HTMLElement;
-        bar.style.height = "30%";
+  return (
+    <canvas
+      ref={canvasRef}
+      className="h-16 w-full"
+      style={{ color: "inherit" }}
+      aria-hidden="true"
+    />
+  );
+}
+
+interface DraggableQueueProps {
+  queue: ReturnType<typeof useAudioPlayer>["queue"];
+  removeFromQueue: (index: number) => void;
+  reorderQueue: (fromIndex: number, toIndex: number) => void;
+}
+
+function DraggableQueue({
+  queue,
+  removeFromQueue,
+  reorderQueue,
+}: DraggableQueueProps) {
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const handleDragStart = useCallback(
+    (index: number) => (e: React.DragEvent) => {
+      setDragIndex(index);
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(index));
+    },
+    []
+  );
+
+  const handleDragOver = useCallback(
+    (index: number) => (e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      setDragOverIndex(index);
+    },
+    []
+  );
+
+  const handleDrop = useCallback(
+    (toIndex: number) => (e: React.DragEvent) => {
+      e.preventDefault();
+      const fromIndex = Number(e.dataTransfer.getData("text/plain"));
+      if (fromIndex !== toIndex) {
+        reorderQueue(fromIndex, toIndex);
       }
-    }
-  }, [isPlaying]);
+      setDragIndex(null);
+      setDragOverIndex(null);
+    },
+    [reorderQueue]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }, []);
+
+  // Touch drag state
+  const touchStartRef = useRef<{ index: number; y: number } | null>(null);
+
+  const handleTouchStart = useCallback(
+    (index: number) => (e: React.TouchEvent) => {
+      touchStartRef.current = { index, y: e.touches[0].clientY };
+    },
+    []
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const startY = touchStartRef.current.y;
+      const endY = e.changedTouches[0].clientY;
+      const diff = endY - startY;
+      const fromIndex = touchStartRef.current.index;
+
+      // Approximate moving one position per 60px of drag
+      if (Math.abs(diff) > 30) {
+        const positions = Math.round(diff / 60);
+        const toIndex = Math.max(
+          0,
+          Math.min(queue.length - 1, fromIndex + positions)
+        );
+        if (fromIndex !== toIndex) {
+          reorderQueue(fromIndex, toIndex);
+        }
+      }
+      touchStartRef.current = null;
+    },
+    [queue.length, reorderQueue]
+  );
 
   return (
-    <div
-      ref={barsRef}
-      className="flex h-16 items-end justify-center gap-[3px]"
-      aria-hidden="true"
-    >
-      {Array.from({ length: 32 }).map((_, i) => (
-        <div
-          key={i}
-          className="w-1 rounded-full bg-current opacity-60 transition-[height] duration-100"
-          style={{ height: "30%" }}
-        />
+    <ul className="flex flex-col gap-2" role="list" aria-label="Queue tracks">
+      {queue.slice(0, 8).map((track, index) => (
+        <li
+          key={`${track.trackId}-${index}`}
+          draggable
+          onDragStart={handleDragStart(index)}
+          onDragOver={handleDragOver(index)}
+          onDrop={handleDrop(index)}
+          onDragEnd={handleDragEnd}
+          onTouchStart={handleTouchStart(index)}
+          onTouchEnd={handleTouchEnd}
+          className={`flex items-center gap-3 rounded-xl bg-surface/50 px-3 py-2 transition-all ${
+            dragIndex === index ? "opacity-50 scale-95" : ""
+          } ${dragOverIndex === index && dragIndex !== index ? "border-t-2 border-foreground/30" : ""}`}
+        >
+          <div
+            className="flex shrink-0 cursor-grab items-center text-muted active:cursor-grabbing"
+            aria-label="Drag to reorder"
+          >
+            <GripVertical className="h-4 w-4" aria-hidden="true" />
+          </div>
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
+            <Image
+              src={track.artworkUrl100}
+              alt={`${track.trackName} artwork`}
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate text-sm font-medium text-foreground">
+              {track.trackName}
+            </span>
+            <span className="truncate text-xs text-muted">
+              {track.artistName}
+            </span>
+          </div>
+          <button
+            onClick={() => removeFromQueue(index)}
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-premium hover:bg-surface hover:text-foreground"
+            aria-label={`Remove ${track.trackName} from queue`}
+          >
+            <svg
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </li>
       ))}
-    </div>
+      {queue.length > 8 && (
+        <li className="py-1 text-center text-xs text-muted">
+          +{queue.length - 8} more tracks
+        </li>
+      )}
+    </ul>
   );
 }
 
@@ -87,38 +246,23 @@ export default function ExpandedPlayer() {
     artistName,
     artworkUrl,
     currentTrack,
-    currentTime,
-    duration,
-    volume,
-    progress,
     isPlaying,
     pause,
     resume,
-    seekTo,
-    setVolume,
     isExpanded,
     toggleExpanded,
     queue,
     removeFromQueue,
+    reorderQueue,
     playNext,
+    previousTrack,
+    shuffleMode,
+    toggleShuffle,
+    repeatMode,
+    cycleRepeatMode,
   } = useAudioPlayer();
   const { colors } = useDynamicColors();
-  const seekBarRef = useRef<HTMLInputElement>(null);
-
-  const handleSeek = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const time = (Number(e.target.value) / 100) * duration;
-      seekTo(time);
-    },
-    [duration, seekTo]
-  );
-
-  const handleVolumeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setVolume(Number(e.target.value) / 100);
-    },
-    [setVolume]
-  );
+  const [showLyrics, setShowLyrics] = useState(false);
 
   // Close on escape
   useEffect(() => {
@@ -140,10 +284,21 @@ export default function ExpandedPlayer() {
     };
   }, [isExpanded]);
 
+  const handleToggleLyrics = useCallback(() => {
+    setShowLyrics((prev) => !prev);
+  }, []);
+
   if (!isExpanded || !currentlyPlayingId) return null;
 
   const dominantColor = colors?.dominant || "#6366f1";
   const albumName = currentTrack?.collectionName || "Unknown Album";
+
+  const repeatIcon =
+    repeatMode === "one" ? (
+      <Repeat1 className="h-5 w-5" aria-hidden="true" />
+    ) : (
+      <Repeat className="h-5 w-5" aria-hidden="true" />
+    );
 
   return (
     <div
@@ -197,11 +352,27 @@ export default function ExpandedPlayer() {
           <span className="text-xs font-medium uppercase tracking-wider text-muted">
             Now Playing
           </span>
-          <div className="w-10" />
+          <div className="flex items-center gap-2">
+            {/* Lyrics toggle */}
+            <button
+              onClick={handleToggleLyrics}
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                showLyrics
+                  ? "bg-foreground/10 text-foreground"
+                  : "text-muted hover:text-foreground"
+              }`}
+              aria-label={showLyrics ? "Hide lyrics" : "Show lyrics"}
+              aria-pressed={showLyrics}
+            >
+              <Mic2 className="h-4 w-4" aria-hidden="true" />
+            </button>
+            {/* Sleep timer */}
+            <SleepTimerPopover />
+          </div>
         </header>
 
         {/* Main content area */}
-        <div className="flex flex-1 flex-col items-center justify-center gap-8 px-6 pb-8">
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 pb-8 sm:gap-8">
           {/* Large artwork */}
           <div className="relative aspect-square w-full max-w-xs sm:max-w-sm">
             {/* Glow behind artwork */}
@@ -253,31 +424,52 @@ export default function ExpandedPlayer() {
           </div>
 
           {/* Waveform Visualization */}
-          <div className="w-full max-w-sm" style={{ color: dominantColor }}>
-            <WaveformVisualization isPlaying={isPlaying} />
-          </div>
-
-          {/* Seek bar */}
-          <div className="w-full max-w-sm">
-            <input
-              ref={seekBarRef}
-              type="range"
-              min={0}
-              max={100}
-              step={0.1}
-              value={progress}
-              onChange={handleSeek}
-              className="w-full accent-foreground"
-              aria-label="Seek"
-            />
-            <div className="mt-1 flex justify-between text-xs text-muted">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
+          {!showLyrics && (
+            <div className="w-full max-w-sm" style={{ color: dominantColor }}>
+              <WaveformVisualization isPlaying={isPlaying} />
             </div>
-          </div>
+          )}
+
+          {/* Lyrics display (simple placeholder - integrates with existing lyrics fetching) */}
+          {showLyrics && (
+            <div className="w-full max-w-sm rounded-xl bg-surface/30 p-4 text-center">
+              <p className="text-sm text-muted">
+                Lyrics available on track detail page
+              </p>
+              <p className="mt-1 text-xs text-muted/70">
+                Tap the track name to view full lyrics
+              </p>
+            </div>
+          )}
+
+          {/* Interactive Progress Bar */}
+          <ProgressBar />
 
           {/* Playback controls */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Shuffle */}
+            <button
+              onClick={toggleShuffle}
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                shuffleMode
+                  ? "text-foreground"
+                  : "text-muted hover:text-foreground"
+              }`}
+              aria-label={shuffleMode ? "Disable shuffle" : "Enable shuffle"}
+              aria-pressed={shuffleMode}
+            >
+              <Shuffle className="h-5 w-5" aria-hidden="true" />
+            </button>
+
+            {/* Previous */}
+            <button
+              onClick={previousTrack}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-premium hover:scale-105"
+              aria-label="Previous track"
+            >
+              <SkipBack className="h-5 w-5 fill-current" aria-hidden="true" />
+            </button>
+
             {/* Play/Pause toggle */}
             <button
               onClick={isPlaying ? pause : resume}
@@ -312,105 +504,40 @@ export default function ExpandedPlayer() {
               className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-premium hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Skip to next track"
             >
-              <svg
-                className="h-5 w-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
+              <SkipForward
+                className="h-5 w-5 fill-current"
                 aria-hidden="true"
-              >
-                <path d="M5 4l10 8-10 8V4zm11 0h3v16h-3V4z" />
-              </svg>
+              />
+            </button>
+
+            {/* Repeat */}
+            <button
+              onClick={cycleRepeatMode}
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                repeatMode !== "off"
+                  ? "text-foreground"
+                  : "text-muted hover:text-foreground"
+              }`}
+              aria-label={`Repeat mode: ${repeatMode}`}
+            >
+              {repeatIcon}
             </button>
           </div>
 
           {/* Volume control */}
-          <div className="flex w-full max-w-sm items-center gap-3">
-            <svg
-              className="h-4 w-4 shrink-0 text-muted"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
-              />
-            </svg>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              value={Math.round(volume * 100)}
-              onChange={handleVolumeChange}
-              className="flex-1 accent-foreground"
-              aria-label="Volume"
-            />
-            <span className="w-8 text-right text-xs text-muted">
-              {Math.round(volume * 100)}
-            </span>
-          </div>
+          <VolumeControl />
 
-          {/* Queue display */}
+          {/* Queue display with drag and drop */}
           {queue.length > 0 && (
             <div className="w-full max-w-sm">
               <h3 className="mb-3 text-sm font-semibold text-foreground">
                 Up Next ({queue.length})
               </h3>
-              <ul className="flex flex-col gap-2">
-                {queue.slice(0, 5).map((track, index) => (
-                  <li
-                    key={`${track.trackId}-${index}`}
-                    className="flex items-center gap-3 rounded-xl bg-surface/50 px-3 py-2"
-                  >
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
-                      <Image
-                        src={track.artworkUrl100}
-                        alt={`${track.trackName} artwork`}
-                        fill
-                        sizes="40px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-sm font-medium text-foreground">
-                        {track.trackName}
-                      </span>
-                      <span className="truncate text-xs text-muted">
-                        {track.artistName}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => removeFromQueue(index)}
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-premium hover:bg-surface hover:text-foreground"
-                      aria-label={`Remove ${track.trackName} from queue`}
-                    >
-                      <svg
-                        className="h-3.5 w-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </li>
-                ))}
-                {queue.length > 5 && (
-                  <li className="py-1 text-center text-xs text-muted">
-                    +{queue.length - 5} more tracks
-                  </li>
-                )}
-              </ul>
+              <DraggableQueue
+                queue={queue}
+                removeFromQueue={removeFromQueue}
+                reorderQueue={reorderQueue}
+              />
             </div>
           )}
         </div>

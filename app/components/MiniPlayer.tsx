@@ -1,6 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { useRef, useCallback, useState } from "react";
+import {
+  SkipBack,
+  SkipForward,
+  Shuffle,
+  Repeat,
+  Repeat1,
+} from "lucide-react";
 import { useAudioPlayer } from "./AudioPlayerContext";
 import { useDynamicColors } from "./DynamicColorProvider";
 import AnimatedEqualizer from "./AnimatedEqualizer";
@@ -22,10 +30,72 @@ export default function MiniPlayer() {
     resume,
     isExpanded,
     toggleExpanded,
+    playNext,
+    previousTrack,
+    shuffleMode,
+    toggleShuffle,
+    repeatMode,
+    cycleRepeatMode,
+    queue,
   } = useAudioPlayer();
   const { colors } = useDynamicColors();
 
+  // Swipe gesture state
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    setSwipeOffset(0);
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - touchStartRef.current.x;
+    const dy = touch.clientY - touchStartRef.current.y;
+
+    // Only handle horizontal swipes (ignore vertical for expand)
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+      setSwipeOffset(dx);
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchStartRef.current.x;
+      const dy = touch.clientY - touchStartRef.current.y;
+
+      // Swipe up to expand
+      if (dy < -60 && Math.abs(dy) > Math.abs(dx)) {
+        toggleExpanded();
+      }
+      // Swipe left for next track
+      else if (dx < -60 && Math.abs(dx) > Math.abs(dy) && queue.length > 0) {
+        playNext();
+      }
+      // Swipe right for previous track
+      else if (dx > 60 && Math.abs(dx) > Math.abs(dy)) {
+        previousTrack();
+      }
+
+      touchStartRef.current = null;
+      setSwipeOffset(0);
+    },
+    [toggleExpanded, playNext, previousTrack, queue.length]
+  );
+
   if (!currentlyPlayingId) return null;
+
+  const repeatIcon =
+    repeatMode === "one" ? (
+      <Repeat1 className="h-3.5 w-3.5" aria-hidden="true" />
+    ) : (
+      <Repeat className="h-3.5 w-3.5" aria-hidden="true" />
+    );
 
   return (
     <>
@@ -34,6 +104,15 @@ export default function MiniPlayer() {
         <aside
           aria-label="Mini player"
           className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-player shadow-2xl transition-premium"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{
+            transform:
+              swipeOffset !== 0
+                ? `translateX(${swipeOffset * 0.3}px)`
+                : undefined,
+          }}
         >
           {/* Progress bar at top */}
           <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden rounded-t-2xl bg-foreground/10">
@@ -47,7 +126,7 @@ export default function MiniPlayer() {
             />
           </div>
 
-          <div className="flex items-center gap-4 px-5 py-3">
+          <div className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5">
             {/* Artwork with dynamic color glow - click to expand */}
             <button
               onClick={toggleExpanded}
@@ -106,27 +185,34 @@ export default function MiniPlayer() {
               </span>
             </button>
 
-            {/* Expand button */}
-            <button
-              onClick={toggleExpanded}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted transition-premium hover:text-foreground icon-bounce"
-              aria-label="Expand player"
-            >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+            {/* Compact controls */}
+            <div className="hidden items-center gap-1 sm:flex">
+              {/* Shuffle */}
+              <button
+                onClick={toggleShuffle}
+                className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
+                  shuffleMode
+                    ? "text-foreground"
+                    : "text-muted hover:text-foreground"
+                }`}
+                aria-label={shuffleMode ? "Disable shuffle" : "Enable shuffle"}
+                aria-pressed={shuffleMode}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 15l7-7 7 7"
+                <Shuffle className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+
+              {/* Previous */}
+              <button
+                onClick={previousTrack}
+                className="flex h-7 w-7 items-center justify-center rounded-full text-muted transition-colors hover:text-foreground"
+                aria-label="Previous track"
+              >
+                <SkipBack
+                  className="h-3.5 w-3.5 fill-current"
+                  aria-hidden="true"
                 />
-              </svg>
-            </button>
+              </button>
+            </div>
 
             {/* Play/Pause button */}
             <button
@@ -153,6 +239,57 @@ export default function MiniPlayer() {
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
+            </button>
+
+            {/* More compact controls */}
+            <div className="hidden items-center gap-1 sm:flex">
+              {/* Next */}
+              <button
+                onClick={playNext}
+                disabled={queue.length === 0}
+                className="flex h-7 w-7 items-center justify-center rounded-full text-muted transition-colors hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Next track"
+              >
+                <SkipForward
+                  className="h-3.5 w-3.5 fill-current"
+                  aria-hidden="true"
+                />
+              </button>
+
+              {/* Repeat */}
+              <button
+                onClick={cycleRepeatMode}
+                className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
+                  repeatMode !== "off"
+                    ? "text-foreground"
+                    : "text-muted hover:text-foreground"
+                }`}
+                aria-label={`Repeat: ${repeatMode}`}
+              >
+                {repeatIcon}
+              </button>
+            </div>
+
+            {/* Expand button */}
+            <button
+              onClick={toggleExpanded}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted transition-premium hover:text-foreground icon-bounce"
+              aria-label="Expand player"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 15l7-7 7 7"
+                />
+              </svg>
             </button>
           </div>
         </aside>
