@@ -9,6 +9,7 @@ import TrackGrid from "@/app/components/TrackGrid";
 import RecommendationPanel from "@/app/components/RecommendationPanel";
 import MusicInsights from "@/app/components/MusicInsights";
 import LyricsDisplay from "@/app/components/LyricsDisplay";
+import VideoSection from "@/app/components/VideoSection";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
 import ShareMenu from "@/app/components/ShareMenu";
@@ -204,6 +205,9 @@ export default async function TrackPage({
             </div>
           </div>
 
+          {/* Music Videos */}
+          <VideoSection query={`${track.artistName} ${track.trackName}`} />
+
           {recommendationsResult.error ? (
             <section className="mb-12" aria-label="Recommendations unavailable">
               <h2 className="mb-4 text-2xl font-bold text-foreground">
@@ -257,7 +261,7 @@ export default async function TrackPage({
       </main>
 
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API</p>
+        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
       </footer>
     </div>
   );

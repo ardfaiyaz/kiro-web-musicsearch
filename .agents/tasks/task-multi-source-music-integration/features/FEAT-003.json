@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Create server-side API routes for secure communication with external APIs (Spotify, Lyrics, YouTube) and update existing pages (artist, track, album) to consume unified data. Add new UI components for YouTube video embeds and enhanced lyrics display.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create app/api/lyrics/route.ts - GET endpoint that accepts artist and track query params, calls lib/lyrics.ts getLyrics, returns JSON. Includes caching headers.",
     "Create app/api/spotify/artist/route.ts - GET endpoint that accepts name query param, calls lib/spotify.ts to get artist details, returns JSON with Spotify artist data.",
