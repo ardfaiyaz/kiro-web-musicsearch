@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import { usePersonalization } from "@/app/components/PersonalizationContext";
 import TrackGrid from "@/app/components/TrackGrid";
-import CollectionsManager from "@/app/components/CollectionsManager";
+import CollectionsPage from "@/app/components/favorites/collections/CollectionsPage";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
@@ -149,7 +149,7 @@ export default function FavoritesPage() {
               role="tabpanel"
               aria-label="Your collections"
             >
-              <CollectionsManager />
+              <CollectionsPage />
             </div>
           )}
 
