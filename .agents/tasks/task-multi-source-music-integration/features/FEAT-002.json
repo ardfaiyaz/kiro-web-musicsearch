@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Create the unified service layer with Spotify, Lyrics, and YouTube services plus a unified music.service.ts that merges all providers. Also extend types, update .env.example, and update next.config.ts for new image domains.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create lib/spotify.ts - Spotify Web API service using server-side credentials (client_credentials flow). Functions: getSpotifyAccessToken(), searchArtist(name), getArtistDetails(spotifyId), getArtistTopTracks(spotifyId), getArtistAlbums(spotifyId), searchAlbum(name, artist), getAlbumDetails(spotifyId). Uses environment variables SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET. Include token caching. Add proper error handling using the existing ApiResult pattern from lib/api-error.ts.",
     "Create lib/lyrics.ts - Lyrics service using lyrics.ovh API (https://api.lyrics.ovh/v1/{artist}/{title}). Functions: getLyrics(artistName, trackName). Returns lyrics string or null on failure. Handles graceful fallback for unavailable lyrics.",

@@ -101,3 +101,82 @@ export interface AlbumDetail {
   album: ItunesAlbum;
   tracks: ItunesTrack[];
 }
+
+// Spotify types
+export interface SpotifyArtist {
+  id: string;
+  name: string;
+  genres: string[];
+  popularity: number;
+  followers: number;
+  images: { url: string; width: number; height: number }[];
+  spotifyUrl: string;
+}
+
+export interface SpotifyAlbum {
+  id: string;
+  name: string;
+  artistName: string;
+  images: { url: string; width: number; height: number }[];
+  releaseDate: string;
+  totalTracks: number;
+  albumType: string;
+  spotifyUrl: string;
+}
+
+export interface SpotifyTrack {
+  id: string;
+  name: string;
+  artistName: string;
+  albumName: string;
+  albumImages: { url: string; width: number; height: number }[];
+  durationMs: number;
+  popularity: number;
+  previewUrl: string | null;
+  explicit: boolean;
+  trackNumber: number;
+  spotifyUrl: string;
+}
+
+// YouTube types
+export interface YouTubeVideo {
+  videoId: string;
+  title: string;
+  channelTitle: string;
+  thumbnailUrl: string;
+  publishedAt: string;
+}
+
+// Unified types combining multiple providers
+export interface UnifiedArtist {
+  name: string;
+  itunes?: ItunesArtist;
+  spotify?: SpotifyArtist;
+  lastfm?: LastFmArtist;
+  spotifyTopTracks?: SpotifyTrack[];
+  spotifyAlbums?: SpotifyAlbum[];
+  genres: string[];
+  imageUrl?: string;
+  bio?: string;
+  popularity?: number;
+  followers?: number;
+}
+
+export interface UnifiedTrack {
+  itunes: ItunesTrack;
+  lyrics?: string;
+  youtubeVideos: YouTubeVideo[];
+}
+
+export interface UnifiedAlbum {
+  itunes: ItunesAlbum;
+  spotify?: SpotifyAlbum;
+}
+
+export interface UnifiedSearchResults {
+  tracks: ItunesTrack[];
+  artists: ItunesArtist[];
+  albums: ItunesAlbum[];
+  spotifyArtist?: SpotifyArtist;
+  spotifyAlbum?: SpotifyAlbum;
+}
