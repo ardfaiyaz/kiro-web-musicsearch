@@ -3,24 +3,28 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
+import { usePersonalization } from "@/app/components/PersonalizationContext";
 import TrackGrid from "@/app/components/TrackGrid";
 import CollectionsManager from "@/app/components/CollectionsManager";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
 import FavoriteAlbumsPage from "@/app/components/favorites/albums/FavoriteAlbumsPage";
+import RecentlyPlayedPage from "@/app/components/favorites/history/RecentlyPlayedPage";
 
-type TabId = "songs" | "artists" | "albums" | "collections";
+type TabId = "songs" | "artists" | "albums" | "collections" | "history";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "songs", label: "Songs" },
   { id: "artists", label: "Artists" },
   { id: "albums", label: "Albums" },
   { id: "collections", label: "Collections" },
+  { id: "history", label: "History" },
 ];
 
 export default function FavoritesPage() {
   const { favorites, favoriteArtists, favoriteAlbums } = useFavorites();
+  const { listeningHistory } = usePersonalization();
   const [activeTab, setActiveTab] = useState<TabId>("songs");
 
   function getTabCount(tabId: TabId): number {
@@ -31,6 +35,8 @@ export default function FavoritesPage() {
         return favoriteArtists.length;
       case "albums":
         return favoriteAlbums.length;
+      case "history":
+        return listeningHistory.length;
       default:
         return 0;
     }
@@ -142,6 +148,17 @@ export default function FavoritesPage() {
               aria-label="Your collections"
             >
               <CollectionsManager />
+            </div>
+          )}
+
+          {/* History Tab */}
+          {activeTab === "history" && (
+            <div
+              id="tabpanel-history"
+              role="tabpanel"
+              aria-label="Listening history"
+            >
+              <RecentlyPlayedPage />
             </div>
           )}
         </section>
