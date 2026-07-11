@@ -21,6 +21,85 @@
   --user-blur-intensity: 20px;
   --user-glass-opacity: 0.7;
   --animation-speed: 1;
+
+  /* Design Bible - Motion timing tokens */
+  --duration-micro: 150ms;
+  --duration-standard: 250ms;
+  --duration-complex: 350ms;
+  --duration-page: 500ms;
+
+  /* Design Bible - Spring easing curves */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Design Bible - Primary brand colors */
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: #a5b4fc;
+  --primary-dark: #3730a3;
+  --secondary: #8b5cf6;
+  --secondary-hover: #7c3aed;
+
+  /* Design Bible - Semantic colors */
+  --success: #22c55e;
+  --success-light: #bbf7d0;
+  --warning: #eab308;
+  --warning-light: #fef08a;
+  --error: #ef4444;
+  --error-light: #fecaca;
+  --info: #3b82f6;
+  --info-light: #bfdbfe;
+
+  /* Design Bible - Text colors */
+  --text-primary: #0a0a0a;
+  --text-secondary: #52525b;
+  --text-tertiary: #a1a1aa;
+  --text-inverse: #fafafa;
+
+  /* Design Bible - Typography scale */
+  --font-size-display-lg: 4.5rem;
+  --font-size-display-md: 3.75rem;
+  --font-size-display-sm: 3rem;
+  --font-size-h1: 2.25rem;
+  --font-size-h2: 1.875rem;
+  --font-size-h3: 1.5rem;
+  --font-size-h4: 1.25rem;
+  --font-size-body-lg: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-body-sm: 0.875rem;
+  --font-size-caption: 0.75rem;
+  --font-size-overline: 0.625rem;
+
+  /* Design Bible - Line heights */
+  --leading-display: 1.1;
+  --leading-heading: 1.25;
+  --leading-body: 1.5;
+  --leading-tight: 1.3;
+  --leading-relaxed: 1.75;
+
+  /* Design Bible - Letter spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  /* Design Bible - Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Design Bible - Elevation/Shadow tokens */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 html.dark {
@@ -42,9 +121,46 @@ html.dark {
   --dynamic-accent-light: transparent;
   --dynamic-accent-muted: transparent;
   --user-glass-opacity: 0.75;
+
+  /* Design Bible - Primary brand colors (dark) */
+  --primary: #818cf8;
+  --primary-hover: #6366f1;
+  --primary-light: #312e81;
+  --primary-dark: #c7d2fe;
+  --secondary: #a78bfa;
+  --secondary-hover: #8b5cf6;
+
+  /* Design Bible - Semantic colors (dark) */
+  --success: #4ade80;
+  --success-light: #166534;
+  --warning: #facc15;
+  --warning-light: #713f12;
+  --error: #f87171;
+  --error-light: #7f1d1d;
+  --info: #60a5fa;
+  --info-light: #1e3a5f;
+
+  /* Design Bible - Text colors (dark) */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-inverse: #0a0a0a;
+
+  /* Design Bible - Elevation/Shadow tokens (dark) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
+  /*
+   * NOTE: Tailwind CSS 4's @theme inline does not support var() references for
+   * font sizes, radii, and shadows due to self-referencing constraints.
+   * These values MUST be duplicated as literals here AND in the :root block above.
+   * When updating a design token, change it in BOTH locations.
+   */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -58,8 +174,64 @@ html.dark {
   --color-glass-border: var(--glass-border);
   --color-shadow-color: var(--shadow-color);
   --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
+
+  /* Design Bible - Primary & secondary colors */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+
+  /* Design Bible - Semantic colors */
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-error: var(--error);
+  --color-error-light: var(--error-light);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+
+  /* Design Bible - Text colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-inverse: var(--text-inverse);
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+
+  /* Design Bible - Typography scale */
+  --font-size-display-lg: 4.5rem;
+  --font-size-display-md: 3.75rem;
+  --font-size-display-sm: 3rem;
+  --font-size-h1: 2.25rem;
+  --font-size-h2: 1.875rem;
+  --font-size-h3: 1.5rem;
+  --font-size-h4: 1.25rem;
+  --font-size-body-lg: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-body-sm: 0.875rem;
+  --font-size-caption: 0.75rem;
+  --font-size-overline: 0.625rem;
+
+  /* Design Bible - Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Design Bible - Elevation/Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 /* Universal theme transition */
@@ -72,15 +244,28 @@ html.dark {
   transition-timing-function: ease;
 }
 
-[class*="animate-"] {
-  transition: none;
+/* ===== Design Bible - Focus Visible Indicators (WCAG 2.2 AA) ===== */
+
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.focus-ring {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    transition-duration: 0ms;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -197,6 +382,156 @@ html.dark .glass-player {
   animation: blurIn 0.4s ease-out forwards;
 }
 
+/* ===== Design Bible - Page Transition Keyframes ===== */
+
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-toast-progress {
+  animation: toastProgress linear forwards;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+}
+
+.animate-page-enter {
+  animation: pageEnter var(--duration-page, 500ms) var(--ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+}
+
+.animate-page-exit {
+  animation: pageExit var(--duration-complex, 350ms) var(--ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+}
+
+/* ===== Design Bible - Scroll-Triggered Entrance Animations ===== */
+
+@keyframes scrollFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scrollSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scroll-triggered entrance using animation-timeline: view() with graceful fallback */
+.animate-on-scroll-fade {
+  opacity: 0;
+  animation: scrollFadeIn var(--duration-complex, 350ms) var(--ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+  animation-timeline: view();
+  animation-range: entry 0% entry 30%;
+}
+
+.animate-on-scroll-slide-up {
+  opacity: 0;
+  animation: scrollSlideUp var(--duration-complex, 350ms) var(--ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+  animation-timeline: view();
+  animation-range: entry 0% entry 30%;
+}
+
+.animate-on-scroll-scale {
+  opacity: 0;
+  animation: scrollScaleIn var(--duration-complex, 350ms) var(--ease-smooth, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
+  animation-timeline: view();
+  animation-range: entry 0% entry 30%;
+}
+
+/* Fallback for browsers that do not support animation-timeline */
+@supports not (animation-timeline: view()) {
+  .animate-on-scroll-fade,
+  .animate-on-scroll-slide-up,
+  .animate-on-scroll-scale {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Reduced motion: disable scroll-triggered animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-on-scroll-fade,
+  .animate-on-scroll-slide-up,
+  .animate-on-scroll-scale {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+
+  .animate-page-enter,
+  .animate-page-exit {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+html.reduce-motion .animate-on-scroll-fade,
+html.reduce-motion .animate-on-scroll-slide-up,
+html.reduce-motion .animate-on-scroll-scale {
+  opacity: 1;
+  animation: none;
+  transform: none;
+}
+
+html.reduce-motion .animate-page-enter,
+html.reduce-motion .animate-page-exit {
+  animation: none;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -297,6 +632,130 @@ html.dark .glass-player {
   box-shadow: 0 8px 24px -4px var(--shadow-color),
     0 4px 12px -2px var(--shadow-color);
   border-radius: 9999px;
+}
+
+/* ===== Design Bible - 5-Level Glass Hierarchy ===== */
+/*
+ * Glass Utility Mapping
+ * ---------------------
+ * The project maintains two sets of glass classes for backward compatibility.
+ * New code should prefer the 5-level system below.
+ *
+ * Level 1 (glass-subtle)  - Background elements, ambient surfaces
+ *   Legacy equivalents: glass-stats, glass-settings, glass-recommendation
+ *
+ * Level 2 (glass-light)   - Cards, secondary containers
+ *   Legacy equivalents: glass, glass-card, glass-search, glass-tooltip, glass-sidebar
+ *
+ * Level 3 (glass-medium)  - Navigation, prominent containers
+ *   Legacy equivalents: glass-elevated, glass-dropdown, glass-fab, glass-player
+ *
+ * Level 4 (glass-heavy)   - Elevated panels, dropdowns, command palettes
+ *   Legacy equivalents: (none - new tier)
+ *
+ * Level 5 (glass-ultra)   - Modals, dialogs, hero overlays
+ *   Legacy equivalents: glass-dialog
+ */
+
+/* Level 1: Subtle - Background elements, ambient surfaces */
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px) saturate(120%);
+  -webkit-backdrop-filter: blur(4px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 4px -1px var(--shadow-color);
+}
+
+html.dark .glass-subtle {
+  background: rgba(24, 24, 27, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Level 2: Light - Cards, secondary containers */
+.glass-light {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px -2px var(--shadow-color);
+}
+
+html.dark .glass-light {
+  background: rgba(24, 24, 27, 0.55);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Level 3: Medium - Navigation, prominent containers */
+.glass-medium {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px -4px var(--shadow-color);
+}
+
+html.dark .glass-medium {
+  background: rgba(24, 24, 27, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Level 4: Heavy - Elevated panels, dropdowns, players */
+.glass-heavy {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px -4px var(--shadow-color),
+    0 4px 16px -2px var(--shadow-color);
+}
+
+html.dark .glass-heavy {
+  background: rgba(24, 24, 27, 0.8);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Level 5: Ultra - Modals, dialogs, hero overlays */
+.glass-ultra {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 16px 48px -8px var(--shadow-color),
+    0 8px 24px -4px var(--shadow-color);
+}
+
+html.dark .glass-ultra {
+  background: rgba(24, 24, 27, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Glass lighting - simulates overhead light source with subtle top highlight */
+.glass-lighting {
+  position: relative;
+}
+
+.glass-lighting::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+html.dark .glass-lighting::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 20%,
+    transparent 50%
+  );
 }
 
 /* Dynamic tinting */
@@ -649,15 +1108,68 @@ html.reduce-motion .ambient-floating-shapes {
   }
 }
 
+/* Enhanced wave shimmer animation (Design Bible skeleton loading pattern) */
+@keyframes shimmerWave {
+  0% {
+    background-position: -200% 0;
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 200% 0;
+    opacity: 0.6;
+  }
+}
+
 .shimmer-loading {
   background: linear-gradient(
     90deg,
     var(--border) 25%,
-    var(--surface) 50%,
+    var(--surface) 37%,
+    var(--surface-hover) 50%,
+    var(--surface) 63%,
     var(--border) 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmerWave 2s ease-in-out infinite;
+}
+
+/* Premium skeleton wave effect with multi-layer highlight */
+.shimmer-wave {
+  position: relative;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.shimmer-wave::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+html.dark .shimmer-wave::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 /* Icon bounce animation */

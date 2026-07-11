@@ -6,6 +6,7 @@ import { getUnifiedAlbum } from "@/lib/music-service";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import AlbumActions from "@/app/components/AlbumActions";
 
 function formatDuration(ms: number): string {
@@ -57,7 +58,7 @@ export default async function AlbumPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Cinematic Hero */}
         <section className="relative overflow-hidden bg-card" aria-label="Album hero">
           {artworkUrl && (
@@ -265,11 +266,9 @@ export default async function AlbumPage({
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

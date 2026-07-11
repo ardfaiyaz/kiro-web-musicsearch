@@ -11,6 +11,7 @@ import RecommendationPanel from "@/app/components/RecommendationPanel";
 import MusicInsights from "@/app/components/MusicInsights";
 import VideoSection from "@/app/components/VideoSection";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import ArtistActions from "@/app/components/ArtistActions";
 
 export default async function ArtistPage({
@@ -58,7 +59,7 @@ export default async function ArtistPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Hero Banner */}
         <section
           className="relative overflow-hidden bg-card"
@@ -254,11 +255,9 @@ export default async function ArtistPage({
             </section>
           )}
         </div>
-      </main>
+      </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

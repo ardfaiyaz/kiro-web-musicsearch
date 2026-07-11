@@ -12,7 +12,7 @@ export default function TrackError({
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-24 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-24 text-center">
         <div className="animate-slide-up">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
             <svg
@@ -44,7 +44,7 @@ export default function TrackError({
         >
           Try Again
         </button>
-      </main>
+      </div>
     </div>
   );
 }

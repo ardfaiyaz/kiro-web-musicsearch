@@ -12,6 +12,7 @@ import LyricsDisplay from "@/app/components/LyricsDisplay";
 import VideoSection from "@/app/components/VideoSection";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import ShareMenu from "@/app/components/ShareMenu";
 
 function formatDuration(ms: number): string {
@@ -55,7 +56,7 @@ export default async function TrackPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Cinematic hero with artwork blur */}
         <section className="relative overflow-hidden bg-card" aria-label="Track hero">
           {artworkUrl && (
@@ -258,11 +259,9 @@ export default async function TrackPage({
             </div>
           )}
         </div>
-      </main>
+      </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

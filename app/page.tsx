@@ -7,6 +7,7 @@ import AlbumGrid from "./components/AlbumGrid";
 import EmptyState from "./components/EmptyState";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import InfiniteScrollResults from "./components/InfiniteScrollResults";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { unifiedSearch } from "@/lib/music-service";
@@ -223,7 +224,7 @@ export default async function Home({
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
         {!query && (
           <section
             className="flex flex-col items-center justify-center gap-8 py-24 text-center sm:py-32 lg:py-40"
@@ -313,11 +314,9 @@ export default async function Home({
             </Suspense>
           </section>
         )}
-      </main>
+      </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

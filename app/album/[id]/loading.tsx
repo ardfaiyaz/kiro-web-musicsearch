@@ -17,7 +17,7 @@ export default function AlbumLoading() {
         </div>
       </div>
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Hero skeleton */}
         <div className="bg-card">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -55,7 +55,7 @@ export default function AlbumLoading() {
             ))}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

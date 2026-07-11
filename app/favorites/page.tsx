@@ -8,6 +8,7 @@ import ArtistCard from "@/app/components/ArtistCard";
 import AlbumCard from "@/app/components/AlbumCard";
 import CollectionsManager from "@/app/components/CollectionsManager";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 type TabId = "songs" | "artists" | "albums" | "collections";
 
@@ -39,7 +40,7 @@ export default function FavoritesPage() {
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
         <section aria-label="Your favorites">
           <header className="mb-8">
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -180,11 +181,9 @@ export default function FavoritesPage() {
             </div>
           )}
         </section>
-      </main>
+      </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

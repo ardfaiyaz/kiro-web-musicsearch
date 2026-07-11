@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import HorizontalScroll from "@/app/components/HorizontalScroll";
 import GenreCard from "@/app/components/GenreCard";
 import DiscoveryMoodSelector from "@/app/components/DiscoveryMoodSelector";
@@ -90,7 +91,7 @@ export default async function DiscoverPage() {
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Hero Section */}
         {heroSong && (
           <section
@@ -370,11 +371,9 @@ export default async function DiscoverPage() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
