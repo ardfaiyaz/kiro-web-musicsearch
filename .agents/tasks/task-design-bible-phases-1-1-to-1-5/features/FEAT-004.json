@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "refactor",
   "description": "Phase 1.4 - Component Design Language: Refactor the Header/NavBar to use Lucide React icons, add a proper Footer component, add a Toast notification system, and add a CommandPalette (Cmd+K) component. These are the key missing components from the design bible's 25-component specification that don't currently exist.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Refactor app/components/Header.tsx to replace all inline SVG icons with lucide-react icons (Search, Mic, BarChart3, ListMusic, Heart, Moon, Sun, ChevronLeft). Keep the same visual sizing and behavior. The nav items should use the lucide-react Icon component.",
     "Create app/components/Footer.tsx as a proper reusable Footer component per the design bible: include brand name, navigation links (Search, Discover, Dashboard, Playlists, Favorites), a 'Powered by' section, and social/attribution links. Use glass-subtle styling with proper semantic HTML (footer element, nav for links). Use lucide-react icons (Music2, Github, ExternalLink).",

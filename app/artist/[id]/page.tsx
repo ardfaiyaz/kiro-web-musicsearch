@@ -11,6 +11,7 @@ import RecommendationPanel from "@/app/components/RecommendationPanel";
 import MusicInsights from "@/app/components/MusicInsights";
 import VideoSection from "@/app/components/VideoSection";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import ArtistActions from "@/app/components/ArtistActions";
 
 export default async function ArtistPage({
@@ -256,9 +257,7 @@ export default async function ArtistPage({
         </div>
       </main>
 
-      <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
