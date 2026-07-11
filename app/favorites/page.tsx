@@ -3,24 +3,30 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
+import { usePersonalization } from "@/app/components/PersonalizationContext";
 import TrackGrid from "@/app/components/TrackGrid";
-import ArtistCard from "@/app/components/ArtistCard";
-import AlbumCard from "@/app/components/AlbumCard";
-import CollectionsManager from "@/app/components/CollectionsManager";
+import CollectionsPage from "@/app/components/favorites/collections/CollectionsPage";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
+import FavoriteAlbumsPage from "@/app/components/favorites/albums/FavoriteAlbumsPage";
+import RecentlyPlayedPage from "@/app/components/favorites/history/RecentlyPlayedPage";
+import MusicInsightsPage from "@/app/components/favorites/analytics/MusicInsightsPage";
 
-type TabId = "songs" | "artists" | "albums" | "collections";
+type TabId = "songs" | "artists" | "albums" | "collections" | "history" | "insights";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "songs", label: "Songs" },
   { id: "artists", label: "Artists" },
   { id: "albums", label: "Albums" },
   { id: "collections", label: "Collections" },
+  { id: "history", label: "History" },
+  { id: "insights", label: "Insights" },
 ];
 
 export default function FavoritesPage() {
   const { favorites, favoriteArtists, favoriteAlbums } = useFavorites();
+  const { listeningHistory } = usePersonalization();
   const [activeTab, setActiveTab] = useState<TabId>("songs");
 
   function getTabCount(tabId: TabId): number {
@@ -31,6 +37,8 @@ export default function FavoritesPage() {
         return favoriteArtists.length;
       case "albums":
         return favoriteAlbums.length;
+      case "history":
+        return listeningHistory.length;
       default:
         return 0;
     }
@@ -119,25 +127,7 @@ export default function FavoritesPage() {
               role="tabpanel"
               aria-label="Favorite artists"
             >
-              {favoriteArtists.length === 0 ? (
-                <EmptyState
-                  icon={
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                    />
-                  }
-                  title="No favorite artists yet"
-                  description="Visit artist pages and add them to your favorites to see them here."
-                />
-              ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {favoriteArtists.map((artist) => (
-                    <ArtistCard key={artist.artistId} artist={artist} />
-                  ))}
-                </div>
-              )}
+              <FavoriteArtistsPage />
             </div>
           )}
 
@@ -148,25 +138,7 @@ export default function FavoritesPage() {
               role="tabpanel"
               aria-label="Favorite albums"
             >
-              {favoriteAlbums.length === 0 ? (
-                <EmptyState
-                  icon={
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                    />
-                  }
-                  title="No favorite albums yet"
-                  description="Visit album pages and add them to your favorites to see them here."
-                />
-              ) : (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {favoriteAlbums.map((album) => (
-                    <AlbumCard key={album.collectionId} album={album} />
-                  ))}
-                </div>
-              )}
+              <FavoriteAlbumsPage />
             </div>
           )}
 
@@ -177,7 +149,29 @@ export default function FavoritesPage() {
               role="tabpanel"
               aria-label="Your collections"
             >
-              <CollectionsManager />
+              <CollectionsPage />
+            </div>
+          )}
+
+          {/* History Tab */}
+          {activeTab === "history" && (
+            <div
+              id="tabpanel-history"
+              role="tabpanel"
+              aria-label="Listening history"
+            >
+              <RecentlyPlayedPage />
+            </div>
+          )}
+
+          {/* Insights Tab */}
+          {activeTab === "insights" && (
+            <div
+              id="tabpanel-insights"
+              role="tabpanel"
+              aria-label="Music insights and analytics"
+            >
+              <MusicInsightsPage />
             </div>
           )}
         </section>

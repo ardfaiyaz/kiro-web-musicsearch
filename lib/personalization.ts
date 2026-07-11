@@ -4,8 +4,10 @@ const RECENTLY_PLAYED_KEY = "music-search-recently-played";
 const FAVORITE_ARTISTS_KEY = "music-search-favorite-artists";
 const FAVORITE_ALBUMS_KEY = "music-search-favorite-albums";
 const PLAYLISTS_KEY = "music-search-playlists";
+const LISTENING_HISTORY_KEY = "music-search-listening-history";
 
 const MAX_RECENTLY_PLAYED = 50;
+const MAX_LISTENING_HISTORY = 500;
 
 export interface Playlist {
   id: string;
@@ -207,10 +209,92 @@ export function removeTrackFromPlaylist(
   }
 }
 
+// --- Listening History ---
+
+export interface HistoryEntry {
+  trackId: number;
+  artistName: string;
+  albumName: string;
+  artworkUrl: string;
+  trackName: string;
+  primaryGenreName: string;
+  playedAt: number;
+  duration: number;
+  progress: number;
+  completed: boolean;
+  sessionId: string;
+  previewUrl: string | null;
+}
+
+export function getListeningHistory(): HistoryEntry[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem(LISTENING_HISTORY_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addHistoryEntry(entry: HistoryEntry): void {
+  if (typeof window === "undefined") return;
+  try {
+    const existing = getListeningHistory();
+    const updated = [entry, ...existing].slice(0, MAX_LISTENING_HISTORY);
+    localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify(updated));
+  } catch {
+    // Silently handle QuotaExceededError
+  }
+}
+
+export function removeHistoryEntry(trackId: number, playedAt: number): void {
+  if (typeof window === "undefined") return;
+  try {
+    const existing = getListeningHistory();
+    const updated = existing.filter(
+      (entry) => !(entry.trackId === trackId && entry.playedAt === playedAt)
+    );
+    localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify(updated));
+  } catch {
+    // Silently handle QuotaExceededError
+  }
+}
+
+export function clearHistory(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify([]));
+  } catch {
+    // Silently handle QuotaExceededError
+  }
+}
+
+export function getPlaybackProgress(trackId: number): number {
+  const history = getListeningHistory();
+  const entry = history.find((e) => e.trackId === trackId);
+  return entry ? entry.progress : 0;
+}
+
+export function updatePlaybackProgress(trackId: number, progress: number): void {
+  if (typeof window === "undefined") return;
+  try {
+    const existing = getListeningHistory();
+    const idx = existing.findIndex((e) => e.trackId === trackId);
+    if (idx !== -1) {
+      existing[idx].progress = progress;
+      existing[idx].completed = progress >= 100;
+      localStorage.setItem(LISTENING_HISTORY_KEY, JSON.stringify(existing));
+    }
+  } catch {
+    // Silently handle QuotaExceededError
+  }
+}
+
 // Storage keys exports for cross-tab detection
 export const PERSONALIZATION_STORAGE_KEYS = {
   recentlyPlayed: RECENTLY_PLAYED_KEY,
   favoriteArtists: FAVORITE_ARTISTS_KEY,
   favoriteAlbums: FAVORITE_ALBUMS_KEY,
   playlists: PLAYLISTS_KEY,
+  listeningHistory: LISTENING_HISTORY_KEY,
 };

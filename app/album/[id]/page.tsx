@@ -1,23 +1,18 @@
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAlbumTracks } from "@/lib/itunes";
+import { getAlbumTracks, getArtistAlbums } from "@/lib/itunes";
 import { getUnifiedAlbum } from "@/lib/music-service";
-import AudioPlayer from "@/app/components/AudioPlayer";
-import ExplicitBadge from "@/app/components/ExplicitBadge";
+import { getSimilarArtists } from "@/lib/lastfm";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import AlbumActions from "@/app/components/AlbumActions";
-
-function formatDuration(ms: number): string {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-function formatYear(dateString: string): string {
-  return new Date(dateString).getFullYear().toString();
-}
+import AlbumPageClient from "@/app/components/album/AlbumPageClient";
+import AlbumCredits from "@/app/components/album/AlbumCredits";
+import AlbumDetails from "@/app/components/album/AlbumDetails";
+import SimilarAlbums from "@/app/components/album/SimilarAlbums";
+import RecommendedArtists from "@/app/components/album/RecommendedArtists";
+import MusicVideos from "@/app/components/album/MusicVideos";
+import AIInsights from "@/app/components/album/AIInsights";
+import AlbumTimeline from "@/app/components/album/AlbumTimeline";
+import ExternalLinks from "@/app/components/album/ExternalLinks";
 
 function totalDuration(tracks: { trackTimeMillis: number }[]): string {
   const totalMs = tracks.reduce((sum, t) => sum + (t.trackTimeMillis || 0), 0);
@@ -48,225 +43,86 @@ export default async function AlbumPage({
   }
 
   const { album, tracks } = albumDetail;
-  const artworkUrl = album.artworkUrl100?.replace("100x100", "600x600");
+  const artworkUrl = album.artworkUrl100?.replace("100x100", "1000x1000") || null;
 
-  // Fetch unified album data for enrichment
-  const unifiedAlbum = await getUnifiedAlbum(album);
-  const spotifyAlbum = unifiedAlbum.spotify;
+  // Fetch enrichment data in parallel with graceful degradation
+  const [unifiedResult, artistAlbumsResult, similarArtistsResult] =
+    await Promise.allSettled([
+      getUnifiedAlbum(album),
+      getArtistAlbums(album.artistId),
+      getSimilarArtists(album.artistName, 8),
+    ]);
+
+  const unifiedAlbum =
+    unifiedResult.status === "fulfilled" ? unifiedResult.value : null;
+  const spotifyAlbum = unifiedAlbum?.spotify;
+
+  const artistAlbums =
+    artistAlbumsResult.status === "fulfilled"
+      ? artistAlbumsResult.value
+      : [];
+
+  const similarArtists =
+    similarArtistsResult.status === "fulfilled"
+      ? similarArtistsResult.value
+      : [];
+
+  const duration = totalDuration(tracks);
 
   return (
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <div className="flex-1">
-        {/* Cinematic Hero */}
-        <section className="relative overflow-hidden bg-card" aria-label="Album hero">
-          {artworkUrl && (
-            <div className="absolute inset-0 opacity-20">
-              <Image
-                src={artworkUrl}
-                alt=""
-                fill
-                sizes="100vw"
-                className="object-cover blur-3xl scale-110"
-                aria-hidden="true"
-              />
-            </div>
-          )}
-          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-            <article>
-              <header className="flex flex-col gap-8 lg:flex-row lg:items-end lg:gap-12">
-                <div className="shrink-0">
-                  <div className="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-2xl shadow-2xl lg:w-72">
-                    {artworkUrl ? (
-                      <Image
-                        src={artworkUrl}
-                        alt={`${album.collectionName} album artwork`}
-                        fill
-                        sizes="(max-width: 1024px) 320px, 288px"
-                        className="object-cover"
-                        priority
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-foreground/5">
-                        <svg
-                          className="h-20 w-20 text-muted"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1}
-                            d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                </div>
+      <main className="flex-1">
+        {/* Client-side interactive sections: Hero, Sticky Bar, Tracklist, Description */}
+        <AlbumPageClient
+          album={album}
+          tracks={tracks}
+          spotify={spotifyAlbum}
+          artworkUrl={artworkUrl}
+          totalDuration={duration}
+        />
 
-                <section className="flex flex-1 flex-col gap-4" aria-label="Album details">
-                  <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                    {album.collectionName}
-                  </h2>
-                  <p className="text-lg text-muted">
-                    <Link
-                      href={`/artist/${album.artistId}`}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {album.artistName}
-                    </Link>
-                  </p>
+        {/* Server-rendered sections */}
+        <AlbumCredits album={album} tracks={tracks} />
 
-                  <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                    <div className="flex flex-col gap-1">
-                      <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                        Year
-                      </dt>
-                      <dd className="text-sm font-medium text-foreground">
-                        {album.releaseDate ? formatYear(album.releaseDate) : "N/A"}
-                      </dd>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                        Genre
-                      </dt>
-                      <dd className="text-sm font-medium text-foreground">
-                        {album.primaryGenreName}
-                      </dd>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                        Tracks
-                      </dt>
-                      <dd className="text-sm font-medium text-foreground">
-                        {tracks.length} songs, {totalDuration(tracks)}
-                      </dd>
-                    </div>
-                    {spotifyAlbum && (
-                      <>
-                        <div className="flex flex-col gap-1">
-                          <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                            Type
-                          </dt>
-                          <dd className="text-sm font-medium capitalize text-foreground">
-                            {spotifyAlbum.albumType}
-                          </dd>
-                        </div>
-                        {spotifyAlbum.spotifyUrl && (
-                          <div className="flex flex-col gap-1">
-                            <dt className="text-xs font-medium uppercase tracking-wider text-muted">
-                              Listen on
-                            </dt>
-                            <dd className="text-sm font-medium text-foreground">
-                              <a
-                                href={spotifyAlbum.spotifyUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-green-500 transition-colors hover:text-green-400"
-                                aria-label="Open on Spotify"
-                              >
-                                Spotify
-                              </a>
-                            </dd>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </dl>
+        <AlbumDetails
+          album={album}
+          spotify={spotifyAlbum}
+          trackCount={tracks.length}
+          totalDuration={duration}
+        />
 
-                  {album.collectionExplicitness === "explicit" && (
-                    <div className="flex items-center gap-2">
-                      <ExplicitBadge />
-                      <span className="text-xs text-muted">Explicit content</span>
-                    </div>
-                  )}
+        {artistAlbums.length > 0 && (
+          <SimilarAlbums
+            albums={artistAlbums}
+            currentAlbumId={album.collectionId}
+          />
+        )}
 
-                  <AlbumActions album={album} />
-                </section>
-              </header>
-            </article>
-          </div>
-        </section>
+        <MusicVideos
+          query={`${album.artistName} ${album.collectionName}`}
+        />
 
-        {/* Track Listing */}
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <section aria-label="Track listing">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
-              Track Listing
-            </h2>
-            <div className="overflow-hidden rounded-2xl border border-border">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border bg-card/80">
-                    <th className="px-5 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted w-12">
-                      #
-                    </th>
-                    <th className="px-5 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted">
-                      Title
-                    </th>
-                    <th className="hidden px-5 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted sm:table-cell">
-                      Duration
-                    </th>
-                    <th className="px-5 py-4 text-center text-xs font-medium uppercase tracking-wider text-muted w-20">
-                      Play
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tracks.map((track, index) => (
-                    <tr
-                      key={track.trackId}
-                      className="border-b border-border/50 last:border-b-0 transition-colors hover:bg-foreground/[0.02]"
-                    >
-                      <td className="px-5 py-4 text-sm tabular-nums text-muted">
-                        {index + 1}
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-2">
-                          <Link
-                            href={`/track/${track.trackId}`}
-                            className="text-sm font-medium text-foreground transition-colors hover:text-muted truncate"
-                          >
-                            {track.trackName}
-                          </Link>
-                          {track.trackExplicitness === "explicit" && (
-                            <ExplicitBadge />
-                          )}
-                        </div>
-                      </td>
-                      <td className="hidden px-5 py-4 text-right text-sm tabular-nums text-muted sm:table-cell">
-                        {track.trackTimeMillis
-                          ? formatDuration(track.trackTimeMillis)
-                          : "--:--"}
-                      </td>
-                      <td className="px-5 py-4 text-center">
-                        {track.previewUrl && (
-                          <AudioPlayer
-                            previewUrl={track.previewUrl}
-                            trackId={track.trackId}
-                            trackName={track.trackName}
-                            artistName={track.artistName}
-                            artworkUrl={track.artworkUrl100?.replace(
-                              "100x100",
-                              "200x200"
-                            )}
-                            compact
-                            track={track}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-      </div>
+        {similarArtists.length > 0 && (
+          <RecommendedArtists artists={similarArtists} />
+        )}
+
+        <AIInsights
+          albumName={album.collectionName}
+          artistName={album.artistName}
+          genre={album.primaryGenreName}
+        />
+
+        {artistAlbums.length > 0 && (
+          <AlbumTimeline
+            artistAlbums={artistAlbums}
+            currentAlbumId={album.collectionId}
+          />
+        )}
+
+        <ExternalLinks album={album} spotify={spotifyAlbum} />
+      </main>
 
       <Footer />
     </div>

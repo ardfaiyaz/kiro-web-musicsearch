@@ -23,7 +23,12 @@ import {
   deletePlaylist as deletePl,
   addTrackToPlaylist as addTrackPl,
   removeTrackFromPlaylist as removeTrackPl,
+  getListeningHistory,
+  addHistoryEntry as addHistoryLib,
+  removeHistoryEntry as removeHistoryLib,
+  clearHistory as clearHistoryLib,
   Playlist,
+  HistoryEntry,
   PERSONALIZATION_STORAGE_KEYS,
 } from "@/lib/personalization";
 
@@ -43,6 +48,10 @@ interface PersonalizationContextType {
   deletePlaylist: (playlistId: string) => void;
   addTrackToPlaylist: (playlistId: string, track: ItunesTrack) => void;
   removeTrackFromPlaylist: (playlistId: string, trackId: number) => void;
+  listeningHistory: HistoryEntry[];
+  addHistoryEntry: (entry: HistoryEntry) => void;
+  removeHistoryEntry: (trackId: number, playedAt: number) => void;
+  clearHistory: () => void;
 }
 
 const PersonalizationContext =
@@ -52,6 +61,7 @@ const emptyTracks: ItunesTrack[] = [];
 const emptyArtists: ItunesArtist[] = [];
 const emptyAlbums: ItunesAlbum[] = [];
 const emptyPlaylists: Playlist[] = [];
+const emptyHistory: HistoryEntry[] = [];
 
 export function PersonalizationProvider({
   children,
@@ -63,12 +73,14 @@ export function PersonalizationProvider({
   const artistsSnapshot = useRef<ItunesArtist[]>(emptyArtists);
   const albumsSnapshot = useRef<ItunesAlbum[]>(emptyAlbums);
   const playlistsSnapshot = useRef<Playlist[]>(emptyPlaylists);
+  const historySnapshot = useRef<HistoryEntry[]>(emptyHistory);
 
   const notify = useCallback(() => {
     recentSnapshot.current = getRecentlyPlayed();
     artistsSnapshot.current = getFavoriteArtists();
     albumsSnapshot.current = getFavoriteAlbums();
     playlistsSnapshot.current = getPlaylists();
+    historySnapshot.current = getListeningHistory();
     listenersRef.current.forEach((listener) => listener());
   }, []);
 
@@ -81,6 +93,7 @@ export function PersonalizationProvider({
       artistsSnapshot.current = getFavoriteArtists();
       albumsSnapshot.current = getFavoriteAlbums();
       playlistsSnapshot.current = getPlaylists();
+      historySnapshot.current = getListeningHistory();
 
       // Listen for cross-tab localStorage changes
       const handleStorage = (event: StorageEvent) => {
@@ -106,11 +119,13 @@ export function PersonalizationProvider({
     () => playlistsSnapshot.current,
     []
   );
+  const getHistorySnapshot = useCallback(() => historySnapshot.current, []);
 
   const getServerRecentSnapshot = useCallback(() => emptyTracks, []);
   const getServerArtistsSnapshot = useCallback(() => emptyArtists, []);
   const getServerAlbumsSnapshot = useCallback(() => emptyAlbums, []);
   const getServerPlaylistsSnapshot = useCallback(() => emptyPlaylists, []);
+  const getServerHistorySnapshot = useCallback(() => emptyHistory, []);
 
   const recentlyPlayed = useSyncExternalStore(
     subscribe,
@@ -134,6 +149,12 @@ export function PersonalizationProvider({
     subscribe,
     getPlaylistsSnapshot,
     getServerPlaylistsSnapshot
+  );
+
+  const listeningHistory = useSyncExternalStore(
+    subscribe,
+    getHistorySnapshot,
+    getServerHistorySnapshot
   );
 
   const addRecentlyPlayed = useCallback(
@@ -222,6 +243,27 @@ export function PersonalizationProvider({
     [notify]
   );
 
+  const addHistoryEntry = useCallback(
+    (entry: HistoryEntry) => {
+      addHistoryLib(entry);
+      notify();
+    },
+    [notify]
+  );
+
+  const removeHistoryEntry = useCallback(
+    (trackId: number, playedAt: number) => {
+      removeHistoryLib(trackId, playedAt);
+      notify();
+    },
+    [notify]
+  );
+
+  const clearHistory = useCallback(() => {
+    clearHistoryLib();
+    notify();
+  }, [notify]);
+
   return (
     <PersonalizationContext.Provider
       value={{
@@ -240,6 +282,10 @@ export function PersonalizationProvider({
         deletePlaylist,
         addTrackToPlaylist,
         removeTrackFromPlaylist,
+        listeningHistory,
+        addHistoryEntry,
+        removeHistoryEntry,
+        clearHistory,
       }}
     >
       {children}
