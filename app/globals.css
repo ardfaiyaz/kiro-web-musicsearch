@@ -269,28 +269,52 @@ html.dark {
   }
 }
 
-/* Theme transition animation - applied during theme switch */
+/* Theme transition animation - scoped to key elements for performance */
 html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
+html.theme-transitioning body,
+html.theme-transitioning header,
+html.theme-transitioning main,
+html.theme-transitioning nav,
+html.theme-transitioning section,
+html.theme-transitioning footer,
+html.theme-transitioning aside,
+html.theme-transitioning [class*="glass"],
+html.theme-transitioning [class*="bg-"],
+html.theme-transitioning [class*="border-"],
+html.theme-transitioning [class*="text-"] {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease,
     box-shadow 0.3s ease !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html.theme-transitioning,
-  html.theme-transitioning *,
-  html.theme-transitioning *::before,
-  html.theme-transitioning *::after {
+  html.theme-transitioning body,
+  html.theme-transitioning header,
+  html.theme-transitioning main,
+  html.theme-transitioning nav,
+  html.theme-transitioning section,
+  html.theme-transitioning footer,
+  html.theme-transitioning aside,
+  html.theme-transitioning [class*="glass"],
+  html.theme-transitioning [class*="bg-"],
+  html.theme-transitioning [class*="border-"],
+  html.theme-transitioning [class*="text-"] {
     transition: none !important;
   }
 }
 
 html.reduce-motion .theme-transitioning,
-html.reduce-motion .theme-transitioning *,
-html.reduce-motion .theme-transitioning *::before,
-html.reduce-motion .theme-transitioning *::after {
+html.reduce-motion .theme-transitioning body,
+html.reduce-motion .theme-transitioning header,
+html.reduce-motion .theme-transitioning main,
+html.reduce-motion .theme-transitioning nav,
+html.reduce-motion .theme-transitioning section,
+html.reduce-motion .theme-transitioning footer,
+html.reduce-motion .theme-transitioning aside,
+html.reduce-motion .theme-transitioning [class*="glass"],
+html.reduce-motion .theme-transitioning [class*="bg-"],
+html.reduce-motion .theme-transitioning [class*="border-"],
+html.reduce-motion .theme-transitioning [class*="text-"] {
   transition: none !important;
 }
 
