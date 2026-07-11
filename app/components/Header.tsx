@@ -1,10 +1,22 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Compass, BarChart3, ListMusic, Heart, ChevronLeft } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { useDynamicColors } from "./DynamicColorProvider";
+
+function useScrollPosition() {
+  const subscribe = (callback: () => void) => {
+    window.addEventListener("scroll", callback, { passive: true });
+    return () => window.removeEventListener("scroll", callback);
+  };
+  const getSnapshot = () => window.scrollY;
+  const getServerSnapshot = () => 0;
+
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
 
 interface HeaderProps {
   showBack?: boolean;
@@ -13,6 +25,10 @@ interface HeaderProps {
 export default function Header({ showBack = false }: HeaderProps) {
   const pathname = usePathname();
   const { colors } = useDynamicColors();
+  const scrollY = useScrollPosition();
+
+  const isHomepage = pathname === "/";
+  const scrolled = !isHomepage || scrollY > 50;
 
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/";
@@ -20,7 +36,21 @@ export default function Header({ showBack = false }: HeaderProps) {
   };
 
   return (
-    <header className="glass-elevated sticky top-0 z-50 border-b border-border/50">
+    <header
+      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        scrolled
+          ? "glass-elevated border-border/50"
+          : "border-transparent bg-transparent"
+      }`}
+    >
+      {/* Brand gradient accent line */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent transition-opacity duration-300 ${
+          scrolled ? "opacity-100" : "opacity-0"
+        }`}
+        aria-hidden="true"
+      />
+
       <div className="mx-auto max-w-7xl px-6 py-4 lg:px-8">
         <nav
           className="flex items-center justify-between"

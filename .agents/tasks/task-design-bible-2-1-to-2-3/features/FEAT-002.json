@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Universal Search Experience Enhancement (Chapters 2.2.1-2.2.3). Redesign the search bar with enhanced autocomplete, real-time multi-source results, intelligent ranking, and AI-powered discovery features. Includes: redesigned search bar with richer autocomplete showing artwork thumbnails and category badges, filter chips below search bar for type/genre/mood, real-time result cards grouped by category (top result, songs, artists, albums), AI discovery panel with mood-based and genre-based suggestions integrated into the search experience.",
+  "status": "pending",
+  "steps": [
+    "Create app/components/SearchHero.tsx - A redesigned search section for the homepage hero area with a larger, more prominent search input using glass-heavy styling, animated placeholder text that cycles through suggestions, and a 'Try searching for...' quick-launch section with genre pills and trending artists.",
+    "Enhance app/components/SearchBar.tsx - Add artwork thumbnail previews in suggestion dropdown items, category badges (Song/Artist/Album) with distinct colors, a 'top result' highlighted card at the top of dropdown for best match, keyboard shortcut hint (Cmd+K), and a subtle loading shimmer during fetch. Keep existing voice search and recent searches functionality.",
+    "Create app/components/SearchResultsLayout.tsx - A new layout component that organizes search results into categorized sections when filter is 'all': Top Result (large featured card), Songs (list view), Artists (horizontal scroll), Albums (grid). Each section has a 'See all' link that switches the filter. Use glass-light containers for section backgrounds.",
+    "Create app/components/TopResultCard.tsx - A large featured card for the best match in search results. Shows large artwork, name, type badge, key metadata, and a play/view button. Uses glass-card with dynamic color accent from artwork.",
+    "Create app/components/AIDiscoveryPanel.tsx - An AI-powered discovery panel that appears in the search experience showing mood-based recommendations, 'Because you searched for X' suggestions, genre exploration shortcuts, and hidden gems. Uses existing lib/ai-discovery.ts functions. Styled with glass-medium and gradient accents.",
+    "Create app/components/SearchFilterChips.tsx - A horizontal row of filter chips (All, Songs, Artists, Albums, Playlists) plus secondary filters (Genre dropdown, Decade dropdown, Mood selector) that appear below the search bar. Active chip uses primary color, others use glass-subtle. Replaces or enhances existing SearchFilters.tsx.",
+    "Update app/page.tsx search results section to use the new SearchResultsLayout when filter is 'all', with the categorized view showing Top Result, Songs, Artists, Albums sections simultaneously. Keep individual filter views (artist-only, album-only, song-only) as before.",
+    "Add the AI Discovery Panel to appear below search results as a 'Discover More' section, fetching mood-based recommendations related to the search query's genre."
+  ],
+  "acceptance_criteria": [
+    "Search bar shows artwork thumbnails and category badges in autocomplete dropdown",
+    "Search results in 'all' mode show categorized layout: Top Result card + Songs + Artists + Albums",
+    "TopResultCard shows the best match with large artwork and dynamic styling",
+    "Filter chips are interactive and switch between category views",
+    "AI Discovery Panel shows mood-based recommendations related to current search",
+    "Animated placeholder text cycles through search suggestions on homepage",
+    "All components use design tokens and glass hierarchy",
+    "Responsive layout works on mobile, tablet, and desktop",
+    "Keyboard navigation works in search dropdown (arrow keys, enter, escape)",
+    "bun run build passes with zero errors",
+    "bun run lint passes with zero errors"
+  ],
+  "verification": [
+    "Run 'bun run lint' and confirm zero errors",
+    "Run 'bun run build' and confirm zero errors and all routes compile"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
