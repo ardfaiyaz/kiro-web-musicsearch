@@ -14,7 +14,7 @@ export default function PlaylistsLoading() {
         </div>
       </div>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-10">
           <div className="h-10 w-36 animate-pulse rounded-lg bg-border" aria-hidden="true" />
           <div className="mt-3 h-5 w-56 animate-pulse rounded-lg bg-border" aria-hidden="true" />
@@ -38,7 +38,7 @@ export default function PlaylistsLoading() {
             </div>
           ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

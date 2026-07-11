@@ -91,7 +91,7 @@ export default async function DiscoverPage() {
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Hero Section */}
         {heroSong && (
           <section
@@ -371,7 +371,7 @@ export default async function DiscoverPage() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
       <Footer />
     </div>

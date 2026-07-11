@@ -76,9 +76,9 @@ export default function RootLayout({
                       <div className="relative z-10 flex min-h-full flex-col">
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
-                        <div id="main-content" tabIndex={-1}>
+                        <main id="main-content" tabIndex={-1}>
                           {children}
-                        </div>
+                        </main>
                         <MiniPlayer />
                         <SettingsFab />
                         <KeyboardShortcuts />

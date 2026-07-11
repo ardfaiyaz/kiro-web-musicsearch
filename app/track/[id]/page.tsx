@@ -56,7 +56,7 @@ export default async function TrackPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Cinematic hero with artwork blur */}
         <section className="relative overflow-hidden bg-card" aria-label="Track hero">
           {artworkUrl && (
@@ -259,7 +259,7 @@ export default async function TrackPage({
             </div>
           )}
         </div>
-      </main>
+      </div>
 
       <Footer />
     </div>

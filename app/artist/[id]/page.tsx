@@ -59,7 +59,7 @@ export default async function ArtistPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Hero Banner */}
         <section
           className="relative overflow-hidden bg-card"
@@ -255,7 +255,7 @@ export default async function ArtistPage({
             </section>
           )}
         </div>
-      </main>
+      </div>
 
       <Footer />
     </div>

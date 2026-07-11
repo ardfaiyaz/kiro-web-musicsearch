@@ -256,10 +256,6 @@ html.dark {
   outline-offset: 2px;
 }
 
-[class*="animate-"] {
-  transition: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
