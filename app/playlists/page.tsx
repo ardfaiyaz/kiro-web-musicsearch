@@ -35,7 +35,7 @@ export default function PlaylistsPage() {
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
         <header className="mb-10">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Playlists
@@ -268,7 +268,7 @@ export default function PlaylistsPage() {
             </div>
           )}
         </section>
-      </main>
+      </div>
     </div>
   );
 }

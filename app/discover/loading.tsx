@@ -14,7 +14,7 @@ export default function DiscoverLoading() {
         </div>
       </div>
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Hero skeleton */}
         <div className="bg-card">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -63,7 +63,7 @@ export default function DiscoverLoading() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

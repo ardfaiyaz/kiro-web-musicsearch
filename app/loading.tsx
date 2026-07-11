@@ -33,7 +33,7 @@ export default function Loading() {
       </div>
 
       {/* Main content skeleton */}
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-6 lg:px-8">
         {/* Hero section skeleton */}
         <div className="flex flex-col items-center gap-6 py-16">
           <ShimmerSkeleton shape="line" width="288px" height="48px" />
@@ -53,7 +53,7 @@ export default function Loading() {
             </div>
           ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

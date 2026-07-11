@@ -58,7 +58,7 @@ export default async function AlbumPage({
     <div className="flex flex-1 flex-col">
       <Header showBack />
 
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Cinematic Hero */}
         <section className="relative overflow-hidden bg-card" aria-label="Album hero">
           {artworkUrl && (
@@ -266,7 +266,7 @@ export default async function AlbumPage({
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
       <Footer />
     </div>

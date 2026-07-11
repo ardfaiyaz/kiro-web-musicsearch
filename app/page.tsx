@@ -224,7 +224,7 @@ export default async function Home({
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
         {!query && (
           <section
             className="flex flex-col items-center justify-center gap-8 py-24 text-center sm:py-32 lg:py-40"
@@ -314,7 +314,7 @@ export default async function Home({
             </Suspense>
           </section>
         )}
-      </main>
+      </div>
 
       <Footer />
     </div>
