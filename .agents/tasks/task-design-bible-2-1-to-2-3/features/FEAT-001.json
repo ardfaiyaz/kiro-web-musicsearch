@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Homepage Redesign - Editorial Magazine Layout with Hero Section (Chapters 2.1.1-2.1.4). Transform the homepage from a simple search-focused page into a luxury editorial music discovery experience. Includes: dynamic hero banner with gradient overlays and featured content, frosted glass navigation enhancements, editorial content sections (featured artists carousel, trending albums grid, new releases, personalized recommendations, editorial picks), rich hover states and scroll-triggered animations, responsive magazine-style grid layouts.",
+  "status": "in_progress",
+  "steps": [
+    "Create app/components/HeroSection.tsx - A large cinematic hero banner component that showcases a featured track/artist with dynamic gradient background extracted from artwork, frosted glass overlay text, play button CTA, and smooth parallax-scroll effect. Use the existing glass-ultra class for the overlay. Should accept featured item data as props. Animate entrance with animate-slide-up.",
+    "Create app/components/FeaturedArtistsCarousel.tsx - A horizontally scrollable carousel of featured artists with large circular images (120px+), artist name overlay with glass-light background, smooth scroll snap behavior, and hover scale animation. Use HorizontalScroll component pattern as reference but with larger items and more visual polish.",
+    "Create app/components/TrendingSection.tsx - An editorial grid section for trending tracks that displays items in a magazine-style asymmetric grid (1 large feature + 4 smaller cards). Each card shows artwork, track name, artist, and a subtle play indicator. Use glass-card class and card-tilt interaction.",
+    "Create app/components/EditorialPicks.tsx - A curated picks section with large banner cards using gradient overlays (similar to existing EDITOR_PICKS in discover page but more visually rich). Cards should have background images with glass-heavy overlays, title, subtitle, and hover reveal of description text.",
+    "Create app/components/NewReleasesGrid.tsx - A responsive grid of new release albums with release date badges, artwork with hover zoom effect, and a 'New' indicator pill. Use the animate-on-scroll-slide-up class for scroll-triggered entrance.",
+    "Create app/components/PersonalizedSection.tsx - A recommendations section that shows 'For You' content based on mood/activity. Includes a small mood selector row and a grid of recommended tracks with reason tags (reuse pattern from RecommendationPanel but with editorial layout).",
+    "Rewrite app/page.tsx to compose the new homepage: When no search query is active, render the full editorial experience with HeroSection at top, then FeaturedArtistsCarousel, TrendingSection, EditorialPicks, NewReleasesGrid, PersonalizedSection. Keep the existing search results functionality intact when a query is present. Use Suspense boundaries around data-fetching sections with shimmer skeleton loading states.",
+    "Update app/components/Header.tsx - Add a transparent-to-glass scroll effect: header starts transparent when at top of homepage, transitions to glass-elevated on scroll. Add a subtle brand gradient accent line below. Keep all existing navigation links.",
+    "Add required CSS keyframes and utility classes to app/globals.css if needed for new animations (parallax, carousel snap, editorial grid layout helpers)."
+  ],
+  "acceptance_criteria": [
+    "Homepage without search query shows full editorial layout: hero banner, featured artists, trending grid, editorial picks, new releases, personalized recommendations",
+    "Hero section displays dynamically with gradient background derived from featured artwork",
+    "All sections use scroll-triggered entrance animations (animate-on-scroll-*)",
+    "Header transitions from transparent to glass on scroll when on homepage",
+    "All new components use design tokens (no hardcoded colors)",
+    "Responsive: works on mobile (single column), tablet (2-col), desktop (full grid)",
+    "Search functionality remains intact - entering a query shows search results",
+    "Semantic HTML with aria-labels on all sections",
+    "All interactive elements have focus-visible indicators",
+    "bun run build passes with zero errors",
+    "bun run lint passes with zero errors"
+  ],
+  "verification": [
+    "Run 'bun run lint' and confirm zero errors",
+    "Run 'bun run build' and confirm zero errors and all routes compile"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
