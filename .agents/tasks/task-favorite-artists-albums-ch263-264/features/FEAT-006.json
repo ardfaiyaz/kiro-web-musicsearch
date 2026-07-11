@@ -2,7 +2,7 @@
   "id": "FEAT-006",
   "type": "fix",
   "description": "Address 5 semantic review findings: fix broken search links (?term= -> ?q=), wire listening history into RecentlyPlayedTracker, strip HTML from album descriptions, add AbortController to drawer fetches, remove console.warn from new personalization functions.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Fix ?term= to ?q= in EmptyFavoriteAlbums, EmptyFavoriteArtists, AlbumRecommendations, ArtistRecommendations, FavoriteAlbumsHero, FavoriteArtistsHero, EmptyInsights. Remove &entity= suffixes.",
     "Wire addHistoryEntry into RecentlyPlayedTracker with session management and preview completion tracking.",
@@ -25,5 +25,5 @@
     "Run `bun run build` and confirm successful compilation"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 5 review issues resolved. Lint and build pass cleanly. The sessionId for listening history is generated once on component mount via useEffect to avoid React 19 purity rule violations with Math.random in render body. The updatePlaybackProgress function is called directly from the lib (not via context) since it is not exposed on PersonalizationContext."
 }
