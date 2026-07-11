@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Comprehensive Settings Page and Theme System - Replace the existing SettingsPanel slide-out with a full dedicated settings page (app/settings/page.tsx) organized into sections: Appearance (theme, accent color, glass settings, animations), Playback (default volume, crossfade placeholder, autoplay, audio quality placeholder), Privacy (search history toggle, listening data toggle, clear data), Storage (cache info, clear cache), API Providers (show which APIs are active), About (app version, credits, links). Also fix theme system to support auto/system theme, eliminate flickering, and ensure consistent dynamic theming from album artwork.",
+  "status": "completed",
+  "steps": [
+    "Update app/components/ThemeContext.tsx: Add 'system' as a third theme mode alongside light/dark. When system is selected, follow prefers-color-scheme media query and update automatically. Ensure no flash of wrong theme on page load (the inline script in layout.tsx already handles dark, extend for system mode).",
+    "Create app/settings/page.tsx: Full settings page with Header, sectioned layout using glass-card styling. Sections: Appearance, Playback, Privacy, Storage, About. Each section as a collapsible card.",
+    "Create app/components/settings/AppearanceSettings.tsx: Theme selector (light/dark/system with visual previews), accent color picker (reuse PRESET_COLORS from existing SettingsPanel), blur intensity slider, glass opacity slider, animation speed selector, reduced motion toggle, compact mode toggle.",
+    "Create app/components/settings/PlaybackSettings.tsx: Default volume slider, autoplay next toggle (controls whether queue auto-advances), crossfade duration slider (placeholder - stores preference but notes 'coming soon' since previews are 30s), playback quality selector (placeholder - standard/high/lossless with note that iTunes previews are fixed quality).",
+    "Create app/components/settings/PrivacySettings.tsx: Toggle to enable/disable search history saving, toggle for listening data collection, button to clear all search history (calls into lib/recent-searches.ts), button to clear listening history, button to clear all local data with confirmation dialog.",
+    "Create app/components/settings/StorageSettings.tsx: Display estimated localStorage usage, list of stored data categories with sizes (favorites, settings, search history, listening history, collections), individual clear buttons per category, and a 'Clear All' button.",
+    "Create app/components/settings/AboutSettings.tsx: App name and version, tech stack credits (Next.js, React, Tailwind, iTunes API, Last.fm, Spotify), links to GitHub repo, keyboard shortcuts reference.",
+    "Update app/components/SettingsPanel.tsx: Simplify to show quick toggles (theme, reduced motion) and a 'All Settings' link to /settings page.",
+    "Update app/components/SettingsFab.tsx: Keep the floating button but have it link to /settings instead of opening the panel (or keep panel for quick access with 'More Settings' link).",
+    "Update app/layout.tsx: Ensure ThemeProvider handles system preference changes reactively. Update the inline script to handle the 'system' theme value from localStorage.",
+    "Add theme transition animation: In globals.css, add a brief color-scheme transition class that gets applied during theme switch to prevent jarring color jumps."
+  ],
+  "acceptance_criteria": [
+    "Settings page at /settings renders with all 5 sections (Appearance, Playback, Privacy, Storage, About)",
+    "Theme selector supports Light, Dark, and System modes",
+    "System theme mode follows OS preference and updates in real-time when OS preference changes",
+    "No theme flickering on page load or navigation",
+    "All settings persist in localStorage and apply immediately",
+    "Privacy section can clear search history, listening history, and all data",
+    "Storage section shows accurate localStorage usage estimates",
+    "Settings FAB still provides quick access to theme toggle",
+    "Build passes with zero TypeScript errors"
+  ],
+  "verification": [
+    "eval \"$(mise activate bash)\" && bun run lint",
+    "eval \"$(mise activate bash)\" && bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "ThemeContext was refactored to use external store pattern with listeners for system theme changes (mediaQuery listener). The theme now stores mode (light/dark/system) in localStorage but still exports resolved theme (light/dark) for backward compatibility. useSyncExternalStore returns a snapshot object {mode, resolved}. React 19 strict lint rule react-hooks/set-state-in-effect required using lazy initializers instead of useEffect for loading localStorage data in settings components. The SettingsPanel was simplified to a quick-access panel with theme toggle, reduced motion, and a link to /settings. The /settings page generated as a static route (no server data needed). All existing consumers of useTheme (CommandPalette, ThemeToggle, Header) remain compatible since theme and toggleTheme are still exposed."
+}

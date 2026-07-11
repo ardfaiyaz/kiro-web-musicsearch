@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Enhanced Music Player System - Upgrade the existing AudioPlayerContext, MiniPlayer, and ExpandedPlayer with premium features: shuffle/repeat modes, previous track, sleep timer, Media Session API, interactive progress bar with scrubbing visual feedback, animated volume slider, queue drag-and-drop reorder, lyrics display in expanded player, playback gestures (swipe on mini player), and keyboard shortcuts for playback (space=play/pause, left/right=seek, up/down=volume). Also add continue listening / smart resume from localStorage.",
+  "status": "completed",
+  "steps": [
+    "Enhance app/components/AudioPlayerContext.tsx: Add shuffle mode (boolean), repeat mode (off/one/all), previousTrack function (track history stack), sleepTimer (setTimeout-based countdown), playbackRate, and persist last played track to localStorage for smart resume. Add reorderQueue(fromIndex, toIndex) function.",
+    "Create app/components/player/ProgressBar.tsx: Interactive progress bar with scrubbing - shows time tooltip on hover, wider hit area, smooth animated fill using the dynamic accent color from DynamicColorProvider, drag-to-seek.",
+    "Create app/components/player/VolumeControl.tsx: Animated volume slider with mute toggle, volume icon changes based on level (mute/low/medium/high), smooth transitions, click-to-set and drag support.",
+    "Update app/components/MiniPlayer.tsx: Add previous/next/shuffle/repeat buttons (compact layout), swipe gestures (swipe up to expand, swipe left/right for next/prev), use new ProgressBar component, integrate Media Session API (navigator.mediaSession with metadata and action handlers).",
+    "Update app/components/ExpandedPlayer.tsx: Add shuffle/repeat/previous buttons, integrate new ProgressBar and VolumeControl components, add lyrics toggle using existing LyricsDisplay component, add sleep timer UI (dropdown with preset times: 15m/30m/45m/1h/end of track), add queue reorder via drag-and-drop (simple mouse/touch drag), improve the waveform visualizer with smoother canvas-based animation.",
+    "Create app/components/player/SleepTimerPopover.tsx: Popover with sleep timer options, shows countdown when active, cancel button.",
+    "Enhance app/components/KeyboardShortcuts.tsx: Add Space=play/pause, Left/Right arrow=seek 5s, Up/Down arrow=volume, M=mute, S=shuffle toggle, R=repeat toggle, N=next, P=previous (all only when not in input fields).",
+    "Create lib/playback-history.ts: Store last 50 played tracks in localStorage with timestamps, expose getLastPlayed() and getContinueListening() for smart resume on app load.",
+    "Create app/components/player/ContinueListening.tsx: Banner/card shown on homepage when there is a recently played track that can be resumed, with artwork and resume button."
+  ],
+  "acceptance_criteria": [
+    "Shuffle and repeat modes work correctly - shuffle randomizes queue order, repeat-one loops current track, repeat-all loops full queue",
+    "Previous track button navigates back through play history",
+    "Sleep timer stops playback after selected duration",
+    "Media Session API shows track metadata in OS media controls and responds to play/pause/next/prev hardware buttons",
+    "Progress bar supports click-to-seek and drag-to-seek with time tooltip",
+    "Volume control has smooth animation and mute toggle",
+    "Queue can be reordered via drag and drop in expanded player",
+    "Keyboard shortcuts for playback work when not focused on input elements",
+    "Continue listening card appears on homepage when a previous session exists",
+    "Build passes with zero TypeScript errors"
+  ],
+  "verification": [
+    "eval \"$(mise activate bash)\" && bun run lint",
+    "eval \"$(mise activate bash)\" && bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "React 19 compiler lint rules are extremely strict: cannot update refs during render, cannot call setState in effects synchronously, cannot modify module-level state during render. Solution was to use a signal-based pattern (endedCounter state) that increments in the audio ended event handler (which is allowed since it comes from an external system event callback), then an effect responds to the counter change. The eslint-disable-next-line comment was needed for the ended effect since it intentionally reads stale deps. Also fixed ContinueListening to use useSyncExternalStore instead of setState-in-useEffect."
+}

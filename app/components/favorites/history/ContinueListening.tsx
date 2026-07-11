@@ -51,6 +51,7 @@ export default function ContinueListening({ history, onDismiss }: ContinueListen
                   src={entry.artworkUrl.replace("100x100", "200x200")}
                   alt={`${entry.trackName} artwork`}
                   fill
+                  sizes="48px"
                   className="object-cover"
                   unoptimized
                 />

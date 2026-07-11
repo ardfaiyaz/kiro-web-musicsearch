@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { CheckCircle2, XCircle, AlertTriangle, Info, X } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, Info, X, Undo2 } from "lucide-react";
 import type { ToastMessage, ToastType } from "./ToastContext";
 
 const TOAST_DURATION = 5000;
@@ -66,10 +66,22 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
           {toast.description && (
             <p className="mt-1 text-xs text-muted">{toast.description}</p>
           )}
+          {toast.onUndo && (
+            <button
+              onClick={() => {
+                toast.onUndo?.();
+                onDismiss(toast.id);
+              }}
+              className="mt-2 inline-flex min-h-[32px] items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium text-primary transition-premium hover:bg-primary/10"
+            >
+              <Undo2 size={12} aria-hidden="true" />
+              Undo
+            </button>
+          )}
         </div>
         <button
           onClick={() => onDismiss(toast.id)}
-          className="shrink-0 rounded-md p-1 text-muted transition-premium hover:text-foreground"
+          className="shrink-0 flex h-8 w-8 items-center justify-center rounded-md text-muted transition-premium hover:text-foreground"
           aria-label="Dismiss notification"
         >
           <X size={14} aria-hidden="true" />
@@ -99,6 +111,7 @@ export default function Toast({ toasts, onDismiss }: ToastProps) {
     <div
       className="pointer-events-none fixed bottom-4 right-4 z-[100] flex flex-col-reverse gap-2 sm:bottom-6 sm:right-6"
       aria-label="Notifications"
+      role="region"
     >
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onDismiss={onDismiss} />

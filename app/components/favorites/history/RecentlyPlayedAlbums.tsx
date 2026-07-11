@@ -66,6 +66,7 @@ export default function RecentlyPlayedAlbums({ history }: RecentlyPlayedAlbumsPr
                 src={album.artworkUrl.replace("100x100", "300x300")}
                 alt={`${album.albumName} by ${album.artistName}`}
                 fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                 unoptimized
               />

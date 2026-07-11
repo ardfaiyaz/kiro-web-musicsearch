@@ -15,6 +15,7 @@ import { ToastProvider } from "./components/ToastContext";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
+import SkipLinks from "./components/ui/SkipLinks";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -53,17 +54,12 @@ export default function RootLayout({
         <meta name="color-scheme" content="light dark" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&!window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t==='system'&&!window.matchMedia('(prefers-color-scheme: light)').matches)||(!t&&!window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();`,
           }}
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only fixed left-4 top-4 z-[100] rounded bg-foreground px-4 py-2 text-background focus:outline-none"
-        >
-          Skip to content
-        </a>
+        <SkipLinks />
         <ThemeProvider>
           <SettingsProvider>
             <AudioPlayerProvider>

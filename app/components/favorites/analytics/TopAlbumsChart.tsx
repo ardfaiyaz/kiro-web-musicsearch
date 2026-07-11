@@ -68,6 +68,7 @@ export default function TopAlbumsChart({ history }: TopAlbumsChartProps) {
                 src={album.artworkUrl.replace("100x100", "100x100")}
                 alt={`${album.albumName} artwork`}
                 fill
+                sizes="48px"
                 className="object-cover"
                 unoptimized
               />
