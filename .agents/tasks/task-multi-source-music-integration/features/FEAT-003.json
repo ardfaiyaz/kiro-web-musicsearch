@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Create server-side API routes for secure communication with external APIs (Spotify, Lyrics, YouTube) and update existing pages (artist, track, album) to consume unified data. Add new UI components for YouTube video embeds and enhanced lyrics display.",
+  "status": "completed",
+  "steps": [
+    "Create app/api/lyrics/route.ts - GET endpoint that accepts artist and track query params, calls lib/lyrics.ts getLyrics, returns JSON. Includes caching headers.",
+    "Create app/api/spotify/artist/route.ts - GET endpoint that accepts name query param, calls lib/spotify.ts to get artist details, returns JSON with Spotify artist data.",
+    "Create app/api/youtube/route.ts - GET endpoint that accepts query param, calls lib/youtube.ts searchMusicVideos, returns JSON with video results.",
+    "Update app/components/LyricsDisplay.tsx to fetch lyrics from /api/lyrics endpoint on mount (using artist and track name props). Show loading skeleton while fetching, graceful fallback when unavailable. Keep the existing auto-scroll functionality.",
+    "Create app/components/YouTubeEmbed.tsx - Client component that displays embedded YouTube music videos. Accept videoId and title props. Render responsive iframe. Include loading state and graceful fallback when no videos available.",
+    "Create app/components/VideoSection.tsx - Client component that fetches videos from /api/youtube endpoint and displays a horizontal scroll of video cards. Clicking a card shows the YouTubeEmbed. Shows skeleton while loading.",
+    "Update app/track/[id]/page.tsx - Import and use the unified music service to enrich track data. Add VideoSection below lyrics. Pass lyrics fetching responsibility to the LyricsDisplay client component (remove server-side lyrics if any). Ensure existing functionality (preview player, recommendations, insights) continues working.",
+    "Update app/artist/[id]/page.tsx - Use lib/music-service.ts getUnifiedArtist to get Spotify data (profile image, popularity, genres, followers). Display Spotify profile image in hero if available (higher quality than Last.fm). Show popularity score, genres from Spotify, follower count. Add VideoSection for artist music videos. Keep existing Last.fm bio, stats, similar artists, albums.",
+    "Update app/album/[id]/page.tsx - Enrich album data with Spotify album details (if available). Show additional metadata like copyright, label info. Add dynamic color theming from album artwork (using existing color-extraction.ts hook). Keep existing track listing and player functionality.",
+    "Update the footer text on all modified pages from 'Powered by the iTunes Search API' to 'Powered by iTunes, Spotify, Last.fm & more' to reflect multi-source integration."
+  ],
+  "acceptance_criteria": [
+    "API routes /api/lyrics, /api/spotify/artist, /api/youtube return proper JSON responses",
+    "API routes handle errors gracefully and return appropriate status codes",
+    "LyricsDisplay component fetches and displays lyrics with loading/error states",
+    "YouTubeEmbed component renders responsive video player",
+    "VideoSection component fetches and displays music videos",
+    "Artist page shows Spotify data (image, popularity, followers, genres) when available",
+    "Track page includes video section and working lyrics fetch",
+    "Album page shows enriched metadata with dynamic color theming",
+    "All existing functionality continues working (audio previews, recommendations, navigation)",
+    "npm run build succeeds with zero errors",
+    "npm run lint passes"
+  ],
+  "verification": [
+    "npm run lint",
+    "npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 10 steps completed successfully. API routes follow the existing pattern from app/api/recommendations/route.ts. LyricsDisplay was updated to fetch from /api/lyrics with loading skeleton and graceful fallback. Artist page now uses getUnifiedArtist for Spotify image (higher quality via next/image), popularity score, follower count, and enriched genres. Album page uses getUnifiedAlbum for Spotify metadata (album type, Spotify link). VideoSection and YouTubeEmbed are client components with proper loading states. The artist page background blur still uses a plain img tag (not next/image) since blur-3xl on Image causes issues - this is intentional and has an eslint-disable comment. Build and lint pass with zero errors. Two pre-existing warnings remain in SearchFilters.tsx (unused variables)."
+}

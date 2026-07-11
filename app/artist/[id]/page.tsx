@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getArtistById, getArtistTracks, getArtistAlbums } from "@/lib/itunes";
 import { getArtistInfo, getSimilarArtists } from "@/lib/lastfm";
 import { getSimilarTracks } from "@/lib/ai-discovery";
+import { getUnifiedArtist } from "@/lib/music-service";
 import TrackGrid from "@/app/components/TrackGrid";
 import AlbumCard from "@/app/components/AlbumCard";
 import SimilarArtists from "@/app/components/SimilarArtists";
 import RecommendationPanel from "@/app/components/RecommendationPanel";
 import MusicInsights from "@/app/components/MusicInsights";
+import VideoSection from "@/app/components/VideoSection";
 import Header from "@/app/components/Header";
 import ArtistActions from "@/app/components/ArtistActions";
 
@@ -28,11 +31,12 @@ export default async function ArtistPage({
     notFound();
   }
 
-  const [lastFmInfo, similarArtists, artistTracks, albums] = await Promise.all([
+  const [lastFmInfo, similarArtists, artistTracks, albums, unifiedArtist] = await Promise.all([
     getArtistInfo(artist.artistName),
     getSimilarArtists(artist.artistName),
     getArtistTracks(artistId, -1),
     getArtistAlbums(artistId),
+    getUnifiedArtist(artist.artistName, artistId),
   ]);
 
   // Get a representative track for "artists like X" recommendations
@@ -45,12 +49,10 @@ export default async function ArtistPage({
     ? lastFmInfo.bio.summary.replace(/<a\b[^>]*>.*?<\/a>/gi, "").trim()
     : null;
 
-  const tags = lastFmInfo?.tags?.tag || [];
-
-  const artistImage =
-    lastFmInfo?.image?.find((img) => img.size === "extralarge")?.["#text"] ||
-    lastFmInfo?.image?.find((img) => img.size === "large")?.["#text"] ||
-    "";
+  // Use Spotify image (higher quality) if available, otherwise Last.fm
+  const artistImage = unifiedArtist.imageUrl || "";
+  const spotifyData = unifiedArtist.spotify;
+  const unifiedGenres = unifiedArtist.genres;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -79,11 +81,13 @@ export default async function ArtistPage({
               {/* Large circular portrait */}
               <div className="relative h-40 w-40 shrink-0 overflow-hidden rounded-full border-2 border-border/50 shadow-2xl sm:h-52 sm:w-52 lg:h-60 lg:w-60">
                 {artistImage ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={artistImage}
                     alt={`${artist.artistName} photo`}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 640px) 160px, (max-width: 1024px) 208px, 240px"
+                    className="object-cover"
+                    priority
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-foreground/5">
@@ -116,36 +120,60 @@ export default async function ArtistPage({
               </div>
 
               {/* Stats */}
-              {lastFmInfo?.stats && (
+              {(lastFmInfo?.stats || spotifyData) && (
                 <div className="flex flex-wrap justify-center gap-8">
-                  <div className="flex flex-col items-center">
-                    <span className="text-2xl font-bold text-foreground sm:text-3xl">
-                      {parseInt(lastFmInfo.stats.listeners).toLocaleString()}
-                    </span>
-                    <span className="text-xs uppercase tracking-wider text-muted">
-                      Listeners
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span className="text-2xl font-bold text-foreground sm:text-3xl">
-                      {parseInt(lastFmInfo.stats.playcount).toLocaleString()}
-                    </span>
-                    <span className="text-xs uppercase tracking-wider text-muted">
-                      Total Plays
-                    </span>
-                  </div>
+                  {spotifyData && (
+                    <>
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl font-bold text-foreground sm:text-3xl">
+                          {spotifyData.followers.toLocaleString()}
+                        </span>
+                        <span className="text-xs uppercase tracking-wider text-muted">
+                          Followers
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl font-bold text-foreground sm:text-3xl">
+                          {spotifyData.popularity}
+                        </span>
+                        <span className="text-xs uppercase tracking-wider text-muted">
+                          Popularity
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {lastFmInfo?.stats && (
+                    <>
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl font-bold text-foreground sm:text-3xl">
+                          {parseInt(lastFmInfo.stats.listeners).toLocaleString()}
+                        </span>
+                        <span className="text-xs uppercase tracking-wider text-muted">
+                          Listeners
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl font-bold text-foreground sm:text-3xl">
+                          {parseInt(lastFmInfo.stats.playcount).toLocaleString()}
+                        </span>
+                        <span className="text-xs uppercase tracking-wider text-muted">
+                          Total Plays
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
-              {/* Tags */}
-              {tags.length > 0 && (
+              {/* Genres */}
+              {unifiedGenres.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-2">
-                  {tags.slice(0, 6).map((tag) => (
+                  {unifiedGenres.slice(0, 8).map((genre) => (
                     <span
-                      key={tag.name}
+                      key={genre}
                       className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted"
                     >
-                      {tag.name}
+                      {genre}
                     </span>
                   ))}
                 </div>
@@ -213,6 +241,9 @@ export default async function ArtistPage({
             </section>
           )}
 
+          {/* Music Videos */}
+          <VideoSection query={`${artist.artistName} music`} />
+
           {/* Enhanced Recommendations */}
           {!artistRecommendations.error && artistRecommendations.tracks.length > 0 && (
             <section className="mb-16" aria-label="Recommended tracks">
@@ -226,7 +257,7 @@ export default async function ArtistPage({
       </main>
 
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API & Last.fm</p>
+        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
       </footer>
     </div>
   );

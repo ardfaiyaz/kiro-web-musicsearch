@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Enhance the search experience with unified multi-source results and improve the discover page with AI recommendations powered by multi-source data. Add dynamic color theming using extracted album artwork colors throughout the UI.",
+  "status": "completed",
+  "steps": [
+    "Update app/page.tsx (home/search page) to use the unified search from lib/music-service.ts. When searching, combine results from multiple providers into one cohesive result set. Ensure the existing filter/sort functionality still works. The SearchBar component suggestions should include results from both iTunes and Spotify.",
+    "Update app/components/SearchBar.tsx to show richer autocomplete suggestions that may include Spotify artist images and additional metadata when available. Keep existing trending searches, recent searches, and voice search functionality intact.",
+    "Create app/components/DynamicColorTheme.tsx - A client component that wraps sections and applies dynamic background gradients extracted from artwork using the existing useColorExtraction hook from lib/color-extraction.ts. Use CSS custom properties to apply colors to hero backgrounds, accent colors, and gradients.",
+    "Update app/components/DynamicColorProvider.tsx to support setting colors from album/artist artwork on detail pages. When a track/artist/album page loads, extract colors and apply them to CSS custom properties (--dynamic-accent, --dynamic-accent-light, --dynamic-accent-muted) already defined in globals.css.",
+    "Update app/discover/page.tsx to include an enhanced recommendations section that uses data from multiple providers. Add a section showing 'Recommended for You' based on AI discovery (lib/ai-discovery.ts) but enriched with Last.fm similar artist data.",
+    "Update app/components/RecommendationPanel.tsx to show recommendation reasons more prominently. Each recommendation card should display a short explanation (already supported via RecommendedTrack.reason). Enhance the visual styling to use dynamic colors from the source track artwork."
+  ],
+  "acceptance_criteria": [
+    "Search results combine data from multiple providers into a unified display",
+    "SearchBar autocomplete works with enriched suggestions",
+    "Dynamic color theming applies extracted artwork colors to hero sections on detail pages",
+    "CSS custom properties (--dynamic-accent etc.) are updated when viewing artist/track/album pages",
+    "Discover page shows multi-source powered recommendations",
+    "RecommendationPanel displays recommendation reasons clearly",
+    "All existing search functionality (filters, sorts, voice, keyboard nav) continues working",
+    "npm run build succeeds with zero errors",
+    "npm run lint passes"
+  ],
+  "verification": [
+    "npm run lint",
+    "npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 6 steps completed. 1) app/page.tsx now uses unifiedSearch() from lib/music-service.ts to combine tracks from multiple providers with a 'Multi-source' badge indicator. 2) SearchBar.tsx fetches Spotify artist suggestions alongside iTunes track suggestions, showing artist thumbnails and type badges in autocomplete. 3) DynamicColorTheme.tsx created as a client wrapper component that accepts imageUrl and applies extracted colors as CSS vars with a gradient overlay. 4) DynamicColorProvider.tsx already correctly applies --dynamic-accent, --dynamic-accent-light, --dynamic-accent-muted CSS vars - no changes needed. 5) Discover page now shows a 'Recommended for You' section using AI discovery enriched with Last.fm similar artist data. 6) RecommendationPanel styling enhanced with larger artwork, sparkle icon in header, and prominent italic reason badges with background pills. Build and lint pass. Pre-existing warnings in SearchFilters.tsx remain unchanged."
+}

@@ -4,12 +4,15 @@ import Header from "@/app/components/Header";
 import HorizontalScroll from "@/app/components/HorizontalScroll";
 import GenreCard from "@/app/components/GenreCard";
 import DiscoveryMoodSelector from "@/app/components/DiscoveryMoodSelector";
+import RecommendationPanel from "@/app/components/RecommendationPanel";
 import {
   getTrendingSongs,
   getNewReleases,
   getTopAlbums,
   GENRES,
 } from "@/lib/discovery";
+import { getRecommendationsByMood, RecommendedTrack } from "@/lib/ai-discovery";
+import { getSimilarArtists } from "@/lib/lastfm";
 
 const EDITOR_PICKS = [
   {
@@ -43,11 +46,36 @@ const EDITOR_PICKS = [
 ];
 
 export default async function DiscoverPage() {
-  const [trendingSongs, newReleases, topAlbums] = await Promise.all([
+  const [trendingSongs, newReleases, topAlbums, moodRecs] = await Promise.all([
     getTrendingSongs(),
     getNewReleases(),
     getTopAlbums(),
+    getRecommendationsByMood("chill"),
   ]);
+
+  // Enrich recommendations with Last.fm similar artist data
+  let recommendedTracks: RecommendedTrack[] = moodRecs.tracks;
+  if (recommendedTracks.length > 0) {
+    const topArtist = recommendedTracks[0]?.artistName;
+    if (topArtist) {
+      const similarArtists = await getSimilarArtists(topArtist, 5);
+      if (similarArtists.length > 0) {
+        // Add "Similar to" reason for tracks from related artists
+        recommendedTracks = recommendedTracks.map((track) => {
+          const isSimilar = similarArtists.some(
+            (sa) => sa.name.toLowerCase() === track.artistName.toLowerCase()
+          );
+          if (isSimilar) {
+            return {
+              ...track,
+              reason: `Similar to ${topArtist}`,
+            };
+          }
+          return track;
+        });
+      }
+    }
+  }
 
   const heroSong = trendingSongs[0];
 
@@ -160,6 +188,16 @@ export default async function DiscoverPage() {
               ))}
             </div>
           </section>
+
+          {/* Recommended for You */}
+          {recommendedTracks.length > 0 && (
+            <section aria-label="Recommended for you" className="mb-16">
+              <RecommendationPanel
+                title="Recommended for You"
+                tracks={recommendedTracks}
+              />
+            </section>
+          )}
 
           {/* Trending Songs */}
           {trendingSongs.length > 0 && (
@@ -335,7 +373,7 @@ export default async function DiscoverPage() {
       </main>
 
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API</p>
+        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
       </footer>
     </div>
   );

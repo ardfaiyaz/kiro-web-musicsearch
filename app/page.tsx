@@ -9,6 +9,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import Header from "./components/Header";
 import InfiniteScrollResults from "./components/InfiniteScrollResults";
 import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
+import { unifiedSearch } from "@/lib/music-service";
 import { ItunesTrack } from "@/lib/types";
 
 function filterByGenre(tracks: ItunesTrack[], genre: string): ItunesTrack[] {
@@ -95,7 +96,24 @@ async function TrackResults({
   explicit: string;
 }) {
   const entity = filter === "song" ? "song" : undefined;
-  let tracks = await searchTracks(query, entity);
+
+  // Use unified search to combine results from multiple providers
+  const unified = await unifiedSearch(query);
+  let tracks = unified.tracks;
+
+  // If entity is specified, also do a targeted iTunes search to ensure complete results
+  if (entity) {
+    const itunesTracks = await searchTracks(query, entity);
+    // Merge unique tracks from iTunes-specific search
+    const existingIds = new Set(tracks.map((t) => t.trackId));
+    for (const track of itunesTracks) {
+      if (!existingIds.has(track.trackId)) {
+        tracks.push(track);
+        existingIds.add(track.trackId);
+      }
+    }
+  }
+
   tracks = filterByGenre(tracks, genre);
   tracks = filterByYear(tracks, year);
   tracks = filterByExplicit(tracks, explicit);
@@ -105,11 +123,25 @@ async function TrackResults({
     return <EmptyState query={query} />;
   }
 
+  const providerLabel = unified.spotifyArtist || unified.spotifyAlbum
+    ? "Results from multiple sources"
+    : "Results";
+
   return (
     <section aria-label="Search results" className="animate-fade-in">
-      <h2 className="mb-6 text-xl font-bold text-foreground sm:text-2xl">
-        Results for &ldquo;{query}&rdquo;
-      </h2>
+      <div className="mb-6 flex items-center gap-3">
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          {providerLabel} for &ldquo;{query}&rdquo;
+        </h2>
+        {(unified.spotifyArtist || unified.spotifyAlbum) && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted">
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+            Multi-source
+          </span>
+        )}
+      </div>
       <InfiniteScrollResults
         initialTracks={sortedTracks}
         query={query}
@@ -284,7 +316,7 @@ export default async function Home({
       </main>
 
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API</p>
+        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
       </footer>
     </div>
   );

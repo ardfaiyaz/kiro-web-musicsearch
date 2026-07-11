@@ -9,14 +9,46 @@ interface LyricsDisplayProps {
 }
 
 export default function LyricsDisplay({
-  lyrics,
+  lyrics: initialLyrics,
   trackName,
   artistName,
 }: LyricsDisplayProps) {
+  const [lyrics, setLyrics] = useState<string | null | undefined>(initialLyrics);
+  const [isLoading, setIsLoading] = useState(!initialLyrics);
   const [currentLine, setCurrentLine] = useState(0);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+
+  useEffect(() => {
+    // If lyrics were passed as prop, skip fetching
+    if (initialLyrics) {
+      setLyrics(initialLyrics);
+      setIsLoading(false);
+      return;
+    }
+
+    async function fetchLyrics() {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `/api/lyrics?artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setLyrics(data.lyrics);
+        } else {
+          setLyrics(null);
+        }
+      } catch {
+        setLyrics(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchLyrics();
+  }, [artistName, trackName, initialLyrics]);
 
   const lines = lyrics
     ? lyrics.split("\n").filter((line) => line.trim().length > 0)
@@ -50,6 +82,28 @@ export default function LyricsDisplay({
     }
   }, [currentLine, isAutoScrolling]);
 
+  // Deterministic widths for loading skeleton to avoid hydration mismatches
+  const skeletonWidths = [75, 60, 85, 70, 65, 80, 55, 90];
+
+  // Loading skeleton
+  if (isLoading) {
+    return (
+      <section className="glass-stats p-6" aria-label="Lyrics loading">
+        <h3 className="mb-4 text-lg font-bold text-foreground">Lyrics</h3>
+        <div className="flex flex-col gap-3 py-4" aria-busy="true">
+          {skeletonWidths.map((width, i) => (
+            <div
+              key={i}
+              className="h-4 animate-pulse rounded bg-surface"
+              style={{ width: `${width}%` }}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   if (!hasLyrics) {
     return (
       <section className="glass-stats p-6" aria-label="Lyrics">
@@ -78,8 +132,7 @@ export default function LyricsDisplay({
             <p className="text-xs text-muted">by {artistName}</p>
           </div>
           <p className="max-w-xs text-xs text-muted">
-            Lyrics require a premium API connection. Connect a lyrics provider to
-            display synced lyrics with auto-scroll.
+            Lyrics are not available for this track at this time. Try again later or check a different track.
           </p>
         </div>
       </section>

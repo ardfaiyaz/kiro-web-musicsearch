@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAlbumTracks } from "@/lib/itunes";
+import { getUnifiedAlbum } from "@/lib/music-service";
 import AudioPlayer from "@/app/components/AudioPlayer";
 import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
@@ -47,6 +48,10 @@ export default async function AlbumPage({
 
   const { album, tracks } = albumDetail;
   const artworkUrl = album.artworkUrl100?.replace("100x100", "600x600");
+
+  // Fetch unified album data for enrichment
+  const unifiedAlbum = await getUnifiedAlbum(album);
+  const spotifyAlbum = unifiedAlbum.spotify;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -140,6 +145,36 @@ export default async function AlbumPage({
                         {tracks.length} songs, {totalDuration(tracks)}
                       </dd>
                     </div>
+                    {spotifyAlbum && (
+                      <>
+                        <div className="flex flex-col gap-1">
+                          <dt className="text-xs font-medium uppercase tracking-wider text-muted">
+                            Type
+                          </dt>
+                          <dd className="text-sm font-medium capitalize text-foreground">
+                            {spotifyAlbum.albumType}
+                          </dd>
+                        </div>
+                        {spotifyAlbum.spotifyUrl && (
+                          <div className="flex flex-col gap-1">
+                            <dt className="text-xs font-medium uppercase tracking-wider text-muted">
+                              Listen on
+                            </dt>
+                            <dd className="text-sm font-medium text-foreground">
+                              <a
+                                href={spotifyAlbum.spotifyUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-green-500 transition-colors hover:text-green-400"
+                                aria-label="Open on Spotify"
+                              >
+                                Spotify
+                              </a>
+                            </dd>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </dl>
 
                   {album.collectionExplicitness === "explicit" && (
@@ -233,7 +268,7 @@ export default async function AlbumPage({
       </main>
 
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted">
-        <p>Powered by the iTunes Search API</p>
+        <p>Powered by iTunes, Spotify, Last.fm &amp; more</p>
       </footer>
     </div>
   );
