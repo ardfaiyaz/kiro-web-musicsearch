@@ -2,7 +2,7 @@
   "id": "FEAT-006",
   "type": "feat",
   "description": "Organization and Library Enhancements (items 51-60): Drag-and-drop playlists, smart playlists, folder organization, tag system, rating system (1-5 stars), import/export playlists, playlist cover generator, collaborative playlists, queue history, and listening journal.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Enhance app/playlists/page.tsx: add drag-and-drop reordering using HTML5 Drag and Drop API (draggable, ondragstart, ondragover, ondrop) to reorder songs within playlists. Show drag handle icon.",
     "2. Create lib/smart-playlists.ts and app/components/SmartPlaylists.tsx: auto-updating playlists based on rules (top songs this week based on play count, recently discovered, most played genre). Compute from listening history on render.",
@@ -32,5 +32,5 @@
     "bun run build succeeds with zero errors"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "React 19 strict lint rule 'react-hooks/set-state-in-effect' prevents calling setState synchronously in useEffect. Solution: use lazy state initializers (useState(() => ...)) for initial values from localStorage/sessionStorage, and only use effects for subscriptions/intervals. The CollectionCoverGenerator was enhanced with a PlaylistCoverGenerator export for playlist-specific mosaic covers. Queue history uses sessionStorage (not localStorage) since it tracks per-session data."
 }
