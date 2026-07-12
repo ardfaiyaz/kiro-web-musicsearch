@@ -6,7 +6,9 @@ import Link from "next/link";
 import { Clock, User, Disc3 } from "lucide-react";
 import { getRecentlyViewed, type RecentlyViewedItem } from "@/lib/recently-viewed";
 
+const STORAGE_KEY = "music-recently-viewed";
 const EMPTY_ARRAY: RecentlyViewedItem[] = [];
+let cachedRawString: string | null = null;
 let cachedItems: RecentlyViewedItem[] = EMPTY_ARRAY;
 
 function subscribe(callback: () => void) {
@@ -20,12 +22,13 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot(): RecentlyViewedItem[] {
-  const items = getRecentlyViewed();
-  // Return cached reference if content hasn't changed to avoid re-renders
-  if (JSON.stringify(items) === JSON.stringify(cachedItems)) {
+  const rawString = localStorage.getItem(STORAGE_KEY);
+  // Compare the raw string to avoid parsing + double JSON.stringify on every render
+  if (rawString === cachedRawString) {
     return cachedItems;
   }
-  cachedItems = items;
+  cachedRawString = rawString;
+  cachedItems = getRecentlyViewed();
   return cachedItems;
 }
 

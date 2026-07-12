@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { memo } from "react";
 
 interface PageTransitionProps {
@@ -8,10 +7,8 @@ interface PageTransitionProps {
 }
 
 function PageTransitionBase({ children }: PageTransitionProps) {
-  const pathname = usePathname();
-
   return (
-    <div key={pathname} className="animate-page-enter">
+    <div className="animate-page-enter">
       {children}
     </div>
   );

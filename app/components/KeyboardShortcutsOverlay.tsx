@@ -36,7 +36,7 @@ export default function KeyboardShortcutsOverlay() {
 
   return (
     <div
-      className="fixed bottom-20 right-4 z-40 w-72 animate-slide-up sm:bottom-6"
+      className="fixed bottom-20 right-4 z-[45] w-72 animate-slide-up sm:bottom-6"
       role="complementary"
       aria-label="Keyboard shortcuts hint"
     >

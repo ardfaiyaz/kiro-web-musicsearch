@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { Sparkles } from "lucide-react";
 import { useAudioPlayer } from "./AudioPlayerContext";
+import { useToast } from "./ToastContext";
 
 const RSS_URL =
   "https://rss.applemarketingtools.com/api/v2/us/music/most-played/25/songs.json";
@@ -16,6 +17,7 @@ interface RSSResult {
 
 export default function FeelingLucky({ className = "" }: { className?: string }) {
   const { play } = useAudioPlayer();
+  const { show: showToast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const handleClick = useCallback(async () => {
@@ -30,7 +32,7 @@ export default function FeelingLucky({ className = "" }: { className?: string })
       const songs: RSSResult[] = rssData?.feed?.results || [];
 
       if (songs.length === 0) {
-        setLoading(false);
+        showToast("warning", "No songs available", "Could not find any trending songs right now.");
         return;
       }
 
@@ -59,13 +61,15 @@ export default function FeelingLucky({ className = "" }: { className?: string })
           artworkUrl: match.artworkUrl100,
           fullTrack: match,
         });
+      } else {
+        showToast("info", "No preview available", "Could not find a playable preview for this song.");
       }
     } catch {
-      // Silently fail - no preview available
+      showToast("error", "Something went wrong", "Could not fetch a random song. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [loading, play]);
+  }, [loading, play, showToast]);
 
   return (
     <button
