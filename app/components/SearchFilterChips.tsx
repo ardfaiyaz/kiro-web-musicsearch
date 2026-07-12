@@ -77,7 +77,7 @@ export default function SearchFilterChips() {
       } else {
         params.set(key, value);
       }
-      router.push(`/?${params.toString()}`);
+      router.push(`/search?${params.toString()}`);
     },
     [router, searchParams]
   );
@@ -89,7 +89,7 @@ export default function SearchFilterChips() {
     params.delete("genre");
     params.delete("year");
     params.delete("explicit");
-    router.push(`/?${params.toString()}`);
+    router.push(`/search?${params.toString()}`);
   }, [router, searchParams]);
 
   return (

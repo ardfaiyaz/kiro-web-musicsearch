@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Audio preview indicators, keyboard shortcut overlay on first visit, genre browsing on /discover, and Feeling Lucky random song feature. Items 3, 4, 5, 6.",
+  "status": "completed",
+  "steps": [
+    "The AnimatedEqualizer component already exists at app/components/AnimatedEqualizer.tsx and is shown in MiniPlayer. Enhance the TrackCard component to show the AnimatedEqualizer when that specific track is currently playing. Import useAudioPlayer from AudioPlayerContext and show the equalizer animation next to the track name/number when isPlaying && currentlyPlayingId matches the track's ID.",
+    "Create app/components/KeyboardShortcutsOverlay.tsx - a dismissible overlay/tooltip that shows on first visit (localStorage flag 'shortcuts-seen'). Shows a minimal card in bottom-right corner with key shortcuts: Space = Play/Pause, / = Focus Search, Cmd+K = Command Palette, ? = All Shortcuts. Has a 'Got it' button to dismiss permanently. Appears ~3 seconds after page load on first visit only. Uses glass-card styling with animate-slide-up.",
+    "Add KeyboardShortcutsOverlay to app/layout.tsx alongside existing KeyboardShortcuts.",
+    "Update app/discover/page.tsx to make the 'Browse by Genre' section more prominent and interactive. The GenreCard already links to /?q=...&genre=... - update it to link to /search?q=...&genre=... instead (since search now has its own page). Add a new section 'Browse Genres' higher up on the page (before the mood section) with larger clickable genre cards that show genre name, a brief description, and a gradient background.",
+    "Create app/components/FeelingLucky.tsx - a fun button component (uses Dice/Sparkles icon from lucide-react) that fetches a random trending song from the Apple RSS API and auto-plays its preview. Uses the discovery.ts getTrendingSongs (cached) and picks a random track, then calls play() from AudioPlayerContext. Style as a glass-card button with hover animation.",
+    "Add FeelingLucky button to the /discover page hero section and to the /search page empty state."
+  ],
+  "acceptance_criteria": [
+    "When a track is playing, the TrackCard for that track shows an animated equalizer indicator",
+    "First-time visitors see a small keyboard shortcuts hint card that can be permanently dismissed",
+    "The shortcuts overlay does not appear on subsequent visits after dismissal",
+    "Genre cards on /discover link to /search page with genre filter applied",
+    "Feeling Lucky button picks and plays a random trending song when clicked",
+    "Build passes with zero TypeScript errors and zero lint errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All steps completed successfully. Build and lint pass with zero errors. GenreCard now accepts optional description and large props for the enhanced browse section. FeelingLucky uses client-side fetch to Apple RSS API then searches iTunes for preview URL. Editor picks and trending artists links also updated to use /search route."
+}

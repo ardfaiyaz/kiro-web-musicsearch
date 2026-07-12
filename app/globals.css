@@ -1453,3 +1453,106 @@ html {
   animation: contextMenuIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* ===== Splash Screen Styles ===== */
+
+.splash-bg {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--primary-dark) 100%);
+  background-size: 200% 200%;
+  animation: splashGradient 3s ease infinite;
+}
+
+@keyframes splashGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.splash-fade-in {
+  animation: splashEnter 0.6s var(--ease-smooth) forwards;
+}
+
+.splash-fade-out {
+  animation: splashExit 0.5s var(--ease-smooth) forwards;
+}
+
+@keyframes splashEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes splashExit {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+.splash-content {
+  animation: splashContentEnter 0.8s var(--ease-spring) 0.2s both;
+}
+
+@keyframes splashContentEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.splash-icon-wrapper {
+  animation: splashIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes splashIconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Reduced motion: disable splash animations */
+@media (prefers-reduced-motion: reduce) {
+  .splash-bg {
+    animation: none;
+  }
+  .splash-fade-in,
+  .splash-fade-out {
+    animation: none;
+  }
+  .splash-fade-in {
+    opacity: 1;
+  }
+  .splash-fade-out {
+    opacity: 0;
+  }
+  .splash-content {
+    animation: none;
+    opacity: 1;
+  }
+  .splash-icon-wrapper {
+    animation: none;
+  }
+}
+
+/* ===== Scrollbar hide utility ===== */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+

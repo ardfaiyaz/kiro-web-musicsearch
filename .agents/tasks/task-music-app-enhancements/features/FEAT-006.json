@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-006",
+  "type": "fix",
+  "description": "Address 3 issues from the 2026-07-12 review: missing custom event dispatch in recently-viewed, unbounded static asset cache in SW, and inert PageTransition animation.",
+  "status": "completed",
+  "steps": [
+    "In lib/recently-viewed.ts, dispatch a custom event 'recently-viewed-updated' after the localStorage.setItem call in addRecentlyViewed, enabling same-tab sync for the RecentlyViewed component.",
+    "In public/sw.js, add trimCache call for the CACHE_NAME (static asset cache) with a larger limit (e.g., 100 entries) in the static asset fetch handler.",
+    "Remove the PageTransition wrapper from layout.tsx since the CSS animation only fires on initial mount and is effectively dead code for client-side navigations. Remove the PageTransition component file or leave it unused."
+  ],
+  "acceptance_criteria": [
+    "addRecentlyViewed dispatches 'recently-viewed-updated' event after writing to localStorage",
+    "Static asset cache (CACHE_NAME) has trimCache eviction with a max of 100 entries",
+    "PageTransition wrapper is removed from layout.tsx",
+    "Build passes with zero TypeScript errors",
+    "Lint passes with zero errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 3 review issues resolved. Custom event dispatch added for same-tab recently-viewed sync. Static cache trimmed at 100 entries across all CACHE_NAME write paths. PageTransition removed from layout (component file left in place for potential per-page use). Build and lint pass with zero errors."
+}

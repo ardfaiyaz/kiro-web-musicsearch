@@ -5,6 +5,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import HorizontalScroll from "@/app/components/HorizontalScroll";
 import GenreCard from "@/app/components/GenreCard";
+import FeelingLucky from "@/app/components/FeelingLucky";
 import DiscoveryMoodSelector from "@/app/components/DiscoveryMoodSelector";
 import RecommendationPanel from "@/app/components/RecommendationPanel";
 import BrowseByMood from "@/app/components/discover/BrowseByMood";
@@ -53,6 +54,25 @@ const EDITOR_PICKS = [
     gradient: "from-orange-500 to-red-700",
   },
 ];
+
+const GENRE_DESCRIPTIONS: Record<string, string> = {
+  pop: "Chart-topping hits and catchy melodies",
+  rock: "Guitar-driven anthems and power ballads",
+  "hip-hop-rap": "Beats, bars, and culture-defining tracks",
+  electronic: "Synths, drops, and dance floor energy",
+  jazz: "Improvisation, swing, and smooth grooves",
+  classical: "Orchestral masterpieces and compositions",
+  country: "Storytelling, twang, and heartland sounds",
+  "r-and-b-soul": "Smooth vocals and emotional depth",
+  latin: "Reggaeton, salsa, and tropical rhythms",
+  alternative: "Genre-bending and boundary-pushing music",
+  indie: "Independent artists and underground sounds",
+  metal: "Heavy riffs and intense performances",
+};
+
+function getGenreDescription(genreId: string): string {
+  return GENRE_DESCRIPTIONS[genreId] || "";
+}
 
 function LoadingSkeleton() {
   return (
@@ -157,6 +177,9 @@ export default async function DiscoverPage() {
                   <p className="mt-2 text-lg text-muted">
                     {heroSong.artistName}
                   </p>
+                  <div className="mt-6">
+                    <FeelingLucky />
+                  </div>
                 </div>
               </div>
             </Link>
@@ -173,7 +196,7 @@ export default async function DiscoverPage() {
               {EDITOR_PICKS.map((pick) => (
                 <Link
                   key={pick.id}
-                  href={`/?q=${encodeURIComponent(pick.query)}`}
+                  href={`/search?q=${encodeURIComponent(pick.query)}`}
                   className="group relative overflow-hidden rounded-2xl glass-card p-6 transition-premium hover:border-foreground/10 hover:shadow-xl hover:-translate-y-1"
                 >
                   <div
@@ -219,6 +242,24 @@ export default async function DiscoverPage() {
               />
             </section>
           )}
+
+          {/* Browse Genres (prominent section) */}
+          <section aria-label="Browse genres" className="mb-16">
+            <h3 className="mb-6 text-2xl font-bold text-foreground">
+              Browse Genres
+            </h3>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {GENRES.map((genre) => (
+                <GenreCard
+                  key={genre.id}
+                  name={genre.name}
+                  gradient={genre.gradient}
+                  description={getGenreDescription(genre.id)}
+                  large
+                />
+              ))}
+            </div>
+          </section>
 
           {/* Popular This Week */}
           <Suspense fallback={<LoadingSkeleton />}>
@@ -273,7 +314,7 @@ export default async function DiscoverPage() {
                 {trendingArtists.map((song) => (
                   <Link
                     key={song.artistName}
-                    href={`/?q=${encodeURIComponent(song.artistName)}`}
+                    href={`/search?q=${encodeURIComponent(song.artistName)}`}
                     className="group flex flex-col items-center gap-4 rounded-2xl glass-card p-5 transition-premium hover:border-foreground/10 hover:shadow-xl hover:-translate-y-1"
                   >
                     <div className="relative h-20 w-20 overflow-hidden rounded-full bg-border shadow-md sm:h-24 sm:w-24">

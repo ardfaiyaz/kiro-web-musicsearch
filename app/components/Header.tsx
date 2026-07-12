@@ -81,32 +81,19 @@ export default function Header({ showBack = false }: HeaderProps) {
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
-              href="/"
+              href="/search"
               aria-current={
-                isActive("/") &&
-                !isActive("/discover") &&
-                !isActive("/favorites") &&
-                !isActive("/dashboard") &&
-                !isActive("/playlists")
+                isActive("/search")
                   ? "page"
                   : undefined
               }
               className={`flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-premium sm:px-4 ${
-                isActive("/") &&
-                !isActive("/discover") &&
-                !isActive("/favorites") &&
-                !isActive("/dashboard") &&
-                !isActive("/playlists")
+                isActive("/search")
                   ? "bg-foreground/10 text-foreground"
                   : "text-muted hover:text-foreground"
               }`}
               style={
-                isActive("/") &&
-                !isActive("/discover") &&
-                !isActive("/favorites") &&
-                !isActive("/dashboard") &&
-                !isActive("/playlists") &&
-                colors
+                isActive("/search") && colors
                   ? { backgroundColor: `color-mix(in srgb, ${colors.dominant} 15%, transparent)` }
                   : undefined
               }

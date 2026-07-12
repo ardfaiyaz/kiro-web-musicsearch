@@ -8,12 +8,17 @@ import { DynamicColorProvider } from "./components/DynamicColorProvider";
 import { SettingsProvider } from "./components/SettingsContext";
 import AmbientBackground from "./components/AmbientBackground";
 import MiniPlayer from "./components/MiniPlayer";
+import MobileBottomNav from "./components/MobileBottomNav";
+import SplashScreen from "./components/SplashScreen";
 import SettingsFab from "./components/SettingsFab";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
+import KeyboardShortcutsOverlay from "./components/KeyboardShortcutsOverlay";
 import CommandPalette from "./components/CommandPalette";
 import { ToastProvider } from "./components/ToastContext";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
+import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
+import WebVitalsReporter from "./components/WebVitalsReporter";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
 import "./globals.css";
@@ -69,15 +74,20 @@ export default function RootLayout({
                     <ToastProvider>
                       <AmbientBackground />
                       <CustomCursorWrapper />
-                      <div className="relative z-10 flex min-h-full flex-col">
+                      <SplashScreen />
+                      <div className="relative z-10 flex min-h-full flex-col pb-16 sm:pb-0">
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
+                        <ServiceWorkerRegistration />
+                        <WebVitalsReporter />
                         <main id="main-content" tabIndex={-1}>
                           {children}
                         </main>
                         <MiniPlayer />
+                        <MobileBottomNav />
                         <SettingsFab />
                         <KeyboardShortcuts />
+                        <KeyboardShortcutsOverlay />
                         <CommandPalette />
                       </div>
                     </ToastProvider>

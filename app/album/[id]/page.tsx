@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getAlbumTracks, getArtistAlbums } from "@/lib/itunes";
 import { getUnifiedAlbum } from "@/lib/music-service";
 import { getSimilarArtists } from "@/lib/lastfm";
@@ -13,6 +14,52 @@ import MusicVideos from "@/app/components/album/MusicVideos";
 import AIInsights from "@/app/components/album/AIInsights";
 import AlbumTimeline from "@/app/components/album/AlbumTimeline";
 import ExternalLinks from "@/app/components/album/ExternalLinks";
+import RecentlyViewedTracker from "@/app/components/RecentlyViewedTracker";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const albumId = parseInt(id, 10);
+
+  if (isNaN(albumId)) {
+    return { title: "Album Not Found" };
+  }
+
+  const albumDetail = await getAlbumTracks(albumId);
+
+  if (!albumDetail) {
+    return { title: "Album Not Found" };
+  }
+
+  const { album } = albumDetail;
+  const title = `${album.collectionName} by ${album.artistName} - Music Search & Discovery`;
+  const description = `Listen to ${album.collectionName} by ${album.artistName}. ${album.trackCount} tracks. Genre: ${album.primaryGenreName}.`;
+  const artworkUrl = album.artworkUrl100?.replace("100x100", "600x600");
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${album.collectionName} by ${album.artistName}`,
+      description,
+      ...(artworkUrl
+        ? {
+            images: [
+              {
+                url: artworkUrl,
+                width: 600,
+                height: 600,
+                alt: `${album.collectionName} album artwork`,
+              },
+            ],
+          }
+        : {}),
+    },
+  };
+}
 
 function totalDuration(tracks: { trackTimeMillis: number }[]): string {
   const totalMs = tracks.reduce((sum, t) => sum + (t.trackTimeMillis || 0), 0);
@@ -72,6 +119,12 @@ export default async function AlbumPage({
   return (
     <div className="flex flex-1 flex-col">
       <Header showBack />
+      <RecentlyViewedTracker
+        type="album"
+        id={album.collectionId}
+        name={album.collectionName}
+        artwork={artworkUrl || album.artworkUrl100 || ""}
+      />
 
       <main className="flex-1">
         {/* Client-side interactive sections: Hero, Sticky Bar, Tracklist, Description */}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getTrackById, getArtistTracks } from "@/lib/itunes";
 import { getRecommendations } from "@/lib/recommendations";
 import { getSimilarTracks } from "@/lib/ai-discovery";
@@ -14,6 +15,50 @@ import ExplicitBadge from "@/app/components/ExplicitBadge";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import ShareMenu from "@/app/components/ShareMenu";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const trackId = parseInt(id, 10);
+
+  if (isNaN(trackId)) {
+    return { title: "Track Not Found" };
+  }
+
+  const track = await getTrackById(trackId);
+
+  if (!track) {
+    return { title: "Track Not Found" };
+  }
+
+  const title = `${track.trackName} by ${track.artistName} - Music Search & Discovery`;
+  const description = `Listen to ${track.trackName} by ${track.artistName} from the album ${track.collectionName}. Genre: ${track.primaryGenreName}.`;
+  const artworkUrl = track.artworkUrl100?.replace("100x100", "600x600");
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${track.trackName} by ${track.artistName}`,
+      description,
+      ...(artworkUrl
+        ? {
+            images: [
+              {
+                url: artworkUrl,
+                width: 600,
+                height: 600,
+                alt: `${track.trackName} artwork`,
+              },
+            ],
+          }
+        : {}),
+    },
+  };
+}
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);

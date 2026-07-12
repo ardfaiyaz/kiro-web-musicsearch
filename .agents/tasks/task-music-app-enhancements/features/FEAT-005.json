@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-005",
+  "type": "fix",
+  "description": "Address issues found in the review: SW caches error responses, FeelingLucky silent failure, RecentlyViewed getSnapshot performance, PageTransition remount, KeyboardShortcutsOverlay z-index collision.",
+  "status": "completed",
+  "steps": [
+    "Fix public/sw.js: add response.ok check before caching responses in all fetch handlers. Add a max entries limit (50) for API cache with eviction of oldest entries.",
+    "Fix app/components/FeelingLucky.tsx: use the toast system (useToast) to show an error message when fetching fails or no preview is found.",
+    "Fix app/components/RecentlyViewed.tsx: optimize getSnapshot to compare the raw localStorage string instead of double JSON.stringify.",
+    "Fix app/components/ui/PageTransition.tsx: remove key={pathname} to avoid full subtree remount on navigation. Keep CSS animation class.",
+    "Fix app/components/KeyboardShortcutsOverlay.tsx: bump z-index from z-40 to z-[45] to avoid collision with MobileBottomNav."
+  ],
+  "acceptance_criteria": [
+    "Service worker only caches responses where response.ok is true",
+    "Service worker API cache has a max entry limit with eviction",
+    "FeelingLucky shows a toast error message on failure",
+    "RecentlyViewed getSnapshot avoids double JSON.stringify on every render",
+    "PageTransition does not remount the subtree on navigation",
+    "KeyboardShortcutsOverlay z-index is higher than MobileBottomNav",
+    "Build passes with zero TypeScript errors and zero lint errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 5 review issues resolved. SplashScreen noop subscribe was intentionally left as-is (correct pattern for one-time sessionStorage read on mount). Build and lint pass with zero errors."
+}
