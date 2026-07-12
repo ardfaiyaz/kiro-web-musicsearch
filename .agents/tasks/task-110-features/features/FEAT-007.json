@@ -2,7 +2,7 @@
   "id": "FEAT-007",
   "type": "feat",
   "description": "Social and Sharing Enhancements (items 61-70): Share cards, QR code sharing, 'Now Playing' status card, playlist sharing links, embed widget, copy lyrics to clipboard, Twitter/X share integration, Instagram story format cards, music taste profile page, and artist comparison mode.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Create app/components/social/ShareCard.tsx: generate beautiful image cards of currently playing song using Canvas API - draw artwork, track name, artist, and gradient background. Allow saving as PNG via toDataURL.",
     "2. Create app/components/social/QRCodeGenerator.tsx: generate QR codes linking to any artist/album/track page using a canvas-based QR code generator (implement simple QR encoding or use SVG path generation). Show QR in a modal.",
