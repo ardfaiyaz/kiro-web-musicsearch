@@ -33,6 +33,7 @@ import DebugOverlay from "./components/DebugOverlay";
 import Onboarding from "./components/Onboarding";
 import FeedbackWidget from "./components/FeedbackWidget";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import FeatureFlagGate from "./components/FeatureFlagGate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -104,15 +105,29 @@ export default function RootLayout({
                         <KeyboardShortcutsOverlay />
                         <CommandPalette />
                         <ScreenReaderAnnouncer />
-                        <FocusMode />
-                        <VoiceNavigation />
+                        <FeatureFlagGate flag="focusMode">
+                          <FocusMode />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="voiceNavigation">
+                          <VoiceNavigation />
+                        </FeatureFlagGate>
                         <AudioCaption />
                         <ColorBlindFilters />
-                        <EasterEggs />
-                        <DebugOverlay />
-                        <Onboarding />
-                        <FeedbackWidget />
-                        <PWAInstallPrompt />
+                        <FeatureFlagGate flag="easterEggs">
+                          <EasterEggs />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="debugMode">
+                          <DebugOverlay />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="onboarding">
+                          <Onboarding />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="feedbackWidget">
+                          <FeedbackWidget />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="pwaInstallPrompt">
+                          <PWAInstallPrompt />
+                        </FeatureFlagGate>
                       </div>
                     </ToastProvider>
                   </PersonalizationProvider>

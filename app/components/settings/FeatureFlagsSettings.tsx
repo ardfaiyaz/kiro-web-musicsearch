@@ -37,6 +37,10 @@ function notifyFlagListeners() {
   for (const listener of flagListeners) {
     listener();
   }
+  // Notify FeatureFlagGate components across the app
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("feature-flags-changed"));
+  }
 }
 
 export default function FeatureFlagsSettings() {

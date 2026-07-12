@@ -208,63 +208,63 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const setBlurIntensity = useCallback((value: number) => {
     updateSettings({
-      ...currentSettings,
+      ...getSettingsSnapshot(),
       blurIntensity: Math.max(0, Math.min(50, value)),
     });
   }, []);
 
   const setGlassOpacity = useCallback((value: number) => {
     updateSettings({
-      ...currentSettings,
+      ...getSettingsSnapshot(),
       glassOpacity: Math.max(0.3, Math.min(0.95, value)),
     });
   }, []);
 
   const setAccentColor = useCallback((value: string | null) => {
-    updateSettings({ ...currentSettings, accentColor: value });
+    updateSettings({ ...getSettingsSnapshot(), accentColor: value });
   }, []);
 
   const setAnimationSpeed = useCallback((value: AnimationSpeed) => {
-    updateSettings({ ...currentSettings, animationSpeed: value });
+    updateSettings({ ...getSettingsSnapshot(), animationSpeed: value });
   }, []);
 
   const setReducedMotion = useCallback((value: boolean) => {
-    updateSettings({ ...currentSettings, reducedMotion: value });
+    updateSettings({ ...getSettingsSnapshot(), reducedMotion: value });
   }, []);
 
   const setCompactMode = useCallback((value: boolean) => {
-    updateSettings({ ...currentSettings, compactMode: value });
+    updateSettings({ ...getSettingsSnapshot(), compactMode: value });
   }, []);
 
   const setCassetteMode = useCallback((value: boolean) => {
-    updateSettings({ ...currentSettings, cassetteMode: value });
+    updateSettings({ ...getSettingsSnapshot(), cassetteMode: value });
   }, []);
 
   const setHighContrast = useCallback((value: boolean) => {
-    updateSettings({ ...currentSettings, highContrast: value });
+    updateSettings({ ...getSettingsSnapshot(), highContrast: value });
   }, []);
 
   const setFontSize = useCallback((value: number) => {
     updateSettings({
-      ...currentSettings,
+      ...getSettingsSnapshot(),
       fontSize: Math.max(14, Math.min(22, value)),
     });
   }, []);
 
   const setDyslexiaFont = useCallback((value: boolean) => {
-    updateSettings({ ...currentSettings, dyslexiaFont: value });
+    updateSettings({ ...getSettingsSnapshot(), dyslexiaFont: value });
   }, []);
 
   const setReducedTransparency = useCallback((value: boolean) => {
-    updateSettings({ ...currentSettings, reducedTransparency: value });
+    updateSettings({ ...getSettingsSnapshot(), reducedTransparency: value });
   }, []);
 
   const setMotionSensitivity = useCallback((value: MotionSensitivity) => {
-    updateSettings({ ...currentSettings, motionSensitivity: value });
+    updateSettings({ ...getSettingsSnapshot(), motionSensitivity: value });
   }, []);
 
   const setColorBlindMode = useCallback((value: ColorBlindMode) => {
-    updateSettings({ ...currentSettings, colorBlindMode: value });
+    updateSettings({ ...getSettingsSnapshot(), colorBlindMode: value });
   }, []);
 
   const resetSettings = useCallback(() => {

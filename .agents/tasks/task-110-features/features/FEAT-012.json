@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-012",
+  "type": "fix",
+  "description": "Address review findings: (1) Feature flags not gating feature rendering - wire them to components, (2) SettingsContext stale closure - fix the setter pattern, (3) Games creating unmanaged Audio elements - pause main player when game starts, (4) Crossfade interval orphaning Audio elements - extract shared helper and track fading elements.",
+  "status": "in_progress",
+  "steps": [
+    "1. Fix SettingsContext stale closure: change all useCallback setters to read currentSettings at call time instead of capturing it in closure. Since currentSettings is a module-level variable, remove empty dependency arrays or use a getter pattern.",
+    "2. Fix feature flags: create a FeatureFlagGate wrapper component that reads feature flags and conditionally renders children. Wrap flagged components in layout.tsx with the gate.",
+    "3. Fix games creating unmanaged Audio: import useAudioPlayer in GuessTheSong and pause the main player before starting game audio.",
+    "4. Fix crossfade interval orphaning Audio elements: extract crossfade logic into a shared helper function, track the fading-out element separately."
+  ],
+  "acceptance_criteria": [
+    "SettingsContext setters always read fresh currentSettings at call time",
+    "Feature-flagged components in layout.tsx are gated by their respective flags",
+    "GuessTheSong pauses the main audio player before playing game audio",
+    "Crossfade logic is extracted into a single helper, fading-out elements are tracked separately",
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}

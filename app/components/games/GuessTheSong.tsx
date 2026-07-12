@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Play, Volume2, RefreshCw, CheckCircle, XCircle, Trophy } from "lucide-react";
+import { useAudioPlayer } from "@/app/components/AudioPlayerContext";
 
 interface SongQuestion {
   previewUrl: string;
@@ -32,6 +33,7 @@ export default function GuessTheSong() {
   const [timeLeft, setTimeLeft] = useState(5);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { pause: pauseMainPlayer, isPlaying: mainPlayerIsPlaying } = useAudioPlayer();
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -116,6 +118,11 @@ export default function GuessTheSong() {
 
   const playPreview = () => {
     if (isPlaying || !questions[currentIndex]) return;
+
+    // Pause the main audio player to prevent overlapping audio
+    if (mainPlayerIsPlaying) {
+      pauseMainPlayer();
+    }
 
     const audio = new Audio(questions[currentIndex].previewUrl);
     audioRef.current = audio;
