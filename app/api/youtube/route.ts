@@ -21,6 +21,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Return empty response gracefully when YouTube API key is not configured
+  if (!process.env.YOUTUBE_API_KEY) {
+    return NextResponse.json({ videos: [] });
+  }
+
   const limit = limitParam ? parseInt(limitParam, 10) : 5;
 
   if (isNaN(limit) || limit < 1 || limit > 20) {

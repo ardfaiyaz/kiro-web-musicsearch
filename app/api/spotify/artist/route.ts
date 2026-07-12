@@ -20,6 +20,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Return empty response gracefully when Spotify API keys are not configured
+  if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
+    return NextResponse.json({ artist: null });
+  }
+
   try {
     const artist = await searchSpotifyArtist(name);
 
