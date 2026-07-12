@@ -2,7 +2,7 @@
   "id": "FEAT-011",
   "type": "feat",
   "description": "Developer and Meta Features (items 101-110): Changelog page, feature flags, debug mode, component playground, onboarding flow, feedback widget, keyboard shortcut cheat sheet page, API status indicator, performance dashboard, and PWA install prompt.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Create app/changelog/page.tsx: version history page with dated entries showing what's new. Include all 110 features grouped by category. Style as a clean timeline/list.",
     "2. Create lib/feature-flags.ts and enhance app/components/settings/AppearanceSettings.tsx or create new FeatureFlagsSettings section: store feature toggles in localStorage. Allow toggling experimental features (cassette mode, particles, aurora, voice search, etc.).",

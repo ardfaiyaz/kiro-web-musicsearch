@@ -29,6 +29,10 @@ import VoiceNavigation from "./components/VoiceNavigation";
 import AudioCaption from "./components/player/AudioCaption";
 import ColorBlindFilters from "./components/ColorBlindFilters";
 import EasterEggs from "./components/EasterEggs";
+import DebugOverlay from "./components/DebugOverlay";
+import Onboarding from "./components/Onboarding";
+import FeedbackWidget from "./components/FeedbackWidget";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -105,6 +109,10 @@ export default function RootLayout({
                         <AudioCaption />
                         <ColorBlindFilters />
                         <EasterEggs />
+                        <DebugOverlay />
+                        <Onboarding />
+                        <FeedbackWidget />
+                        <PWAInstallPrompt />
                       </div>
                     </ToastProvider>
                   </PersonalizationProvider>

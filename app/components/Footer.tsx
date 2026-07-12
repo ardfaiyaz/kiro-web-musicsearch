@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Music2, Code, ExternalLink } from "lucide-react";
+import APIStatusIndicator from "./APIStatusIndicator";
 
 export default function Footer() {
   return (
@@ -88,6 +89,9 @@ export default function Footer() {
           <p className="text-sm text-muted">
             Powered by iTunes, Spotify, Last.fm &amp; more
           </p>
+          <div className="mt-3 flex justify-center">
+            <APIStatusIndicator />
+          </div>
         </div>
       </div>
     </footer>

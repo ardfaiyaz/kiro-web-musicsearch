@@ -8,6 +8,7 @@ import {
   Shield,
   HardDrive,
   Info,
+  Flag,
   ChevronDown,
   ChevronLeft,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import PlaybackSettings from "../components/settings/PlaybackSettings";
 import PrivacySettings from "../components/settings/PrivacySettings";
 import StorageSettings from "../components/settings/StorageSettings";
 import AboutSettings from "../components/settings/AboutSettings";
+import FeatureFlagsSettings from "../components/settings/FeatureFlagsSettings";
 
 interface SettingsSection {
   id: string;
@@ -29,6 +31,7 @@ interface SettingsSection {
 const SECTIONS: SettingsSection[] = [
   { id: "appearance", label: "Appearance", icon: Palette, component: AppearanceSettings },
   { id: "playback", label: "Playback", icon: Play, component: PlaybackSettings },
+  { id: "feature-flags", label: "Feature Flags", icon: Flag, component: FeatureFlagsSettings },
   { id: "privacy", label: "Privacy", icon: Shield, component: PrivacySettings },
   { id: "storage", label: "Storage", icon: HardDrive, component: StorageSettings },
   { id: "about", label: "About", icon: Info, component: AboutSettings },
