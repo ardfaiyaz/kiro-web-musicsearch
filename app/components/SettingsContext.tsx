@@ -140,61 +140,43 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const settings = useSyncExternalStore(subscribe, getSettingsSnapshot, getServerSnapshot);
   const appliedRef = useRef(false);
 
-  // Apply DOM settings on mount
+  // Apply DOM settings on mount only
   useEffect(() => {
     if (!appliedRef.current) {
       appliedRef.current = true;
-      applySettingsToDOM(settings);
+      applySettingsToDOM(currentSettings);
     }
-  });
+  }, []);
 
-  const setBlurIntensity = useCallback(
-    (value: number) => {
-      updateSettings({
-        ...settings,
-        blurIntensity: Math.max(0, Math.min(50, value)),
-      });
-    },
-    [settings]
-  );
+  const setBlurIntensity = useCallback((value: number) => {
+    updateSettings({
+      ...currentSettings,
+      blurIntensity: Math.max(0, Math.min(50, value)),
+    });
+  }, []);
 
-  const setGlassOpacity = useCallback(
-    (value: number) => {
-      updateSettings({
-        ...settings,
-        glassOpacity: Math.max(0.3, Math.min(0.95, value)),
-      });
-    },
-    [settings]
-  );
+  const setGlassOpacity = useCallback((value: number) => {
+    updateSettings({
+      ...currentSettings,
+      glassOpacity: Math.max(0.3, Math.min(0.95, value)),
+    });
+  }, []);
 
-  const setAccentColor = useCallback(
-    (value: string | null) => {
-      updateSettings({ ...settings, accentColor: value });
-    },
-    [settings]
-  );
+  const setAccentColor = useCallback((value: string | null) => {
+    updateSettings({ ...currentSettings, accentColor: value });
+  }, []);
 
-  const setAnimationSpeed = useCallback(
-    (value: AnimationSpeed) => {
-      updateSettings({ ...settings, animationSpeed: value });
-    },
-    [settings]
-  );
+  const setAnimationSpeed = useCallback((value: AnimationSpeed) => {
+    updateSettings({ ...currentSettings, animationSpeed: value });
+  }, []);
 
-  const setReducedMotion = useCallback(
-    (value: boolean) => {
-      updateSettings({ ...settings, reducedMotion: value });
-    },
-    [settings]
-  );
+  const setReducedMotion = useCallback((value: boolean) => {
+    updateSettings({ ...currentSettings, reducedMotion: value });
+  }, []);
 
-  const setCompactMode = useCallback(
-    (value: boolean) => {
-      updateSettings({ ...settings, compactMode: value });
-    },
-    [settings]
-  );
+  const setCompactMode = useCallback((value: boolean) => {
+    updateSettings({ ...currentSettings, compactMode: value });
+  }, []);
 
   const resetSettings = useCallback(() => {
     updateSettings(defaultSettings);

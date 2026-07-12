@@ -113,13 +113,23 @@ interface ThemeSnapshot {
   resolved: Theme;
 }
 
+let cachedSnapshot: ThemeSnapshot = { mode: currentMode, resolved: resolvedTheme };
+
 function getSnapshot(): ThemeSnapshot {
   initializeThemeStore();
-  return { mode: currentMode, resolved: resolvedTheme };
+  if (
+    cachedSnapshot.mode !== currentMode ||
+    cachedSnapshot.resolved !== resolvedTheme
+  ) {
+    cachedSnapshot = { mode: currentMode, resolved: resolvedTheme };
+  }
+  return cachedSnapshot;
 }
 
+const serverSnapshot: ThemeSnapshot = { mode: "dark", resolved: "dark" };
+
 function getServerSnapshot(): ThemeSnapshot {
-  return { mode: "dark", resolved: "dark" };
+  return serverSnapshot;
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
