@@ -433,6 +433,14 @@ export default async function Home({
       {/* Editorial homepage when no search query */}
       {!query && (
         <>
+          <section
+            className="mx-auto flex w-full max-w-7xl justify-center px-4 pt-8 pb-4 sm:px-6 lg:px-8"
+            aria-label="Search"
+          >
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
+          </section>
           <ContinueListening />
           <Suspense fallback={<EditorialSkeleton />}>
             <EditorialHomepage />
