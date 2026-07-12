@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "feat",
   "description": "Analytics and Insights Enhancements (items 41-50): Listening streaks, genre pie chart, peak listening hours heatmap, musical journey timeline, taste compatibility score, monthly wrapped report, discovery stats, longest listening session, genre evolution graph, and achievement badges.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Create lib/streaks.ts and app/components/favorites/analytics/ListeningStreaks.tsx: track consecutive days of listening (check playback-history timestamps). Display streak count with fire emoji and motivational message. Store in localStorage.",
     "2. Enhance app/components/favorites/analytics/GenreAnalytics.tsx: add a visual pie chart (CSS conic-gradient based) showing genre breakdown from listening history. Show percentages and colors per genre.",

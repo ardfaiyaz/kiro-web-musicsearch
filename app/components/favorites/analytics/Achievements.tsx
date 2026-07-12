@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo, useEffect, useSyncExternalStore } from "react";
 import {
   Trophy,
   Play,
@@ -11,9 +11,15 @@ import {
   Users,
   Moon,
   Flame,
+  Sun,
+  Star,
+  Zap,
+  Music,
+  Globe,
+  Heart,
 } from "lucide-react";
 import type { HistoryEntry } from "@/lib/personalization";
-import { computeAchievements, type Achievement as AchievementType } from "@/lib/analytics";
+import { computeListeningStreak, type Achievement as AchievementType } from "@/lib/analytics";
 
 interface AchievementsProps {
   history: HistoryEntry[];
@@ -34,6 +40,28 @@ function getServerNow() {
   return 0;
 }
 
+const BADGES_STORAGE_KEY = "music-search-earned-badges";
+
+function loadEarnedBadges(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const stored = localStorage.getItem(BADGES_STORAGE_KEY);
+    if (stored) return new Set(JSON.parse(stored) as string[]);
+  } catch {
+    // ignore
+  }
+  return new Set();
+}
+
+function saveEarnedBadges(badges: Set<string>): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(BADGES_STORAGE_KEY, JSON.stringify(Array.from(badges)));
+  } catch {
+    // ignore quota errors
+  }
+}
+
 const ICON_MAP: Record<string, React.ReactNode> = {
   play: <Play className="h-5 w-5" />,
   compass: <Compass className="h-5 w-5" />,
@@ -43,7 +71,238 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   users: <Users className="h-5 w-5" />,
   moon: <Moon className="h-5 w-5" />,
   flame: <Flame className="h-5 w-5" />,
+  sun: <Sun className="h-5 w-5" />,
+  star: <Star className="h-5 w-5" />,
+  zap: <Zap className="h-5 w-5" />,
+  music: <Music className="h-5 w-5" />,
+  globe: <Globe className="h-5 w-5" />,
+  heart: <Heart className="h-5 w-5" />,
+  trophy: <Trophy className="h-5 w-5" />,
 };
+
+function computeComprehensiveAchievements(
+  history: HistoryEntry[],
+  favCount: number,
+  artistCount: number,
+  albumCount: number,
+  now: number
+): AchievementType[] {
+  const totalPlays = history.length;
+  const uniqueArtists = new Set(history.map((e) => e.artistName));
+  const uniqueGenres = new Set(
+    history.map((e) => e.primaryGenreName).filter(Boolean)
+  );
+  const uniqueSongs = new Set(history.map((e) => e.trackId));
+
+  // Night listens (10pm - 5am)
+  const nightListens = history.filter((e) => {
+    const hour = new Date(e.playedAt).getHours();
+    return hour >= 22 || hour < 5;
+  }).length;
+
+  // Early bird listens (5am - 8am)
+  const earlyBirdListens = history.filter((e) => {
+    const hour = new Date(e.playedAt).getHours();
+    return hour >= 5 && hour < 8;
+  }).length;
+
+  // Streak calculation
+  const streak = computeListeningStreak(history, now);
+
+  // Favorite songs (played 5+ times)
+  const songPlayCounts = new Map<number, number>();
+  for (const entry of history) {
+    songPlayCounts.set(entry.trackId, (songPlayCounts.get(entry.trackId) || 0) + 1);
+  }
+  const repeatFavorites = Array.from(songPlayCounts.values()).filter((c) => c >= 5).length;
+
+  // Total listening hours
+  const totalMs = history.reduce((sum, e) => sum + e.duration, 0);
+  const totalHours = totalMs / (1000 * 60 * 60);
+
+  return [
+    {
+      id: "first-song",
+      title: "First Song",
+      description: "Play your first song",
+      icon: "play",
+      unlocked: totalPlays >= 1,
+      progress: Math.min(totalPlays, 1),
+      target: 1,
+    },
+    {
+      id: "music-explorer",
+      title: "Music Explorer",
+      description: "Play 50 songs",
+      icon: "compass",
+      unlocked: totalPlays >= 50,
+      progress: Math.min(totalPlays, 50),
+      target: 50,
+    },
+    {
+      id: "century-club",
+      title: "Century Club",
+      description: "Play 100 songs",
+      icon: "star",
+      unlocked: totalPlays >= 100,
+      progress: Math.min(totalPlays, 100),
+      target: 100,
+    },
+    {
+      id: "dedicated-listener",
+      title: "Dedicated Listener",
+      description: "Play 200 songs",
+      icon: "headphones",
+      unlocked: totalPlays >= 200,
+      progress: Math.min(totalPlays, 200),
+      target: 200,
+    },
+    {
+      id: "music-machine",
+      title: "Music Machine",
+      description: "Play 500 songs",
+      icon: "zap",
+      unlocked: totalPlays >= 500,
+      progress: Math.min(totalPlays, 500),
+      target: 500,
+    },
+    {
+      id: "artist-discoverer",
+      title: "Artist Discoverer",
+      description: "Listen to 20 unique artists",
+      icon: "users",
+      unlocked: uniqueArtists.size >= 20,
+      progress: Math.min(uniqueArtists.size, 20),
+      target: 20,
+    },
+    {
+      id: "artist-connoisseur",
+      title: "Artist Connoisseur",
+      description: "Listen to 50 unique artists",
+      icon: "globe",
+      unlocked: uniqueArtists.size >= 50,
+      progress: Math.min(uniqueArtists.size, 50),
+      target: 50,
+    },
+    {
+      id: "genre-adventurer",
+      title: "Genre Adventurer",
+      description: "Explore 5 or more genres",
+      icon: "palette",
+      unlocked: uniqueGenres.size >= 5,
+      progress: Math.min(uniqueGenres.size, 5),
+      target: 5,
+    },
+    {
+      id: "genre-explorer",
+      title: "Genre Explorer",
+      description: "Explore 10 or more genres",
+      icon: "compass",
+      unlocked: uniqueGenres.size >= 10,
+      progress: Math.min(uniqueGenres.size, 10),
+      target: 10,
+    },
+    {
+      id: "album-collector",
+      title: "Album Collector",
+      description: "Save 10 or more albums",
+      icon: "disc",
+      unlocked: albumCount >= 10,
+      progress: Math.min(albumCount, 10),
+      target: 10,
+    },
+    {
+      id: "artist-fan",
+      title: "Artist Fan",
+      description: "Save 10 or more artists",
+      icon: "heart",
+      unlocked: artistCount >= 10,
+      progress: Math.min(artistCount, 10),
+      target: 10,
+    },
+    {
+      id: "night-owl",
+      title: "Night Owl",
+      description: "Listen to 50 songs at night (10PM-5AM)",
+      icon: "moon",
+      unlocked: nightListens >= 50,
+      progress: Math.min(nightListens, 50),
+      target: 50,
+    },
+    {
+      id: "early-bird",
+      title: "Early Bird",
+      description: "Listen to 30 songs in the early morning (5AM-8AM)",
+      icon: "sun",
+      unlocked: earlyBirdListens >= 30,
+      progress: Math.min(earlyBirdListens, 30),
+      target: 30,
+    },
+    {
+      id: "streak-starter",
+      title: "Streak Starter",
+      description: "Maintain a 3-day listening streak",
+      icon: "flame",
+      unlocked: streak.longest >= 3,
+      progress: Math.min(streak.longest, 3),
+      target: 3,
+    },
+    {
+      id: "streak-master",
+      title: "Streak Master",
+      description: "Maintain a 7-day listening streak",
+      icon: "flame",
+      unlocked: streak.longest >= 7,
+      progress: Math.min(streak.longest, 7),
+      target: 7,
+    },
+    {
+      id: "streak-legend",
+      title: "Streak Legend",
+      description: "Maintain a 30-day listening streak",
+      icon: "trophy",
+      unlocked: streak.longest >= 30,
+      progress: Math.min(streak.longest, 30),
+      target: 30,
+    },
+    {
+      id: "repeat-lover",
+      title: "Repeat Lover",
+      description: "Play 5 songs at least 5 times each",
+      icon: "music",
+      unlocked: repeatFavorites >= 5,
+      progress: Math.min(repeatFavorites, 5),
+      target: 5,
+    },
+    {
+      id: "song-variety",
+      title: "Song Variety",
+      description: "Listen to 100 unique songs",
+      icon: "music",
+      unlocked: uniqueSongs.size >= 100,
+      progress: Math.min(uniqueSongs.size, 100),
+      target: 100,
+    },
+    {
+      id: "marathon-listener",
+      title: "Marathon Listener",
+      description: "Accumulate 24 hours of listening",
+      icon: "headphones",
+      unlocked: totalHours >= 24,
+      progress: Math.min(Math.round(totalHours), 24),
+      target: 24,
+    },
+    {
+      id: "super-fan",
+      title: "Super Fan",
+      description: "Add 20 favorites",
+      icon: "heart",
+      unlocked: favCount >= 20,
+      progress: Math.min(favCount, 20),
+      target: 20,
+    },
+  ];
+}
 
 function AchievementCard({ achievement }: { achievement: AchievementType }) {
   const progressPercent = Math.min(
@@ -129,9 +388,36 @@ export default function Achievements({
 
   const achievements = useMemo(
     () =>
-      computeAchievements(history, favCount, artistCount, albumCount, now),
+      computeComprehensiveAchievements(
+        history,
+        favCount,
+        artistCount,
+        albumCount,
+        now
+      ),
     [history, favCount, artistCount, albumCount, now]
   );
+
+  // Persist earned badges to localStorage
+  useEffect(() => {
+    const earned = new Set(
+      achievements.filter((a) => a.unlocked).map((a) => a.id)
+    );
+    const stored = loadEarnedBadges();
+    // Only save if there are new badges
+    let hasNew = false;
+    for (const badge of earned) {
+      if (!stored.has(badge)) {
+        hasNew = true;
+        break;
+      }
+    }
+    if (hasNew) {
+      // Merge with existing (keep old badges even if un-earned now due to data change)
+      const merged = new Set([...stored, ...earned]);
+      saveEarnedBadges(merged);
+    }
+  }, [achievements]);
 
   if (achievements.length === 0) return null;
 
@@ -145,6 +431,24 @@ export default function Achievements({
         <span className="ml-auto text-xs text-muted">
           {unlockedCount}/{achievements.length} unlocked
         </span>
+      </div>
+
+      {/* Progress overview */}
+      <div className="rounded-xl glass-light p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs text-muted">Overall Progress</span>
+          <span className="text-xs font-medium text-foreground">
+            {Math.round((unlockedCount / achievements.length) * 100)}%
+          </span>
+        </div>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-foreground/10">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 transition-all duration-700"
+            style={{
+              width: `${(unlockedCount / achievements.length) * 100}%`,
+            }}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
