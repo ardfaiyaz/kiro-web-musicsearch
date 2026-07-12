@@ -24,7 +24,6 @@ import SkipLinks from "./components/ui/SkipLinks";
 import FloatingActionButton from "./components/ui/FloatingActionButton";
 import LandscapePlayer from "./components/player/LandscapePlayer";
 import "./globals.css";
-import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

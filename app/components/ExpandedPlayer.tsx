@@ -16,6 +16,9 @@ import { useDynamicColors } from "./DynamicColorProvider";
 import ProgressBar from "./player/ProgressBar";
 import VolumeControl from "./player/VolumeControl";
 import SleepTimerPopover from "./player/SleepTimerPopover";
+import VinylSpinner from "./player/VinylSpinner";
+import CassetteTheme from "./themes/CassetteTheme";
+import { useSettings } from "./SettingsContext";
 
 function WaveformVisualization({ isPlaying }: { isPlaying: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -262,6 +265,7 @@ export default function ExpandedPlayer() {
     cycleRepeatMode,
   } = useAudioPlayer();
   const { colors } = useDynamicColors();
+  const { settings } = useSettings();
   const [showLyrics, setShowLyrics] = useState(false);
 
   // Close on escape
@@ -373,7 +377,12 @@ export default function ExpandedPlayer() {
 
         {/* Main content area */}
         <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 pb-8 sm:gap-8">
-          {/* Large artwork */}
+          {/* Cassette Theme Mode */}
+          {settings.cassetteMode ? (
+            <CassetteTheme />
+          ) : (
+          <>
+          {/* Vinyl Spinner or Large artwork */}
           <div className="relative aspect-square w-full max-w-xs sm:max-w-sm">
             {/* Glow behind artwork */}
             <div
@@ -382,7 +391,11 @@ export default function ExpandedPlayer() {
               aria-hidden="true"
             />
             <div className="relative h-full w-full overflow-hidden rounded-3xl shadow-2xl">
-              {artworkUrl ? (
+              {isPlaying ? (
+                <div className="flex h-full w-full items-center justify-center bg-zinc-950">
+                  <VinylSpinner size={280} />
+                </div>
+              ) : artworkUrl ? (
                 <Image
                   src={artworkUrl.replace("100x100", "600x600")}
                   alt={`${trackName || "Track"} artwork`}
@@ -539,6 +552,8 @@ export default function ExpandedPlayer() {
                 reorderQueue={reorderQueue}
               />
             </div>
+          )}
+          </>
           )}
         </div>
       </div>

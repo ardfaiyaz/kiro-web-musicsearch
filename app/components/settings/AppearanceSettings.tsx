@@ -35,6 +35,7 @@ export default function AppearanceSettings() {
     setAnimationSpeed,
     setReducedMotion,
     setCompactMode,
+    setCassetteMode,
   } = useSettings();
 
   const themeOptions: Array<{
@@ -205,6 +206,22 @@ export default function AppearanceSettings() {
             type="checkbox"
             checked={settings.compactMode}
             onChange={(e) => setCompactMode(e.target.checked)}
+            className="h-4 w-4 accent-foreground"
+          />
+        </label>
+      </div>
+
+      {/* Cassette Theme */}
+      <div className="space-y-3">
+        <label className="flex cursor-pointer items-center justify-between rounded-xl bg-surface px-4 py-3">
+          <div>
+            <span className="text-sm font-medium text-foreground">Cassette Retro Mode</span>
+            <p className="text-xs text-muted mt-0.5">Retro cassette player theme for the music player</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.cassetteMode}
+            onChange={(e) => setCassetteMode(e.target.checked)}
             className="h-4 w-4 accent-foreground"
           />
         </label>

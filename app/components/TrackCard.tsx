@@ -8,6 +8,7 @@ import FavoriteButton from "./FavoriteButton";
 import { useFavorites } from "./FavoritesContext";
 import { useAudioPlayer } from "./AudioPlayerContext";
 import AnimatedEqualizer from "./AnimatedEqualizer";
+import TiltCard from "./ui/TiltCard";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -23,10 +24,11 @@ function TrackCardBase({ track }: { track: ItunesTrack }) {
   const artworkUrl = track.artworkUrl100?.replace("100x100", "200x200");
 
   return (
-    <Link
-      href={`/track/${track.trackId}`}
-      className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl glass-card card-tilt hover-glow transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
-    >
+    <TiltCard>
+      <Link
+        href={`/track/${track.trackId}`}
+        className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl glass-card hover-glow transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
+      >
       <div className="relative aspect-square w-full overflow-hidden bg-border">
         {artworkUrl ? (
           <Image
@@ -84,6 +86,7 @@ function TrackCardBase({ track }: { track: ItunesTrack }) {
         </div>
       </div>
     </Link>
+    </TiltCard>
   );
 }
 

@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Disc3 } from "lucide-react";
 import { RSSFeedItem } from "@/lib/discovery";
+import StaggeredGrid from "./ui/StaggeredGrid";
 
 interface NewReleasesGridProps {
   releases: RSSFeedItem[];
@@ -31,7 +34,10 @@ export default function NewReleasesGrid({ releases }: NewReleasesGridProps) {
         </h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <StaggeredGrid
+        className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+        staggerDelay={80}
+      >
         {releases.slice(0, 10).map((album) => (
           <Link
             key={album.id}
@@ -70,7 +76,7 @@ export default function NewReleasesGrid({ releases }: NewReleasesGridProps) {
             </div>
           </Link>
         ))}
-      </div>
+      </StaggeredGrid>
     </section>
   );
 }

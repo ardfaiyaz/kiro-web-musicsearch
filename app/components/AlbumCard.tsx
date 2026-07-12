@@ -4,6 +4,7 @@ import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ItunesAlbum } from "@/lib/types";
+import TiltCard from "./ui/TiltCard";
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -18,10 +19,11 @@ function AlbumCardBase({ album }: { album: ItunesAlbum }) {
   const artworkUrl = album.artworkUrl100?.replace("100x100", "200x200");
 
   return (
-    <Link
-      href={`/album/${album.collectionId}`}
-      className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl glass-card card-tilt hover-glow transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
-    >
+    <TiltCard>
+      <Link
+        href={`/album/${album.collectionId}`}
+        className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl glass-card hover-glow transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
+      >
       <div className="relative aspect-square w-full overflow-hidden bg-border">
         {artworkUrl ? (
           <Image
@@ -67,6 +69,7 @@ function AlbumCardBase({ album }: { album: ItunesAlbum }) {
         </div>
       </div>
     </Link>
+    </TiltCard>
   );
 }
 

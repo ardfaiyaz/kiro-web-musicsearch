@@ -19,6 +19,7 @@ interface Settings {
   animationSpeed: AnimationSpeed;
   reducedMotion: boolean;
   compactMode: boolean;
+  cassetteMode: boolean;
 }
 
 interface SettingsContextType {
@@ -29,6 +30,7 @@ interface SettingsContextType {
   setAnimationSpeed: (value: AnimationSpeed) => void;
   setReducedMotion: (value: boolean) => void;
   setCompactMode: (value: boolean) => void;
+  setCassetteMode: (value: boolean) => void;
   resetSettings: () => void;
 }
 
@@ -39,6 +41,7 @@ const defaultSettings: Settings = {
   animationSpeed: "normal",
   reducedMotion: false,
   compactMode: false,
+  cassetteMode: false,
 };
 
 const STORAGE_KEY = "app-settings";
@@ -178,6 +181,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     updateSettings({ ...currentSettings, compactMode: value });
   }, []);
 
+  const setCassetteMode = useCallback((value: boolean) => {
+    updateSettings({ ...currentSettings, cassetteMode: value });
+  }, []);
+
   const resetSettings = useCallback(() => {
     updateSettings(defaultSettings);
   }, []);
@@ -192,6 +199,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setAnimationSpeed,
         setReducedMotion,
         setCompactMode,
+        setCassetteMode,
         resetSettings,
       }}
     >

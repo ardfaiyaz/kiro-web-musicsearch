@@ -22,6 +22,13 @@ export default function AmbientBackground({ colors: propColors }: AmbientBackgro
       className="ambient-background"
       aria-hidden="true"
     >
+      {/* Animated gradient mesh - slow-moving layers behind glass panels */}
+      <div className="ambient-gradient-mesh">
+        <div className="ambient-mesh-layer ambient-mesh-layer-1" />
+        <div className="ambient-mesh-layer ambient-mesh-layer-2" />
+        <div className="ambient-mesh-layer ambient-mesh-layer-3" />
+      </div>
+
       {/* Animated gradient layer */}
       <div
         className="ambient-gradient-layer"

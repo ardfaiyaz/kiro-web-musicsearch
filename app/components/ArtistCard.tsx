@@ -4,16 +4,18 @@ import { useState, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ItunesArtist } from "@/lib/types";
+import TiltCard from "./ui/TiltCard";
 
 function ArtistCardBase({ artist }: { artist: ItunesArtist }) {
   const artworkUrl = artist.artworkUrl100?.replace("100x100", "200x200");
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
-    <Link
-      href={`/artist/${artist.artistId}`}
-      className="cursor-pointer group flex items-center gap-4 rounded-2xl glass-card hover-glow card-tilt p-4 transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
-    >
+    <TiltCard>
+      <Link
+        href={`/artist/${artist.artistId}`}
+        className="cursor-pointer group flex items-center gap-4 rounded-2xl glass-card hover-glow p-4 transition-premium hover:border-foreground/10 hover:shadow-xl hover:shadow-black/5"
+      >
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full shadow-md">
         {artworkUrl && !imageFailed ? (
           <Image
@@ -66,6 +68,7 @@ function ArtistCardBase({ artist }: { artist: ItunesArtist }) {
         />
       </svg>
     </Link>
+    </TiltCard>
   );
 }
 

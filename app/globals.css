@@ -1556,3 +1556,405 @@ html {
   display: none;
 }
 
+/* ===== FEAT-004: Visual & Animation Enhancements ===== */
+
+/* --- Aurora Background Effect --- */
+.aurora-background {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  mix-blend-mode: screen;
+}
+
+.aurora-blob-1 {
+  width: 50%;
+  height: 60%;
+  top: -10%;
+  left: 10%;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.4), rgba(20, 184, 166, 0.3));
+  animation: auroraFloat1 25s ease-in-out infinite;
+}
+
+.aurora-blob-2 {
+  width: 45%;
+  height: 50%;
+  top: 5%;
+  right: 10%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.3));
+  animation: auroraFloat2 30s ease-in-out infinite;
+}
+
+.aurora-blob-3 {
+  width: 40%;
+  height: 45%;
+  top: -5%;
+  left: 30%;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.2));
+  animation: auroraFloat3 22s ease-in-out infinite;
+}
+
+.aurora-blob-4 {
+  width: 35%;
+  height: 40%;
+  top: 10%;
+  right: 25%;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(59, 130, 246, 0.2));
+  animation: auroraFloat4 28s ease-in-out infinite;
+}
+
+@keyframes auroraFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
+  33% { transform: translate(5%, 3%) scale(1.1); opacity: 0.35; }
+  66% { transform: translate(-3%, -2%) scale(0.95); opacity: 0.2; }
+}
+
+@keyframes auroraFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+  25% { transform: translate(-4%, 5%) scale(1.05); opacity: 0.3; }
+  50% { transform: translate(3%, -3%) scale(0.9); opacity: 0.25; }
+  75% { transform: translate(-2%, 2%) scale(1.08); opacity: 0.35; }
+}
+
+@keyframes auroraFloat3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+  50% { transform: translate(6%, -4%) scale(1.15); opacity: 0.3; }
+}
+
+@keyframes auroraFloat4 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+  40% { transform: translate(-5%, 3%) scale(1.1); opacity: 0.25; }
+  80% { transform: translate(4%, -2%) scale(0.95); opacity: 0.2; }
+}
+
+/* --- Animated Gradient Mesh for AmbientBackground --- */
+.ambient-gradient-mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ambient-mesh-layer {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  opacity: 0.15;
+  border-radius: 50%;
+}
+
+.ambient-mesh-layer-1 {
+  background: radial-gradient(ellipse at 30% 40%, rgba(99, 102, 241, 0.3), transparent 60%);
+  animation: meshDrift1 25s ease-in-out infinite;
+}
+
+.ambient-mesh-layer-2 {
+  background: radial-gradient(ellipse at 70% 60%, rgba(236, 72, 153, 0.25), transparent 55%);
+  animation: meshDrift2 30s ease-in-out infinite;
+}
+
+.ambient-mesh-layer-3 {
+  background: radial-gradient(ellipse at 50% 30%, rgba(34, 197, 94, 0.2), transparent 50%);
+  animation: meshDrift3 28s ease-in-out infinite;
+}
+
+@keyframes meshDrift1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(3%, -2%) rotate(2deg); }
+  66% { transform: translate(-2%, 3%) rotate(-1deg); }
+}
+
+@keyframes meshDrift2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-4%, 2%) rotate(-2deg); }
+}
+
+@keyframes meshDrift3 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(2%, 4%) rotate(1deg); }
+  75% { transform: translate(-3%, -2%) rotate(-1.5deg); }
+}
+
+/* --- Vinyl Spinner --- */
+.vinyl-disc {
+  transition: animation-play-state 0.3s;
+}
+
+.vinyl-spinning {
+  animation: vinylSpin 3s linear infinite;
+}
+
+.vinyl-paused {
+  animation: vinylSpin 3s linear infinite paused;
+}
+
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* --- Particle Burst Effect --- */
+@keyframes particleBurst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--particle-x), var(--particle-y)) scale(0);
+    opacity: 0;
+  }
+}
+
+.particle-burst-item {
+  animation: particleBurst 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* --- Text Reveal Animation --- */
+.text-reveal-container {
+  overflow: hidden;
+}
+
+.text-reveal-letter {
+  opacity: 0;
+  transform: translateY(20px);
+  display: inline-block;
+}
+
+.text-reveal-visible {
+  animation: textRevealIn 0.4s ease-out forwards;
+}
+
+@keyframes textRevealIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Staggered Grid Animation --- */
+.staggered-grid-item {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.staggered-grid-item-visible {
+  animation: staggeredItemIn 0.5s ease-out forwards;
+}
+
+@keyframes staggeredItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* --- Cassette Theme --- */
+.cassette-player {
+  background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.cassette-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  opacity: 0.5;
+}
+
+.cassette-reel {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #333 30%, #555 60%, #333 100%);
+  border: 3px solid #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cassette-reel-spinning {
+  animation: vinylSpin 2s linear infinite;
+}
+
+.cassette-reel-inner {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.cassette-spoke {
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  background: #888;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+.cassette-spoke-2 {
+  transform: translateY(-50%) rotate(60deg);
+}
+
+.cassette-spoke-3 {
+  transform: translateY(-50%) rotate(120deg);
+}
+
+.cassette-tape-strip {
+  flex: 1;
+  height: 4px;
+  background: #222;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cassette-tape-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #8b4513;
+  border-radius: 2px;
+  transition: width 0.3s linear;
+}
+
+.cassette-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.1s, box-shadow 0.1s;
+  cursor: pointer;
+}
+
+.cassette-btn:active {
+  transform: scale(0.95) translateY(1px);
+}
+
+.cassette-btn-primary {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(180deg, #e0e0e0, #b0b0b0);
+  border: 2px solid #999;
+  color: #333;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.cassette-btn-primary:active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.cassette-btn-secondary {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(180deg, #d0d0d0, #a0a0a0);
+  border: 2px solid #888;
+  color: #444;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.cassette-btn-secondary:active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* --- Reduced Motion: disable FEAT-004 animations --- */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob-1,
+  .aurora-blob-2,
+  .aurora-blob-3,
+  .aurora-blob-4 {
+    animation: none !important;
+  }
+
+  .ambient-mesh-layer-1,
+  .ambient-mesh-layer-2,
+  .ambient-mesh-layer-3 {
+    animation: none !important;
+  }
+
+  .vinyl-spinning {
+    animation: none !important;
+  }
+
+  .particle-burst-item {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .text-reveal-letter {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .staggered-grid-item {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .cassette-reel-spinning {
+    animation: none !important;
+  }
+}
+
+html.reduce-motion .aurora-blob-1,
+html.reduce-motion .aurora-blob-2,
+html.reduce-motion .aurora-blob-3,
+html.reduce-motion .aurora-blob-4 {
+  animation: none !important;
+}
+
+html.reduce-motion .ambient-mesh-layer-1,
+html.reduce-motion .ambient-mesh-layer-2,
+html.reduce-motion .ambient-mesh-layer-3 {
+  animation: none !important;
+}
+
+html.reduce-motion .vinyl-spinning {
+  animation: none !important;
+}
+
+html.reduce-motion .particle-burst-item {
+  animation: none !important;
+  opacity: 0;
+}
+
+html.reduce-motion .text-reveal-letter {
+  opacity: 1;
+  transform: none;
+  animation: none !important;
+}
+
+html.reduce-motion .staggered-grid-item {
+  opacity: 1;
+  transform: none;
+  animation: none !important;
+}
+
+html.reduce-motion .cassette-reel-spinning {
+  animation: none !important;
+}
+
+
