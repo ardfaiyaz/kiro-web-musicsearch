@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, TrendingUp, X } from "lucide-react";
+import Image from "next/image";
+import { Clock, TrendingUp, X, Music } from "lucide-react";
 import { RecentSearch } from "@/lib/types";
 
 interface SearchSuggestionsProps {
@@ -57,7 +58,21 @@ export default function SearchSuggestions({
               role="option"
               aria-selected={activeIndex === getItemIndex("recent", idx)}
             >
-              <Clock size={14} className="shrink-0 text-muted" aria-hidden="true" />
+              {r.imageUrl ? (
+                <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-border">
+                  <Image
+                    src={r.imageUrl}
+                    alt=""
+                    fill
+                    sizes="32px"
+                    className="object-cover"
+                  />
+                </span>
+              ) : (
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/5">
+                  <Music size={12} className="text-muted" aria-hidden="true" />
+                </span>
+              )}
               <span className="truncate">{r.query}</span>
             </button>
           ))}

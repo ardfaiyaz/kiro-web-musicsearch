@@ -15,6 +15,7 @@ import { unifiedSearch } from "@/lib/music-service";
 import { ItunesTrack } from "@/lib/types";
 import { Search as SearchIcon, TrendingUp } from "lucide-react";
 import FeelingLucky from "../components/FeelingLucky";
+import SimilarArtistsSection from "../components/search/SimilarArtistsSection";
 
 function filterByGenre(tracks: ItunesTrack[], genre: string): ItunesTrack[] {
   if (!genre) return tracks;
@@ -356,6 +357,10 @@ export default async function SearchPage({
   const activeYear = year || "";
   const activeExplicit = explicitParam || "";
 
+  // Detect "similar to [artist]" pattern
+  const similarMatch = query.match(/^similar\s+to\s+(.+)$/i);
+  const similarArtistName = similarMatch ? similarMatch[1].trim() : null;
+
   return (
     <div className="flex flex-1 flex-col">
       <Header showBack />
@@ -376,6 +381,19 @@ export default async function SearchPage({
                 <SearchFilterChips />
               </Suspense>
             </section>
+
+            {/* Similar To detection */}
+            {similarArtistName && (
+              <section className="mt-4">
+                <Suspense
+                  fallback={
+                    <LoadingSpinner message={`Finding artists similar to ${similarArtistName}...`} />
+                  }
+                >
+                  <SimilarArtistsSection artistName={similarArtistName} />
+                </Suspense>
+              </section>
+            )}
 
             {activeFilter === "all" && (
               <section className="mt-6 pb-8">

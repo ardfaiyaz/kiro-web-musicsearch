@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Search and Discovery Enhancements (items 11-20): Voice search via Web Speech API, search by humming Easter egg, search filters by decade, mood-based playlists, daily discovery feed, genre deep-dive pages, 'similar to...' search, release radar with calendar view, surprise me button, and search autocomplete previews with album art thumbnails.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Add voice search to app/components/SearchBar.tsx: add a microphone button that uses the Web Speech API (SpeechRecognition) to convert speech to text and populate the search field. Use the existing types/speech-recognition.d.ts type declarations.",
     "2. Create app/components/search/HumSearch.tsx: add a fun Easter egg button 'Search by humming' that links to Google's hum-to-search feature (https://www.google.com/search?q=hum+to+search). Show as a small link/button near the search bar.",

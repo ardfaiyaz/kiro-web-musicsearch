@@ -16,7 +16,7 @@ export function getRecentSearches(): RecentSearch[] {
   }
 }
 
-export function addRecentSearch(query: string): void {
+export function addRecentSearch(query: string, imageUrl?: string): void {
   if (typeof window === "undefined") return;
   const trimmed = query.trim();
   if (!trimmed) return;
@@ -27,7 +27,7 @@ export function addRecentSearch(query: string): void {
       (s) => s.query.toLowerCase() !== trimmed.toLowerCase()
     );
     const updated: RecentSearch[] = [
-      { query: trimmed, timestamp: Date.now() },
+      { query: trimmed, timestamp: Date.now(), imageUrl },
       ...filtered,
     ].slice(0, MAX_RECENT);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
