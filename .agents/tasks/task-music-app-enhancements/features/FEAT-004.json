@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Service Worker for offline caching and Web Vitals reporting. Items 14 and 15.",
+  "status": "completed",
+  "steps": [
+    "Create public/sw.js - a service worker that caches the app shell (HTML, CSS, JS bundles, fonts). Uses a cache-first strategy for static assets and network-first for API calls. Cache name should be versioned (e.g., 'music-app-v1'). On install, pre-cache the root page and key static assets. On fetch, serve from cache for same-origin requests, fall back to network.",
+    "Create app/components/ServiceWorkerRegistration.tsx - a Client Component that registers the service worker on mount. Uses navigator.serviceWorker.register('/sw.js') with proper error handling. Only registers in production (check process.env.NODE_ENV or window.location.hostname !== 'localhost').",
+    "Add ServiceWorkerRegistration to app/layout.tsx.",
+    "Create lib/web-vitals.ts - a module that uses the web-vitals library pattern (manual implementation since we don't want to add a dependency). Uses PerformanceObserver to capture LCP, FID, CLS, FCP, TTFB metrics. Stores results in localStorage for now under key 'music-web-vitals'. Export a reportWebVitals function.",
+    "Create app/components/WebVitalsReporter.tsx - a Client Component that calls reportWebVitals on mount to start collecting metrics.",
+    "Add WebVitalsReporter to app/layout.tsx."
+  ],
+  "acceptance_criteria": [
+    "public/sw.js exists and implements cache-first for static assets",
+    "Service worker is registered only in production environments",
+    "Web Vitals (LCP, CLS, FCP, TTFB) are collected and stored in localStorage",
+    "The OfflineDetector component still works correctly alongside the service worker",
+    "Build passes with zero TypeScript errors and zero lint errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "Removed @ts-nocheck from sw.js since ESLint flagged it. Simplified error handling in ServiceWorkerRegistration to avoid unused console.warn eslint issue. Build produces NotImplementedError warnings from Bun worker_threads but build completes successfully."
+}
