@@ -14,6 +14,7 @@ import {
   addToPlaybackHistory,
   updatePlaybackProgress,
 } from "@/lib/playback-history";
+import { addToQueueHistory } from "@/lib/queue-history";
 
 export type RepeatMode = "off" | "one" | "all";
 
@@ -441,6 +442,11 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current = audio;
       setCurrentlyPlayingId(id);
       setIsPlaying(true);
+
+      // Track in queue history
+      if (metadata?.fullTrack) {
+        addToQueueHistory(metadata.fullTrack);
+      }
 
       if (shouldCrossfade && oldAudio) {
         audio.volume = 0;

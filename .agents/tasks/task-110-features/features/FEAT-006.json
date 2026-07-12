@@ -2,7 +2,7 @@
   "id": "FEAT-006",
   "type": "feat",
   "description": "Organization and Library Enhancements (items 51-60): Drag-and-drop playlists, smart playlists, folder organization, tag system, rating system (1-5 stars), import/export playlists, playlist cover generator, collaborative playlists, queue history, and listening journal.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Enhance app/playlists/page.tsx: add drag-and-drop reordering using HTML5 Drag and Drop API (draggable, ondragstart, ondragover, ondrop) to reorder songs within playlists. Show drag handle icon.",
     "2. Create lib/smart-playlists.ts and app/components/SmartPlaylists.tsx: auto-updating playlists based on rules (top songs this week based on play count, recently discovered, most played genre). Compute from listening history on render.",

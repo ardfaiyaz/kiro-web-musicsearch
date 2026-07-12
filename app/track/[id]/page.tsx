@@ -20,6 +20,7 @@ import LinerNotes from "@/app/components/album/LinerNotes";
 import ArtistRadio from "@/app/components/player/ArtistRadio";
 import WaveformVisualizer from "@/app/components/player/WaveformVisualizer";
 import DynamicColorTheme from "@/app/components/DynamicColorTheme";
+import TrackOrganization from "@/app/components/TrackOrganization";
 
 export async function generateMetadata({
   params,
@@ -262,6 +263,11 @@ export default async function TrackPage({
 
         {/* Recommendations */}
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Rating, Tags, and Journal */}
+          <div className="mb-12">
+            <TrackOrganization trackId={track.trackId} />
+          </div>
+
           {/* Insights and Lyrics sidebar */}
           <div className="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-1">

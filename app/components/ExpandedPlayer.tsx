@@ -18,6 +18,7 @@ import VolumeControl from "./player/VolumeControl";
 import SleepTimerPopover from "./player/SleepTimerPopover";
 import VinylSpinner from "./player/VinylSpinner";
 import CassetteTheme from "./themes/CassetteTheme";
+import QueueHistory from "./player/QueueHistory";
 import { useSettings } from "./SettingsContext";
 
 function WaveformVisualization({ isPlaying }: { isPlaying: boolean }) {
@@ -553,6 +554,11 @@ export default function ExpandedPlayer() {
               />
             </div>
           )}
+
+          {/* Queue History */}
+          <div className="w-full max-w-sm">
+            <QueueHistory />
+          </div>
           </>
           )}
         </div>
