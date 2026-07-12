@@ -288,12 +288,80 @@ function EditorialSkeleton() {
   );
 }
 
+interface EditorialData {
+  trendingSongs: Awaited<ReturnType<typeof getTrendingSongs>>;
+  newReleases: Awaited<ReturnType<typeof getNewReleases>>;
+  moodRecs: Awaited<ReturnType<typeof getRecommendationsByMood>>;
+}
+
+async function fetchEditorialData(): Promise<EditorialData | null> {
+  try {
+    const [trendingSongs, newReleases, moodRecs] = await Promise.all([
+      getTrendingSongs(),
+      getNewReleases(),
+      getRecommendationsByMood("chill"),
+    ]);
+    return { trendingSongs, newReleases, moodRecs };
+  } catch (error) {
+    console.error("Failed to fetch editorial data:", error);
+    return null;
+  }
+}
+
+function EditorialFallback() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="flex flex-col items-center gap-6 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-surface-elevated">
+          <svg
+            className="h-10 w-10 text-muted"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+            />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+          Discover Music
+        </h2>
+        <p className="max-w-md text-muted">
+          Use the search bar above to find songs, artists, and albums. Our music
+          catalog is powered by iTunes and requires no configuration.
+        </p>
+      </div>
+
+      {/* Editorial Picks still renders without external data */}
+      <div className="mt-12">
+        <EditorialPicks />
+      </div>
+    </div>
+  );
+}
+
 async function EditorialHomepage() {
-  const [trendingSongs, newReleases, moodRecs] = await Promise.all([
-    getTrendingSongs(),
-    getNewReleases(),
-    getRecommendationsByMood("chill"),
-  ]);
+  const data = await fetchEditorialData();
+
+  if (!data) {
+    return <EditorialFallback />;
+  }
+
+  const { trendingSongs, newReleases, moodRecs } = data;
+
+  // If all data sources returned empty, show fallback
+  if (
+    trendingSongs.length === 0 &&
+    newReleases.length === 0 &&
+    moodRecs.tracks.length === 0
+  ) {
+    return <EditorialFallback />;
+  }
 
   const heroSong = trendingSongs[0];
 
