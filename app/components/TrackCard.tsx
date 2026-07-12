@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ItunesTrack } from "@/lib/types";
 import FavoriteButton from "./FavoriteButton";
 import { useFavorites } from "./FavoritesContext";
+import { useAudioPlayer } from "./AudioPlayerContext";
+import AnimatedEqualizer from "./AnimatedEqualizer";
 
 function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -15,7 +17,9 @@ function formatDuration(ms: number): string {
 
 function TrackCardBase({ track }: { track: ItunesTrack }) {
   const { isFavorite } = useFavorites();
+  const { isPlaying, currentlyPlayingId } = useAudioPlayer();
   const favorited = isFavorite(track.trackId);
+  const isCurrentlyPlaying = isPlaying && currentlyPlayingId === track.trackId;
   const artworkUrl = track.artworkUrl100?.replace("100x100", "200x200");
 
   return (
@@ -59,9 +63,14 @@ function TrackCardBase({ track }: { track: ItunesTrack }) {
         </div>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-4">
-        <h3 className="truncate text-sm font-bold text-foreground tracking-tight group-hover:text-accent transition-premium">
-          {track.trackName}
-        </h3>
+        <div className="flex items-center gap-2">
+          {isCurrentlyPlaying && (
+            <AnimatedEqualizer className="shrink-0" />
+          )}
+          <h3 className="truncate text-sm font-bold text-foreground tracking-tight group-hover:text-accent transition-premium">
+            {track.trackName}
+          </h3>
+        </div>
         <p className="truncate text-xs text-muted">{track.artistName}</p>
         <div className="mt-auto flex items-center justify-between pt-2">
           <p className="truncate text-xs text-muted/70">

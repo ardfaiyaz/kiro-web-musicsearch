@@ -12,6 +12,7 @@ import MobileBottomNav from "./components/MobileBottomNav";
 import SplashScreen from "./components/SplashScreen";
 import SettingsFab from "./components/SettingsFab";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
+import KeyboardShortcutsOverlay from "./components/KeyboardShortcutsOverlay";
 import CommandPalette from "./components/CommandPalette";
 import { ToastProvider } from "./components/ToastContext";
 import OfflineDetector from "./components/OfflineDetector";
@@ -82,6 +83,7 @@ export default function RootLayout({
                         <MobileBottomNav />
                         <SettingsFab />
                         <KeyboardShortcuts />
+                        <KeyboardShortcutsOverlay />
                         <CommandPalette />
                       </div>
                     </ToastProvider>

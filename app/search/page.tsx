@@ -14,6 +14,7 @@ import { searchTracks, searchArtists, searchAlbums } from "@/lib/itunes";
 import { unifiedSearch } from "@/lib/music-service";
 import { ItunesTrack } from "@/lib/types";
 import { Search as SearchIcon, TrendingUp } from "lucide-react";
+import FeelingLucky from "../components/FeelingLucky";
 
 function filterByGenre(tracks: ItunesTrack[], genre: string): ItunesTrack[] {
   if (!genre) return tracks;
@@ -323,6 +324,7 @@ function SearchEmptyState() {
           ))}
         </div>
       </div>
+      <FeelingLucky className="mt-2" />
     </div>
   );
 }
