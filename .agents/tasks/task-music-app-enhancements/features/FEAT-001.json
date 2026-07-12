@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Splash screen, dedicated /search page, mobile bottom tab bar, and recently viewed on homepage. Items 1, 2, 8, 16 from the requirements plus the splash art steering message.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create app/components/SplashScreen.tsx - a premium animated loading screen with the app logo/branding (Music2 icon from lucide + text 'Music'). Uses CSS animations: fade-in logo with scale and blur transition, animated gradient background matching the app's primary/secondary colors. Auto-dismisses after ~2 seconds (or once page is interactive) and stores a sessionStorage flag so it only shows on first load per session. Must be a Client Component. Respect prefers-reduced-motion.",
     "Add SplashScreen to app/layout.tsx inside the ThemeProvider wrapper, rendered above/before main content. It should overlay the whole page with fixed positioning and z-index above everything (z-[100]).",
@@ -29,5 +29,5 @@
     "bun run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Used useSyncExternalStore instead of useState+useEffect for RecentlyViewed and SplashScreen initial state to avoid the react-hooks/set-state-in-effect lint rule. SearchFilterChips also needed updating to navigate to /search?... instead of /?.... Header Search tab updated to link to /search. The bg-surface-elevated class does not exist as a CSS variable so changed to bg-surface."
 }
