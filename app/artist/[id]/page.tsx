@@ -13,6 +13,7 @@ import ArtistDiscoveryNetwork from "@/app/components/ArtistDiscoveryNetwork";
 import ArtistVideos from "@/app/components/ArtistVideos";
 import ArtistBio from "@/app/components/ArtistBio";
 import ArtistInsightsPanel from "@/app/components/ArtistInsightsPanel";
+import RecentlyViewedTracker from "@/app/components/RecentlyViewedTracker";
 
 function SectionSkeleton({ height = "h-64" }: { height?: string }) {
   return (
@@ -50,6 +51,12 @@ export default async function ArtistPage({
   return (
     <div className="flex flex-1 flex-col">
       <Header />
+      <RecentlyViewedTracker
+        type="artist"
+        id={artistId}
+        name={artist.artistName}
+        artwork={unifiedArtist.imageUrl || ""}
+      />
 
       <main className="flex-1">
         {/* Cinematic Hero */}

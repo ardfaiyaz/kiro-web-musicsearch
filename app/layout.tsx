@@ -8,6 +8,8 @@ import { DynamicColorProvider } from "./components/DynamicColorProvider";
 import { SettingsProvider } from "./components/SettingsContext";
 import AmbientBackground from "./components/AmbientBackground";
 import MiniPlayer from "./components/MiniPlayer";
+import MobileBottomNav from "./components/MobileBottomNav";
+import SplashScreen from "./components/SplashScreen";
 import SettingsFab from "./components/SettingsFab";
 import KeyboardShortcuts from "./components/KeyboardShortcuts";
 import CommandPalette from "./components/CommandPalette";
@@ -69,13 +71,15 @@ export default function RootLayout({
                     <ToastProvider>
                       <AmbientBackground />
                       <CustomCursorWrapper />
-                      <div className="relative z-10 flex min-h-full flex-col">
+                      <SplashScreen />
+                      <div className="relative z-10 flex min-h-full flex-col pb-16 sm:pb-0">
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
                         <main id="main-content" tabIndex={-1}>
                           {children}
                         </main>
                         <MiniPlayer />
+                        <MobileBottomNav />
                         <SettingsFab />
                         <KeyboardShortcuts />
                         <CommandPalette />

@@ -222,7 +222,7 @@ export default function SearchBar() {
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("q", trimmed);
-      router.push(`/?${params.toString()}`);
+      router.push(`/search?${params.toString()}`);
     });
   }
 

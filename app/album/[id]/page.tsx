@@ -13,6 +13,7 @@ import MusicVideos from "@/app/components/album/MusicVideos";
 import AIInsights from "@/app/components/album/AIInsights";
 import AlbumTimeline from "@/app/components/album/AlbumTimeline";
 import ExternalLinks from "@/app/components/album/ExternalLinks";
+import RecentlyViewedTracker from "@/app/components/RecentlyViewedTracker";
 
 function totalDuration(tracks: { trackTimeMillis: number }[]): string {
   const totalMs = tracks.reduce((sum, t) => sum + (t.trackTimeMillis || 0), 0);
@@ -72,6 +73,12 @@ export default async function AlbumPage({
   return (
     <div className="flex flex-1 flex-col">
       <Header showBack />
+      <RecentlyViewedTracker
+        type="album"
+        id={album.collectionId}
+        name={album.collectionName}
+        artwork={artworkUrl || album.artworkUrl100 || ""}
+      />
 
       <main className="flex-1">
         {/* Client-side interactive sections: Hero, Sticky Bar, Tracklist, Description */}

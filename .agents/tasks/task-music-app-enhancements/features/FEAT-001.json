@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Splash screen, dedicated /search page, mobile bottom tab bar, and recently viewed on homepage. Items 1, 2, 8, 16 from the requirements plus the splash art steering message.",
+  "status": "in_progress",
+  "steps": [
+    "Create app/components/SplashScreen.tsx - a premium animated loading screen with the app logo/branding (Music2 icon from lucide + text 'Music'). Uses CSS animations: fade-in logo with scale and blur transition, animated gradient background matching the app's primary/secondary colors. Auto-dismisses after ~2 seconds (or once page is interactive) and stores a sessionStorage flag so it only shows on first load per session. Must be a Client Component. Respect prefers-reduced-motion.",
+    "Add SplashScreen to app/layout.tsx inside the ThemeProvider wrapper, rendered above/before main content. It should overlay the whole page with fixed positioning and z-index above everything (z-[100]).",
+    "Create app/search/page.tsx - a dedicated search page that shows SearchBar centered, SearchFilterChips, and search results (reuse the same CategorizedResults/TrackResults/ArtistResults/AlbumResults components pattern from app/page.tsx). Should read ?q=, ?filter=, ?sort=, ?genre=, ?year=, ?explicit= search params. Include Header with showBack. When no query is present, show empty placeholder suggestions ('Try searching for: Taylor Swift, Drake, BTS...') and recent searches from localStorage.",
+    "Update the SearchBar component's performSearch function to navigate to /search?q=... instead of /?q=... This way the homepage stays editorial-only and the search page handles all searching.",
+    "Create app/components/MobileBottomNav.tsx - a fixed bottom tab bar visible only on mobile (hidden on sm: and above). Tabs: Search (/search, Search icon), Discover (/discover, Compass icon), Favorites (/favorites, Heart icon), Settings (/settings, Settings icon). Use glass-heavy styling, highlight active tab with primary color. Must have min-h-[44px] touch targets. Use usePathname() to determine active state.",
+    "Add MobileBottomNav to app/layout.tsx, positioned after MiniPlayer. Add bottom padding to the main content on mobile so MiniPlayer and bottom nav don't overlap content.",
+    "Create app/components/RecentlyViewed.tsx - a Client Component that reads recently visited artist/album pages from localStorage (key: 'music-recently-viewed', stores array of {type, id, name, artwork, timestamp}). Display as a horizontal scroll section on the homepage with small artwork thumbnails and names.",
+    "Create lib/recently-viewed.ts - utilities to get/add/clear recently viewed items (max 12 items).",
+    "Update app/artist/[id]/page.tsx and app/album/[id]/page.tsx to call a client-side tracker (similar to RecentlyPlayedTracker pattern) that records visits. Create app/components/RecentlyViewedTracker.tsx as a client component that reads the page data from props and saves to localStorage.",
+    "Add RecentlyViewed section to app/page.tsx in the editorial homepage, after ContinueListening and before EditorialHomepage Suspense boundary."
+  ],
+  "acceptance_criteria": [
+    "On first browser session load, a splash screen with animated logo and branding displays for ~2 seconds before fading out. It does not reappear on subsequent navigations within the same session.",
+    "/search route exists and shows a clean focused search experience with SearchBar, filters, and results",
+    "SearchBar navigates to /search?q=... instead of /?q=...",
+    "Mobile bottom tab bar is visible on viewport widths below 640px with 4 tabs and proper active states",
+    "Bottom tab bar is hidden on desktop/tablet viewports",
+    "Recently viewed section appears on homepage when user has previously visited artist/album pages",
+    "Build passes with zero TypeScript errors and zero lint errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
