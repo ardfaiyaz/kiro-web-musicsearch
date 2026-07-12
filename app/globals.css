@@ -1957,4 +1957,250 @@ html.reduce-motion .cassette-reel-spinning {
   animation: none !important;
 }
 
+/* ===== FEAT-009: Accessibility Enhancements ===== */
 
+/* --- Font Size Adjustment --- */
+body {
+  font-size: var(--user-font-size, 16px);
+}
+
+/* --- Dyslexia-Friendly Font (OpenDyslexic) --- */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/OpenDyslexic-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/OpenDyslexic-Bold.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+html.dyslexia-font,
+html.dyslexia-font body,
+html.dyslexia-font * {
+  font-family: "OpenDyslexic", sans-serif !important;
+}
+
+/* --- High Contrast Mode --- */
+html.high-contrast {
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #333333;
+  --border: #000000;
+  --card: #ffffff;
+  --accent: #000000;
+  --accent-hover: #333333;
+  --surface: #f5f5f5;
+  --surface-hover: #e0e0e0;
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 0.5);
+  --glass-highlight: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --ring: rgba(0, 0, 0, 0.3);
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
+  --text-tertiary: #333333;
+}
+
+html.high-contrast.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --muted: #cccccc;
+  --border: #ffffff;
+  --card: #000000;
+  --accent: #ffffff;
+  --accent-hover: #cccccc;
+  --surface: #1a1a1a;
+  --surface-hover: #333333;
+  --glass-bg: rgba(0, 0, 0, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(255, 255, 255, 0.1);
+  --ring: rgba(255, 255, 255, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #cccccc;
+}
+
+html.high-contrast a,
+html.high-contrast button {
+  text-decoration-thickness: 2px;
+}
+
+html.high-contrast *:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* --- Reduced Transparency Mode --- */
+html.reduce-transparency .glass,
+html.reduce-transparency .glass-elevated,
+html.reduce-transparency .glass-search,
+html.reduce-transparency .glass-dropdown,
+html.reduce-transparency .glass-player,
+html.reduce-transparency .glass-card,
+html.reduce-transparency .glass-tooltip,
+html.reduce-transparency .glass-sidebar,
+html.reduce-transparency .glass-dialog,
+html.reduce-transparency .glass-settings,
+html.reduce-transparency .glass-recommendation,
+html.reduce-transparency .glass-stats,
+html.reduce-transparency .glass-fab,
+html.reduce-transparency .glass-subtle,
+html.reduce-transparency .glass-light,
+html.reduce-transparency .glass-medium,
+html.reduce-transparency .glass-heavy,
+html.reduce-transparency .glass-ultra {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+html.reduce-transparency.dark .glass,
+html.reduce-transparency.dark .glass-elevated,
+html.reduce-transparency.dark .glass-search,
+html.reduce-transparency.dark .glass-dropdown,
+html.reduce-transparency.dark .glass-player,
+html.reduce-transparency.dark .glass-card,
+html.reduce-transparency.dark .glass-tooltip,
+html.reduce-transparency.dark .glass-sidebar,
+html.reduce-transparency.dark .glass-dialog,
+html.reduce-transparency.dark .glass-settings,
+html.reduce-transparency.dark .glass-recommendation,
+html.reduce-transparency.dark .glass-stats,
+html.reduce-transparency.dark .glass-fab,
+html.reduce-transparency.dark .glass-subtle,
+html.reduce-transparency.dark .glass-light,
+html.reduce-transparency.dark .glass-medium,
+html.reduce-transparency.dark .glass-heavy,
+html.reduce-transparency.dark .glass-ultra {
+  background: var(--surface) !important;
+}
+
+html.reduce-transparency .ambient-background,
+html.reduce-transparency .ambient-floating-shapes,
+html.reduce-transparency .aurora-background {
+  display: none !important;
+}
+
+/* --- Focus Mode --- */
+html.focus-mode #mini-player,
+html.focus-mode nav,
+html.focus-mode .mobile-bottom-nav,
+html.focus-mode .floating-action-button,
+html.focus-mode .settings-fab,
+html.focus-mode aside:not(#main-content aside),
+html.focus-mode .ambient-background,
+html.focus-mode .aurora-background {
+  display: none !important;
+}
+
+html.focus-mode main {
+  padding-bottom: 0 !important;
+}
+
+/* --- Motion Sensitivity Levels --- */
+
+/* Off: disable all animations and transitions */
+html.motion-off *,
+html.motion-off *::before,
+html.motion-off *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+html.motion-off .ambient-floating-shapes,
+html.motion-off .aurora-background {
+  display: none !important;
+}
+
+/* Reduced: minimal animations, no complex effects */
+html.motion-reduced *,
+html.motion-reduced *::before,
+html.motion-reduced *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 150ms !important;
+}
+
+html.motion-reduced .ambient-gradient-layer,
+html.motion-reduced .ambient-shape-1,
+html.motion-reduced .ambient-shape-2,
+html.motion-reduced .ambient-shape-3,
+html.motion-reduced .aurora-blob-1,
+html.motion-reduced .aurora-blob-2,
+html.motion-reduced .aurora-blob-3,
+html.motion-reduced .aurora-blob-4 {
+  animation: none !important;
+}
+
+html.motion-reduced .ambient-floating-shapes {
+  display: none;
+}
+
+html.motion-reduced .card-tilt:hover {
+  transform: none;
+}
+
+/* Full: enable all effects including extra animations */
+html.motion-full .transition-premium {
+  transition-duration: 0.4s;
+}
+
+html.motion-full .hover-glow:hover {
+  box-shadow: 0 0 30px -4px var(--dynamic-accent, var(--accent)),
+    0 0 12px -2px var(--dynamic-accent, var(--accent));
+}
+
+html.motion-full .card-tilt:hover {
+  transform: perspective(800px) rotateX(3deg) rotateY(-3deg) translateY(-6px);
+}
+
+/* --- Color Blind Modes --- */
+
+/* Protanopia (red-blind): shift reds toward blue/yellow */
+html.colorblind-protanopia {
+  filter: url("#protanopia-filter");
+}
+
+html.colorblind-protanopia {
+  --error: #d4a017;
+  --error-light: #fef3c7;
+  --success: #2563eb;
+  --success-light: #bfdbfe;
+}
+
+/* Deuteranopia (green-blind): shift greens toward blue/yellow */
+html.colorblind-deuteranopia {
+  filter: url("#deuteranopia-filter");
+}
+
+html.colorblind-deuteranopia {
+  --success: #2563eb;
+  --success-light: #bfdbfe;
+  --error: #d97706;
+  --error-light: #fef3c7;
+}
+
+/* Tritanopia (blue-blind): shift blues toward red/green */
+html.colorblind-tritanopia {
+  filter: url("#tritanopia-filter");
+}
+
+html.colorblind-tritanopia {
+  --info: #dc2626;
+  --info-light: #fecaca;
+  --primary: #dc2626;
+  --primary-hover: #b91c1c;
+}
+
+/* Color blind filter SVG definitions are injected via ColorBlindFilters component */

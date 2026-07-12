@@ -3,6 +3,7 @@
 import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "../ThemeContext";
 import { useSettings } from "../SettingsContext";
+import type { MotionSensitivity, ColorBlindMode } from "../SettingsContext";
 
 const PRESET_COLORS = [
   "#6366f1", // Indigo
@@ -25,6 +26,20 @@ const ANIMATION_SPEEDS = [
   { value: "none" as const, label: "None" },
 ];
 
+const MOTION_LEVELS: Array<{ value: MotionSensitivity; label: string; description: string }> = [
+  { value: "off", label: "Off", description: "No animations" },
+  { value: "reduced", label: "Reduced", description: "Minimal animations" },
+  { value: "normal", label: "Normal", description: "Standard animations" },
+  { value: "full", label: "Full", description: "All effects enabled" },
+];
+
+const COLOR_BLIND_MODES: Array<{ value: ColorBlindMode; label: string; description: string }> = [
+  { value: "none", label: "None", description: "Default colors" },
+  { value: "protanopia", label: "Protanopia", description: "Red-blind adjustment" },
+  { value: "deuteranopia", label: "Deuteranopia", description: "Green-blind adjustment" },
+  { value: "tritanopia", label: "Tritanopia", description: "Blue-blind adjustment" },
+];
+
 export default function AppearanceSettings() {
   const { themeMode, setThemeMode } = useTheme();
   const {
@@ -36,6 +51,12 @@ export default function AppearanceSettings() {
     setReducedMotion,
     setCompactMode,
     setCassetteMode,
+    setHighContrast,
+    setFontSize,
+    setDyslexiaFont,
+    setReducedTransparency,
+    setMotionSensitivity,
+    setColorBlindMode,
   } = useSettings();
 
   const themeOptions: Array<{
@@ -120,6 +141,80 @@ export default function AppearanceSettings() {
         </div>
       </div>
 
+      {/* High Contrast Mode */}
+      <div className="space-y-3">
+        <label className="flex cursor-pointer items-center justify-between rounded-xl bg-surface px-4 py-3">
+          <div>
+            <span className="text-sm font-medium text-foreground">High Contrast Mode</span>
+            <p className="text-xs text-muted mt-0.5">Maximum contrast ratio for readability</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.highContrast}
+            onChange={(e) => setHighContrast(e.target.checked)}
+            className="h-4 w-4 accent-foreground"
+          />
+        </label>
+      </div>
+
+      {/* Font Size Adjustment */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-foreground">Font Size</h3>
+          <span className="text-xs text-muted">{settings.fontSize}px</span>
+        </div>
+        <input
+          type="range"
+          min={14}
+          max={22}
+          step={1}
+          value={settings.fontSize}
+          onChange={(e) => setFontSize(Number(e.target.value))}
+          className="w-full accent-foreground"
+          aria-label="Font size adjustment"
+          aria-valuemin={14}
+          aria-valuemax={22}
+          aria-valuenow={settings.fontSize}
+        />
+        <div className="flex justify-between text-xs text-muted">
+          <span>14px</span>
+          <span>18px</span>
+          <span>22px</span>
+        </div>
+      </div>
+
+      {/* Dyslexia-Friendly Font */}
+      <div className="space-y-3">
+        <label className="flex cursor-pointer items-center justify-between rounded-xl bg-surface px-4 py-3">
+          <div>
+            <span className="text-sm font-medium text-foreground">Dyslexia-Friendly Font</span>
+            <p className="text-xs text-muted mt-0.5">Use OpenDyslexic font for easier reading</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.dyslexiaFont}
+            onChange={(e) => setDyslexiaFont(e.target.checked)}
+            className="h-4 w-4 accent-foreground"
+          />
+        </label>
+      </div>
+
+      {/* Reduced Transparency */}
+      <div className="space-y-3">
+        <label className="flex cursor-pointer items-center justify-between rounded-xl bg-surface px-4 py-3">
+          <div>
+            <span className="text-sm font-medium text-foreground">Reduced Transparency</span>
+            <p className="text-xs text-muted mt-0.5">Replace glass/blur effects with solid backgrounds</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.reducedTransparency}
+            onChange={(e) => setReducedTransparency(e.target.checked)}
+            className="h-4 w-4 accent-foreground"
+          />
+        </label>
+      </div>
+
       {/* Blur Intensity */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -156,6 +251,52 @@ export default function AppearanceSettings() {
           className="w-full accent-foreground"
           aria-label="Glass opacity"
         />
+      </div>
+
+      {/* Motion Sensitivity Levels */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-foreground">Motion Sensitivity</h3>
+        <p className="text-xs text-muted">Control animation intensity level</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {MOTION_LEVELS.map(({ value, label, description }) => (
+            <button
+              key={value}
+              onClick={() => setMotionSensitivity(value)}
+              className={`rounded-lg px-3 py-2.5 text-center transition-premium ${
+                settings.motionSensitivity === value
+                  ? "bg-foreground text-background"
+                  : "bg-surface text-muted hover:bg-surface-hover hover:text-foreground"
+              }`}
+              aria-pressed={settings.motionSensitivity === value}
+              title={description}
+            >
+              <span className="text-sm font-medium">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Color Blind Mode */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-foreground">Color Blind Mode</h3>
+        <p className="text-xs text-muted">Adjust colors for color vision deficiency</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {COLOR_BLIND_MODES.map(({ value, label, description }) => (
+            <button
+              key={value}
+              onClick={() => setColorBlindMode(value)}
+              className={`rounded-lg px-3 py-2.5 text-center transition-premium ${
+                settings.colorBlindMode === value
+                  ? "bg-foreground text-background"
+                  : "bg-surface text-muted hover:bg-surface-hover hover:text-foreground"
+              }`}
+              aria-pressed={settings.colorBlindMode === value}
+              title={description}
+            >
+              <span className="text-sm font-medium">{label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Animation Speed */}

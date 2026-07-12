@@ -23,6 +23,11 @@ import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
 import FloatingActionButton from "./components/ui/FloatingActionButton";
 import LandscapePlayer from "./components/player/LandscapePlayer";
+import ScreenReaderAnnouncer from "./components/ScreenReaderAnnouncer";
+import FocusMode from "./components/FocusMode";
+import VoiceNavigation from "./components/VoiceNavigation";
+import AudioCaption from "./components/player/AudioCaption";
+import ColorBlindFilters from "./components/ColorBlindFilters";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -93,6 +98,11 @@ export default function RootLayout({
                         <KeyboardShortcuts />
                         <KeyboardShortcutsOverlay />
                         <CommandPalette />
+                        <ScreenReaderAnnouncer />
+                        <FocusMode />
+                        <VoiceNavigation />
+                        <AudioCaption />
+                        <ColorBlindFilters />
                       </div>
                     </ToastProvider>
                   </PersonalizationProvider>

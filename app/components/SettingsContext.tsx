@@ -11,6 +11,8 @@ import {
 } from "react";
 
 type AnimationSpeed = "slow" | "normal" | "fast" | "none";
+export type MotionSensitivity = "off" | "reduced" | "normal" | "full";
+export type ColorBlindMode = "none" | "protanopia" | "deuteranopia" | "tritanopia";
 
 interface Settings {
   blurIntensity: number;
@@ -20,6 +22,12 @@ interface Settings {
   reducedMotion: boolean;
   compactMode: boolean;
   cassetteMode: boolean;
+  highContrast: boolean;
+  fontSize: number;
+  dyslexiaFont: boolean;
+  reducedTransparency: boolean;
+  motionSensitivity: MotionSensitivity;
+  colorBlindMode: ColorBlindMode;
 }
 
 interface SettingsContextType {
@@ -31,6 +39,12 @@ interface SettingsContextType {
   setReducedMotion: (value: boolean) => void;
   setCompactMode: (value: boolean) => void;
   setCassetteMode: (value: boolean) => void;
+  setHighContrast: (value: boolean) => void;
+  setFontSize: (value: number) => void;
+  setDyslexiaFont: (value: boolean) => void;
+  setReducedTransparency: (value: boolean) => void;
+  setMotionSensitivity: (value: MotionSensitivity) => void;
+  setColorBlindMode: (value: ColorBlindMode) => void;
   resetSettings: () => void;
 }
 
@@ -42,6 +56,12 @@ const defaultSettings: Settings = {
   reducedMotion: false,
   compactMode: false,
   cassetteMode: false,
+  highContrast: false,
+  fontSize: 16,
+  dyslexiaFont: false,
+  reducedTransparency: false,
+  motionSensitivity: "normal",
+  colorBlindMode: "none",
 };
 
 const STORAGE_KEY = "app-settings";
@@ -69,6 +89,7 @@ function applySettingsToDOM(settings: Settings) {
     "--animation-speed",
     getAnimationMultiplier(settings.animationSpeed)
   );
+  root.style.setProperty("--user-font-size", `${settings.fontSize}px`);
 
   if (settings.accentColor) {
     root.style.setProperty("--dynamic-accent-override", settings.accentColor);
@@ -86,6 +107,40 @@ function applySettingsToDOM(settings: Settings) {
     root.classList.add("compact-mode");
   } else {
     root.classList.remove("compact-mode");
+  }
+
+  if (settings.highContrast) {
+    root.classList.add("high-contrast");
+  } else {
+    root.classList.remove("high-contrast");
+  }
+
+  if (settings.dyslexiaFont) {
+    root.classList.add("dyslexia-font");
+  } else {
+    root.classList.remove("dyslexia-font");
+  }
+
+  if (settings.reducedTransparency) {
+    root.classList.add("reduce-transparency");
+  } else {
+    root.classList.remove("reduce-transparency");
+  }
+
+  // Motion sensitivity classes
+  root.classList.remove("motion-off", "motion-reduced", "motion-full");
+  if (settings.motionSensitivity === "off") {
+    root.classList.add("motion-off");
+  } else if (settings.motionSensitivity === "reduced") {
+    root.classList.add("motion-reduced");
+  } else if (settings.motionSensitivity === "full") {
+    root.classList.add("motion-full");
+  }
+
+  // Color blind mode classes
+  root.classList.remove("colorblind-protanopia", "colorblind-deuteranopia", "colorblind-tritanopia");
+  if (settings.colorBlindMode !== "none") {
+    root.classList.add(`colorblind-${settings.colorBlindMode}`);
   }
 }
 
@@ -185,6 +240,33 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     updateSettings({ ...currentSettings, cassetteMode: value });
   }, []);
 
+  const setHighContrast = useCallback((value: boolean) => {
+    updateSettings({ ...currentSettings, highContrast: value });
+  }, []);
+
+  const setFontSize = useCallback((value: number) => {
+    updateSettings({
+      ...currentSettings,
+      fontSize: Math.max(14, Math.min(22, value)),
+    });
+  }, []);
+
+  const setDyslexiaFont = useCallback((value: boolean) => {
+    updateSettings({ ...currentSettings, dyslexiaFont: value });
+  }, []);
+
+  const setReducedTransparency = useCallback((value: boolean) => {
+    updateSettings({ ...currentSettings, reducedTransparency: value });
+  }, []);
+
+  const setMotionSensitivity = useCallback((value: MotionSensitivity) => {
+    updateSettings({ ...currentSettings, motionSensitivity: value });
+  }, []);
+
+  const setColorBlindMode = useCallback((value: ColorBlindMode) => {
+    updateSettings({ ...currentSettings, colorBlindMode: value });
+  }, []);
+
   const resetSettings = useCallback(() => {
     updateSettings(defaultSettings);
   }, []);
@@ -200,6 +282,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setReducedMotion,
         setCompactMode,
         setCassetteMode,
+        setHighContrast,
+        setFontSize,
+        setDyslexiaFont,
+        setReducedTransparency,
+        setMotionSensitivity,
+        setColorBlindMode,
         resetSettings,
       }}
     >
