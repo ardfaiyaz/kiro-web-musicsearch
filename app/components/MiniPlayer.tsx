@@ -12,6 +12,7 @@ import {
 import { useAudioPlayer } from "./AudioPlayerContext";
 import { useDynamicColors } from "./DynamicColorProvider";
 import AnimatedEqualizer from "./AnimatedEqualizer";
+import MiniLyricsTicker from "./player/MiniLyricsTicker";
 import dynamic from "next/dynamic";
 
 const ExpandedPlayer = dynamic(() => import("./ExpandedPlayer"), {
@@ -190,6 +191,7 @@ export default function MiniPlayer() {
                 <AnimatedEqualizer />
                 {artistName || "Unknown Artist"}
               </span>
+              <MiniLyricsTicker />
             </button>
 
             {/* Compact controls */}

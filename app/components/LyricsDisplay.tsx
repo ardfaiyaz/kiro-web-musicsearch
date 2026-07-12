@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useAudioPlayer } from "./AudioPlayerContext";
 
 interface LyricsDisplayProps {
   lyrics?: string | null;
@@ -15,13 +16,13 @@ export default function LyricsDisplay({
 }: LyricsDisplayProps) {
   const [lyrics, setLyrics] = useState<string | null | undefined>(initialLyrics);
   const [isLoading, setIsLoading] = useState(!initialLyrics);
-  const [currentLine, setCurrentLine] = useState(0);
-  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
+  const { currentlyPlayingId, currentTime, duration, isPlaying, currentTrack } =
+    useAudioPlayer();
+
   useEffect(() => {
-    // If lyrics were passed as prop, skip fetching
     if (initialLyrics) {
       setLyrics(initialLyrics);
       setIsLoading(false);
@@ -50,42 +51,45 @@ export default function LyricsDisplay({
     fetchLyrics();
   }, [artistName, trackName, initialLyrics]);
 
-  const lines = lyrics
-    ? lyrics.split("\n").filter((line) => line.trim().length > 0)
-    : [];
+  const lines = useMemo(
+    () => (lyrics ? lyrics.split("\n").filter((line) => line.trim().length > 0) : []),
+    [lyrics]
+  );
 
   const hasLyrics = lines.length > 0;
 
+  // Determine if the currently playing track matches this lyrics display
+  const isTrackPlaying = useMemo(() => {
+    if (!currentTrack || !currentlyPlayingId) return false;
+    const nameMatch =
+      currentTrack.trackName?.toLowerCase() === trackName.toLowerCase();
+    const artistMatch =
+      currentTrack.artistName?.toLowerCase() === artistName.toLowerCase();
+    return nameMatch && artistMatch;
+  }, [currentTrack, currentlyPlayingId, trackName, artistName]);
+
+  // Calculate current line based on playback progress (even distribution)
+  const currentLine = useMemo(() => {
+    if (!isTrackPlaying || !isPlaying || lines.length === 0 || duration <= 0) {
+      return -1;
+    }
+    const lineIndex = Math.floor((currentTime / duration) * lines.length);
+    return Math.min(lineIndex, lines.length - 1);
+  }, [isTrackPlaying, isPlaying, currentTime, duration, lines.length]);
+
+  // Auto-scroll to current line when synced with audio
   useEffect(() => {
-    if (!isAutoScrolling || !hasLyrics) return;
-
-    const interval = setInterval(() => {
-      setCurrentLine((prev) => {
-        const next = prev + 1;
-        if (next >= lines.length) {
-          setIsAutoScrolling(false);
-          return 0;
-        }
-        return next;
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [isAutoScrolling, hasLyrics, lines.length]);
-
-  useEffect(() => {
-    if (isAutoScrolling && lineRefs.current[currentLine]) {
+    if (currentLine >= 0 && lineRefs.current[currentLine]) {
       lineRefs.current[currentLine]?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
     }
-  }, [currentLine, isAutoScrolling]);
+  }, [currentLine]);
 
-  // Deterministic widths for loading skeleton to avoid hydration mismatches
+  // Deterministic widths for loading skeleton
   const skeletonWidths = [75, 60, 85, 70, 65, 80, 55, 90];
 
-  // Loading skeleton
   if (isLoading) {
     return (
       <section className="glass-stats p-6" aria-label="Lyrics loading">
@@ -132,29 +136,29 @@ export default function LyricsDisplay({
             <p className="text-xs text-muted">by {artistName}</p>
           </div>
           <p className="max-w-xs text-xs text-muted">
-            Lyrics are not available for this track at this time. Try again later or check a different track.
+            Lyrics are not available for this track at this time. Try again
+            later or check a different track.
           </p>
         </div>
       </section>
     );
   }
 
+  const isSynced = currentLine >= 0;
+
   return (
     <section className="glass-stats p-6" aria-label="Lyrics">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">Lyrics</h3>
-        <button
-          onClick={() => {
-            setIsAutoScrolling(!isAutoScrolling);
-            if (!isAutoScrolling) {
-              setCurrentLine(0);
-            }
-          }}
-          className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-premium hover:border-foreground/20 hover:text-foreground"
-          aria-label={isAutoScrolling ? "Stop auto-scroll" : "Start auto-scroll"}
-        >
-          {isAutoScrolling ? "Stop" : "Auto-scroll"}
-        </button>
+        {isSynced && (
+          <span className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted">
+            <span
+              className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-500"
+              aria-hidden="true"
+            />
+            Synced
+          </span>
+        )}
       </div>
       <div
         ref={containerRef}
@@ -163,32 +167,42 @@ export default function LyricsDisplay({
         aria-label={`Lyrics for ${trackName} by ${artistName}`}
       >
         <div className="flex flex-col gap-3 py-4">
-          {lines.map((line, index) => (
-            <p
-              key={index}
-              ref={(el) => {
-                lineRefs.current[index] = el;
-              }}
-              className={`lyrics-line transition-all duration-300 ${
-                isAutoScrolling && index === currentLine
-                  ? "lyrics-line-active text-lg font-bold text-foreground"
-                  : isAutoScrolling && Math.abs(index - currentLine) <= 2
-                    ? "text-base text-muted"
-                    : isAutoScrolling
-                      ? "text-sm text-muted/50"
-                      : "text-sm text-foreground/80"
-              }`}
-              onClick={() => {
-                if (isAutoScrolling) {
-                  setCurrentLine(index);
+          {lines.map((line, index) => {
+            const isActive = isSynced && index === currentLine;
+            const isNearby = isSynced && Math.abs(index - currentLine) <= 2;
+            const isPast = isSynced && index < currentLine;
+
+            return (
+              <p
+                key={index}
+                ref={(el) => {
+                  lineRefs.current[index] = el;
+                }}
+                className={`lyrics-line transition-all duration-500 ${
+                  isActive
+                    ? "scale-[1.02] text-lg font-bold text-foreground"
+                    : isNearby
+                      ? "text-base text-muted"
+                      : isPast
+                        ? "text-sm text-muted/40"
+                        : isSynced
+                          ? "text-sm text-muted/50"
+                          : "text-sm text-foreground/80"
+                }`}
+                style={
+                  isActive
+                    ? {
+                        textShadow: "0 0 20px var(--dynamic-accent, rgba(99,102,241,0.3))",
+                        color: "var(--dynamic-accent, var(--foreground))",
+                      }
+                    : undefined
                 }
-              }}
-              role={isAutoScrolling ? "button" : undefined}
-              tabIndex={isAutoScrolling ? 0 : undefined}
-            >
-              {line}
-            </p>
-          ))}
+                aria-current={isActive ? "true" : undefined}
+              >
+                {line}
+              </p>
+            );
+          })}
         </div>
       </div>
     </section>

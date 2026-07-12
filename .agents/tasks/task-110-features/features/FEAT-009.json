@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-009",
+  "type": "feat",
+  "description": "Accessibility Enhancements (items 81-90): Screen reader announcements, high contrast mode, font size adjustment, dyslexia-friendly font toggle, reduced transparency mode, focus mode, voice navigation, captions for audio previews, motion sensitivity levels, and color blind modes.",
+  "status": "pending",
+  "steps": [
+    "1. Enhance screen reader announcements: add aria-live regions that announce 'Now playing: Song Name by Artist' when track changes. Add to MiniPlayer.tsx (already has one - verify it works). Add announcements for queue changes and favorites.",
+    "2. Add high contrast mode to settings: create a toggle in app/components/settings/AppearanceSettings.tsx that adds 'high-contrast' class to html element. Define high-contrast CSS overrides in globals.css with maximum contrast ratios (pure black/white).",
+    "3. Add font size adjustment to settings: create a slider in AppearanceSettings that adjusts base font size (14px-22px range). Apply via CSS variable --user-font-size on document root. Use rem units throughout.",
+    "4. Add dyslexia-friendly font toggle: add OpenDyslexic font via @font-face in globals.css. Toggle in settings adds 'dyslexia-font' class to html, which sets font-family to OpenDyslexic. Load font from Google Fonts or CDN.",
+    "5. Add reduced transparency mode: toggle in settings that adds 'reduce-transparency' class to html. CSS rules disable all glass/blur effects, replace with solid opaque backgrounds.",
+    "6. Create app/components/FocusMode.tsx: a toggle that hides everything except current content (no sidebar, no bottom nav, no player, no FAB). Only shows main content area. Toggle via keyboard shortcut and settings.",
+    "7. Create app/components/VoiceNavigation.tsx: use Web Speech API for voice commands - 'play next', 'pause', 'search for [query]', 'go to favorites'. Parse speech recognition results and trigger appropriate actions.",
+    "8. Enhance audio previews with captions: when audio plays, show track title and artist as text overlay/banner (like closed captions). Create app/components/player/AudioCaption.tsx visible when audio is active.",
+    "9. Enhance motion sensitivity in settings: expand the existing reducedMotion/animationSpeed settings to offer Off / Reduced / Normal / Full levels. 'Off' disables all animations, 'Reduced' uses prefer-reduced-motion styles, 'Full' enables all effects.",
+    "10. Create app/components/ColorBlindMode.tsx: add color blind mode options (Protanopia, Deuteranopia, Tritanopia) in settings. Apply CSS filter (hue-rotate + saturate adjustments) or custom color palette overrides to the root element."
+  ],
+  "acceptance_criteria": [
+    "Screen readers announce track changes via aria-live regions",
+    "High contrast mode provides pure black/white maximum contrast",
+    "Font size is adjustable from 14px to 22px via settings slider",
+    "Dyslexia-friendly font (OpenDyslexic) is available as toggle",
+    "Reduced transparency removes all glass/blur effects",
+    "Focus mode hides all chrome leaving only main content",
+    "Voice navigation processes commands like 'play next' and 'search for'",
+    "Audio captions display track info when preview plays",
+    "Motion sensitivity offers 4 levels (Off/Reduced/Normal/Full)",
+    "Color blind modes adjust colors for Protanopia/Deuteranopia/Tritanopia"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

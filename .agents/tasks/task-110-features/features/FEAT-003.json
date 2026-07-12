@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Mobile and Touch Enhancements (items 21-30): Swipe between tabs, pull-to-refresh, haptic feedback simulation, long-press context menus, swipe-to-favorite, pinch-to-zoom artwork, landscape player mode, bottom sheet for track details, floating action button, and thumb-zone optimized layout.",
+  "status": "pending",
+  "steps": [
+    "1. Create app/components/ui/SwipeTabs.tsx: a wrapper component that detects horizontal swipe gestures (touchstart/touchmove/touchend) and emits tab change events. Use in favorites page tabs and other tabbed interfaces.",
+    "2. Create app/components/ui/PullToRefresh.tsx: detect pull-down gesture on mobile. Show a spinner animation at top. Call router.refresh() or window.location.reload() on release. Add to main content areas.",
+    "3. Create app/components/ui/HapticButton.tsx: a button wrapper that adds subtle CSS scale/transform animation on tap (scale down then back) to simulate haptic feedback. Apply to key interactive elements.",
+    "4. Enhance app/components/ui/ContextMenu.tsx: add long-press detection (touchstart with 500ms timeout). Show quick actions: favorite, add to queue, share, go to artist. Apply to TrackCard and AlbumCard components.",
+    "5. Create app/components/ui/SwipeToFavorite.tsx: wrap track cards with horizontal swipe detection. Swipe right reveals heart icon and favorites the track. Show visual feedback with green background reveal.",
+    "6. Create app/components/ui/PinchZoomImage.tsx: full-screen modal for album artwork with pinch-to-zoom on mobile using touch events for scale/translate transforms.",
+    "7. Create app/components/player/LandscapePlayer.tsx: detect landscape orientation via matchMedia('(orientation: landscape)') and show an immersive fullscreen player with large artwork, controls spread across width.",
+    "8. Enhance app/components/ui/BottomSheet.tsx: make it work as a slide-up sheet triggered by tapping a track card on mobile. Include preview player, lyrics snippet, favorite/queue actions.",
+    "9. Create app/components/ui/FloatingActionButton.tsx: a FAB fixed to bottom-right (above bottom nav on mobile) with quick access to search and play actions. Expands on tap to show mini menu.",
+    "10. Update layout and component spacing: ensure all primary action buttons (play, favorite, search) are in the bottom 40% of the screen on mobile. Adjust MobileBottomNav, MiniPlayer positioning."
+  ],
+  "acceptance_criteria": [
+    "Horizontal swipe navigates between tabs on favorites page",
+    "Pull-down gesture triggers refresh animation on mobile",
+    "Buttons have subtle scale animation on tap simulating haptics",
+    "Long-press on track/album cards shows context menu with actions",
+    "Swiping right on a track card favorites it with visual feedback",
+    "Album artwork can be viewed fullscreen with pinch-to-zoom",
+    "Landscape orientation shows immersive fullscreen player",
+    "Tapping a track shows a bottom sheet with details and actions",
+    "FAB provides quick access to search/play on mobile",
+    "Primary actions are accessible in bottom 40% of screen on mobile"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

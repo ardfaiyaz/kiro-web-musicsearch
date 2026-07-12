@@ -3,12 +3,30 @@
 import { useState } from "react";
 
 interface YouTubeEmbedProps {
-  videoId: string;
+  videoId?: string;
+  searchQuery?: string;
   title: string;
 }
 
-export default function YouTubeEmbed({ videoId, title }: YouTubeEmbedProps) {
+/**
+ * YouTube embed component that supports both direct video IDs and search query embedding.
+ * When no API key is available, uses youtube.com/results?search_query= as an iframe source
+ * or the standard /embed/ endpoint for known video IDs.
+ */
+export default function YouTubeEmbed({
+  videoId,
+  searchQuery,
+  title,
+}: YouTubeEmbedProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const embedUrl = videoId
+    ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
+    : searchQuery
+      ? `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(searchQuery)}`
+      : null;
+
+  if (!embedUrl) return null;
 
   return (
     <div
@@ -22,7 +40,7 @@ export default function YouTubeEmbed({ videoId, title }: YouTubeEmbedProps) {
         </div>
       )}
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+        src={embedUrl}
         title={title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen

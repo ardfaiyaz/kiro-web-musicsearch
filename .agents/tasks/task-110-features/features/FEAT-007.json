@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-007",
+  "type": "feat",
+  "description": "Social and Sharing Enhancements (items 61-70): Share cards, QR code sharing, 'Now Playing' status card, playlist sharing links, embed widget, copy lyrics to clipboard, Twitter/X share integration, Instagram story format cards, music taste profile page, and artist comparison mode.",
+  "status": "pending",
+  "steps": [
+    "1. Create app/components/social/ShareCard.tsx: generate beautiful image cards of currently playing song using Canvas API - draw artwork, track name, artist, and gradient background. Allow saving as PNG via toDataURL.",
+    "2. Create app/components/social/QRCodeGenerator.tsx: generate QR codes linking to any artist/album/track page using a canvas-based QR code generator (implement simple QR encoding or use SVG path generation). Show QR in a modal.",
+    "3. Create app/components/social/NowPlayingCard.tsx: shareable 'currently listening to...' card with artwork, track info, progress bar, and timestamp. Styled as a social media card. Use canvas for image export.",
+    "4. Enhance playlist sharing: encode playlist as compressed URL parameters (JSON -> base64 in URL). Create app/playlists/shared/page.tsx that decodes URL and shows the shared playlist with 'Import' button.",
+    "5. Create app/embed/page.tsx: an embeddable mini player widget page designed for iframe embedding on blogs/websites. Minimal UI with artwork, track name, play button. Accept trackId as URL parameter.",
+    "6. Enhance app/components/LyricsDisplay.tsx: add a 'Copy Lyrics' button that copies all lyrics text to clipboard using navigator.clipboard.writeText(). Show toast notification on success.",
+    "7. Enhance app/components/ShareMenu.tsx: add 'Share to Twitter/X' button with pre-filled text (track name, artist, link) using https://twitter.com/intent/tweet URL. Add share to other platforms.",
+    "8. Create app/components/social/InstagramStoryCard.tsx: generate vertical (9:16 aspect ratio) share cards sized for Instagram stories using Canvas API. Include large artwork, track name, gradient background.",
+    "9. Create app/profile/page.tsx: music taste profile page showing top genres (pie chart), top artists (grid), listening stats, achievement badges, and taste summary. Pull data from analytics/personalization stores.",
+    "10. Create app/components/ArtistComparison.tsx and app/compare/page.tsx: compare two artists side-by-side showing genres, album count, and latest releases. Allow selecting artists via search."
+  ],
+  "acceptance_criteria": [
+    "Share card generates a downloadable image of current song",
+    "QR code generates and displays for any page URL",
+    "Now Playing card shows shareable current listening status",
+    "Playlist sharing via URL parameter works for import/export",
+    "Embed widget page renders mini player suitable for iframes",
+    "Copy lyrics button copies text to clipboard with confirmation",
+    "Twitter/X share opens intent with pre-filled track info",
+    "Instagram story cards generate in 9:16 aspect ratio",
+    "/profile page shows comprehensive music taste overview",
+    "/compare page allows side-by-side artist comparison"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-011",
+  "type": "feat",
+  "description": "Developer and Meta Features (items 101-110): Changelog page, feature flags, debug mode, component playground, onboarding flow, feedback widget, keyboard shortcut cheat sheet page, API status indicator, performance dashboard, and PWA install prompt.",
+  "status": "pending",
+  "steps": [
+    "1. Create app/changelog/page.tsx: version history page with dated entries showing what's new. Include all 110 features grouped by category. Style as a clean timeline/list.",
+    "2. Create lib/feature-flags.ts and enhance app/components/settings/AppearanceSettings.tsx or create new FeatureFlagsSettings section: store feature toggles in localStorage. Allow toggling experimental features (cassette mode, particles, aurora, voice search, etc.).",
+    "3. Create lib/debug.ts and app/components/DebugOverlay.tsx: debug mode showing API response times, cache hits/misses, component render counts, and memory usage. Toggle via settings or keyboard shortcut (Ctrl+Shift+D). Show as floating panel.",
+    "4. Create app/dev/components/page.tsx: component playground/storybook-style page showcasing all UI components (buttons, cards, glass panels, inputs, badges, etc.) with different states and props. For development reference.",
+    "5. Create app/components/Onboarding.tsx: first-time user guided tour highlighting key features - search bar, favorites, playlists, discover, player controls. Show step-by-step tooltips. Track completion in localStorage.",
+    "6. Create app/components/FeedbackWidget.tsx: floating 'Send Feedback' button in bottom-left that opens a form modal. Store feedback in localStorage (no backend). Show confirmation after submit.",
+    "7. Create app/shortcuts/page.tsx: comprehensive keyboard shortcuts page listing all available shortcuts (Space=play/pause, /, Ctrl+K=search, F=favorite, N=next, P=prev, M=mute, etc.) with visual key representations.",
+    "8. Create app/components/APIStatusIndicator.tsx: show in footer whether iTunes/Apple API is responding. Ping API on mount with a simple search, show green/yellow/red indicator. Update periodically.",
+    "9. Create app/dev/performance/page.tsx: performance dashboard showing Web Vitals over time (LCP, FID, CLS, TTFB). Pull from web-vitals data stored by existing WebVitalsReporter. Show charts/tables.",
+    "10. Create app/components/PWAInstallPrompt.tsx: custom 'Add to Home Screen' banner for PWA. Listen for beforeinstallprompt event, show styled banner with dismiss/install buttons. Track dismissal in localStorage."
+  ],
+  "acceptance_criteria": [
+    "/changelog page shows version history with all features listed",
+    "Feature flags toggle experimental features on/off in settings",
+    "Debug mode overlay shows API times, cache hits, render counts",
+    "/dev/components page showcases all UI components",
+    "First-time users see guided onboarding tour",
+    "Feedback widget collects user feedback via floating button",
+    "/shortcuts page lists all keyboard shortcuts with visual keys",
+    "API status indicator shows green/red in footer",
+    "/dev/performance shows Web Vitals data over time",
+    "PWA install prompt appears with custom styled banner"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

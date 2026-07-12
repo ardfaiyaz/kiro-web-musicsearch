@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-006",
+  "type": "feat",
+  "description": "Organization and Library Enhancements (items 51-60): Drag-and-drop playlists, smart playlists, folder organization, tag system, rating system (1-5 stars), import/export playlists, playlist cover generator, collaborative playlists, queue history, and listening journal.",
+  "status": "pending",
+  "steps": [
+    "1. Enhance app/playlists/page.tsx: add drag-and-drop reordering using HTML5 Drag and Drop API (draggable, ondragstart, ondragover, ondrop) to reorder songs within playlists. Show drag handle icon.",
+    "2. Create lib/smart-playlists.ts and app/components/SmartPlaylists.tsx: auto-updating playlists based on rules (top songs this week based on play count, recently discovered, most played genre). Compute from listening history on render.",
+    "3. Create lib/playlist-folders.ts and enhance playlists page: add folder support - create folders, drag playlists into folders, expand/collapse folders. Store folder structure in localStorage.",
+    "4. Create lib/tags.ts and app/components/TagSystem.tsx: allow adding custom tags (#workout, #chill, #roadtrip) to songs. Store tag-to-trackId mapping in localStorage. Show tags on track cards and allow filtering by tag.",
+    "5. Create lib/ratings.ts and app/components/StarRating.tsx: 1-5 star rating system for songs. Show interactive star display on track detail pages and track cards. Store ratings in localStorage. Allow sorting by rating.",
+    "6. Create app/components/PlaylistImportExport.tsx: export playlists as JSON file (using Blob and URL.createObjectURL for download). Import from JSON file (using file input). Add buttons to playlist page.",
+    "7. Enhance app/components/favorites/collections/CollectionCoverGenerator.tsx: auto-generate mosaic covers from track artwork - create a 2x2 or 3x3 grid of artwork images as the playlist cover using canvas or CSS grid.",
+    "8. Create app/components/CollaborativePlaylist.tsx: share edit links by encoding playlist data in URL parameters (base64 encoded JSON). Landing page decodes and shows 'Add to your playlists' button.",
+    "9. Create lib/queue-history.ts and app/components/player/QueueHistory.tsx: track what was played in current/last session. Store last 50 played tracks. Show in expanded player as 'Recently Played in Session'.",
+    "10. Create lib/listening-journal.ts and app/components/ListeningJournal.tsx: allow adding personal notes to songs ('reminds me of summer 2023'). Show notes on track detail pages. Store in localStorage."
+  ],
+  "acceptance_criteria": [
+    "Playlist tracks can be reordered via drag-and-drop",
+    "Smart playlists auto-generate based on listening patterns",
+    "Playlists can be organized into nested folders",
+    "Custom tags can be added to songs and used for filtering",
+    "1-5 star ratings work on track pages with persistent storage",
+    "Playlists can be exported as JSON and imported from file",
+    "Playlist covers auto-generate from track artwork mosaic",
+    "Playlist sharing via URL parameter encoding works",
+    "Queue history shows recently played tracks in session",
+    "Personal notes can be added to songs via listening journal"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

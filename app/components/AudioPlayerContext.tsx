@@ -52,6 +52,8 @@ interface AudioPlayerContextType {
   setPlaybackRate: (rate: number) => void;
   isMuted: boolean;
   toggleMute: () => void;
+  crossfadeEnabled: boolean;
+  toggleCrossfade: () => void;
 }
 
 interface TrackMetadata {
@@ -84,6 +86,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [isMuted, setIsMuted] = useState(false);
   const [playbackRate, setPlaybackRateState] = useState(1);
   const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null);
+  const [crossfadeEnabled, setCrossfadeEnabled] = useState(false);
 
   // A counter that increments when a track ends, triggering the ended effect
   const [endedCounter, setEndedCounter] = useState(0);
@@ -91,6 +94,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const historyStackRef = useRef<ItunesTrack[]>([]);
   const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const previousVolumeRef = useRef(1);
+  const crossfadeRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const crossfadeEnabledRef = useRef(false);
 
   // Refs for values needed in the endedCounter effect to avoid stale closures
   const queueRef = useRef<ItunesTrack[]>([]);
@@ -103,6 +108,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   shuffleModeRef.current = shuffleMode;
   repeatModeRef.current = repeatMode;
   currentTrackRef.current = currentTrack;
+  crossfadeEnabledRef.current = crossfadeEnabled;
 
   const resetPlaybackState = useCallback(() => {
     setCurrentTime(0);
@@ -157,17 +163,56 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     (track: ItunesTrack) => {
       if (!track.previewUrl) return;
       const audio = new Audio(track.previewUrl);
-      audio.volume = isMuted ? 0 : volumeRef.current;
+      const targetVolume = isMuted ? 0 : volumeRef.current;
       audio.playbackRate = playbackRate;
 
-      // Clean up old audio and its listeners first
+      // Clean up any existing crossfade interval
+      if (crossfadeRef.current) {
+        clearInterval(crossfadeRef.current);
+        crossfadeRef.current = null;
+      }
+
+      // If crossfade is enabled and there is an old audio, fade out old and fade in new
+      const oldAudio = audioRef.current;
+      const shouldCrossfade = crossfadeEnabledRef.current && oldAudio && !oldAudio.paused;
+
+      if (shouldCrossfade && oldAudio) {
+        audio.volume = 0;
+        const fadeSteps = 40; // 2 seconds at 50ms intervals
+        const fadeInterval = 50;
+        const volumeStep = targetVolume / fadeSteps;
+        const oldVolumeStep = (oldAudio.volume || targetVolume) / fadeSteps;
+        let step = 0;
+
+        crossfadeRef.current = setInterval(() => {
+          step++;
+          // Fade in new audio
+          audio.volume = Math.min(targetVolume, volumeStep * step);
+          // Fade out old audio
+          if (oldAudio) {
+            oldAudio.volume = Math.max(0, (oldAudio.volume || targetVolume) - oldVolumeStep);
+          }
+          if (step >= fadeSteps) {
+            if (crossfadeRef.current) {
+              clearInterval(crossfadeRef.current);
+              crossfadeRef.current = null;
+            }
+            oldAudio.pause();
+          }
+        }, fadeInterval);
+      } else {
+        audio.volume = targetVolume;
+        if (oldAudio) {
+          oldAudio.pause();
+        }
+      }
+
+      // Clean up old listeners
       if (cleanupRef.current) {
         cleanupRef.current();
         cleanupRef.current = null;
       }
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+
       audioRef.current = audio;
 
       resetPlaybackState();
@@ -368,14 +413,20 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         ];
       }
 
-      // Clean up old listeners and audio
+      // Clean up any existing crossfade
+      if (crossfadeRef.current) {
+        clearInterval(crossfadeRef.current);
+        crossfadeRef.current = null;
+      }
+
+      const targetVolume = isMuted ? 0 : volumeRef.current;
+      const oldAudio = audioRef.current;
+      const shouldCrossfade = crossfadeEnabledRef.current && oldAudio && !oldAudio.paused;
+
+      // Clean up old listeners
       if (cleanupRef.current) {
         cleanupRef.current();
         cleanupRef.current = null;
-      }
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
       }
 
       resetPlaybackState();
@@ -386,11 +437,38 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       setCurrentTrack(metadata?.fullTrack || null);
 
       const audio = new Audio(url);
-      audio.volume = isMuted ? 0 : volumeRef.current;
       audio.playbackRate = playbackRate;
       audioRef.current = audio;
       setCurrentlyPlayingId(id);
       setIsPlaying(true);
+
+      if (shouldCrossfade && oldAudio) {
+        audio.volume = 0;
+        const fadeSteps = 40;
+        const fadeInterval = 50;
+        const volumeStep = targetVolume / fadeSteps;
+        const oldStartVolume = oldAudio.volume || targetVolume;
+        const oldVolumeStep = oldStartVolume / fadeSteps;
+        let step = 0;
+
+        crossfadeRef.current = setInterval(() => {
+          step++;
+          audio.volume = Math.min(targetVolume, volumeStep * step);
+          oldAudio.volume = Math.max(0, oldStartVolume - oldVolumeStep * step);
+          if (step >= fadeSteps) {
+            if (crossfadeRef.current) {
+              clearInterval(crossfadeRef.current);
+              crossfadeRef.current = null;
+            }
+            oldAudio.pause();
+          }
+        }, fadeInterval);
+      } else {
+        audio.volume = targetVolume;
+        if (oldAudio) {
+          oldAudio.pause();
+        }
+      }
 
       const cleanup = attachCoreListeners(audio);
       cleanupRef.current = cleanup;
@@ -542,6 +620,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const toggleCrossfade = useCallback(() => {
+    setCrossfadeEnabled((prev) => !prev);
+  }, []);
+
   return (
     <AudioPlayerContext.Provider
       value={{
@@ -579,6 +661,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         setPlaybackRate,
         isMuted,
         toggleMute,
+        crossfadeEnabled,
+        toggleCrossfade,
       }}
     >
       {children}

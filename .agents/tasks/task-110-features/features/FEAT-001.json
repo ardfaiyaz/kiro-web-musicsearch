@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Music Experience Enhancements (items 1-10): Song lyrics with synced scrolling (enhance existing LyricsDisplay), album artwork color theming (enhance existing DynamicColorTheme), YouTube video embeds (enhance existing VideoSection/YouTubeEmbed), song preview waveform visualization, crossfade between previews, album tracklist auto-play, artist radio mode, mini lyrics ticker in MiniPlayer, BPM/tempo indicator, and album liner notes design for track pages.",
+  "status": "in_progress",
+  "steps": [
+    "1. Enhance app/components/LyricsDisplay.tsx: improve the synced scrolling to work with audio playback progress from AudioPlayerContext - map current playback time to estimated lyric line position based on even time distribution across lines. Add a karaoke-style highlight effect.",
+    "2. Enhance app/components/DynamicColorTheme.tsx and app/components/DynamicColorProvider.tsx: ensure the page-level color theming applies a full gradient background to track/album/artist pages based on dominant album art colors. Apply to hero sections, cards, and navigation elements.",
+    "3. Enhance app/components/YouTubeEmbed.tsx and app/components/VideoSection.tsx: embed YouTube videos using iframe with youtube.com/results?search_query= URL pattern (no API key needed). Show video search results embedded on artist and track pages.",
+    "4. Create app/components/player/WaveformVisualizer.tsx: generate a visual waveform display using Web Audio API's AnalyserNode during 30-second preview playback. Show animated bars that respond to audio frequency data. Integrate into AudioPlayer.tsx.",
+    "5. Add crossfade to AudioPlayerContext.tsx: when switching songs, create the new Audio object and fade it in while fading out the old one over ~2 seconds using volume ramping. Add a crossfadeEnabled setting.",
+    "6. Create app/components/album/AlbumAutoPlay.tsx: add an 'Auto-play all previews' button on album pages that queues all album tracks and plays them sequentially using the existing queue system in AudioPlayerContext.",
+    "7. Create app/components/player/ArtistRadio.tsx: when on an artist page or playing an artist's track, offer 'Artist Radio' button that fetches more tracks from the same artist via getArtistTracks() and queues them automatically.",
+    "8. Add mini lyrics ticker to app/components/MiniPlayer.tsx: show a single scrolling lyrics line in the mini player bar by fetching lyrics and estimating current line from playback progress.",
+    "9. Create app/components/BPMIndicator.tsx: estimate BPM from track genre metadata (map genres to typical BPM ranges) and track duration. Display as a small badge on track cards and detail pages.",
+    "10. Create app/components/album/LinerNotes.tsx: redesign track detail page section to look like vinyl liner notes with credits layout, story section (using track metadata), large artwork, track listing with durations in a typewriter font style."
+  ],
+  "acceptance_criteria": [
+    "LyricsDisplay shows highlighted current line synced with audio playback",
+    "Album art colors theme the track/album page hero sections dynamically",
+    "YouTube video embeds appear on track and artist pages without requiring API keys",
+    "Waveform visualization animates during audio preview playback",
+    "Audio crossfades smoothly when switching between tracks",
+    "Album page has auto-play button that queues all tracks",
+    "Artist radio mode generates a queue from artist's catalog",
+    "Mini player shows current lyric line as a ticker",
+    "BPM indicator displays estimated tempo on track cards",
+    "Track pages include a liner notes styled section with credits"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

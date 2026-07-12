@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-010",
+  "type": "feat",
+  "description": "Fun and Engagement Features (items 91-100): Music trivia quiz, guess the song game, music bingo, listening challenges, Easter eggs, album of the day, music memory game, countdown to release, year in review, and musical mood ring.",
+  "status": "pending",
+  "steps": [
+    "1. Create app/games/trivia/page.tsx and app/components/games/MusicTrivia.tsx: daily music trivia quiz - 'Which artist released this album?' Show album artwork, provide 4 artist choices. Generate from listening history or random iTunes searches. Track score in localStorage.",
+    "2. Create app/games/guess/page.tsx and app/components/games/GuessTheSong.tsx: play 5 seconds of a track preview, user guesses the song from 4 options. Use Audio API with setTimeout to stop after 5s. Score tracking.",
+    "3. Create app/games/bingo/page.tsx and app/components/games/MusicBingo.tsx: 5x5 bingo card with criteria ('Listen to a jazz song', 'Find a song from the 80s', 'Play a song over 5 minutes'). Mark squares when criteria met. Track in localStorage.",
+    "4. Create lib/challenges.ts and app/components/games/ListeningChallenges.tsx: weekly challenges like 'Listen to 5 jazz albums this week' with progress bars. Check progress against playback history. Show on dashboard page.",
+    "5. Create app/components/EasterEggs.tsx: Konami code (up up down down left right left right B A) unlocks retro theme. Typing 'vinyl' in search triggers special vinyl mode. Add event listeners in layout.",
+    "6. Create app/components/discover/AlbumOfTheDay.tsx: featured album each day (use date as seed to pick from curated list or iTunes top albums). Show editorial-style card with description. Add to home page.",
+    "7. Create app/games/memory/page.tsx and app/components/games/MemoryGame.tsx: card-flip memory matching game using album artworks. Grid of face-down cards, flip two to match pairs. Generate from favorite albums or random.",
+    "8. Create app/components/discover/ReleaseCountdown.tsx: show countdown timers for upcoming album releases. Hardcode a few notable upcoming releases or parse from Apple RSS. Show days/hours/minutes remaining.",
+    "9. Create app/components/favorites/analytics/YearInReview.tsx: end-of-year summary with total stats, top 5 artists, top 5 songs, genres explored, total hours, and highlight moments. Styled as a celebratory page.",
+    "10. Create app/components/MoodRing.tsx: animated ring on profile that changes color based on recent listening mood (energetic=red, chill=blue, happy=yellow, sad=purple). Derive mood from genre of recent tracks."
+  ],
+  "acceptance_criteria": [
+    "Music trivia quiz presents daily questions with 4 choices",
+    "Guess the song plays 5 seconds of audio with multiple choice",
+    "Music bingo card tracks criteria completion",
+    "Listening challenges show progress bars toward goals",
+    "Konami code and 'vinyl' search activate Easter eggs",
+    "Album of the day shows a featured album with description",
+    "Memory game works with album artwork card matching",
+    "Release countdown shows timers for upcoming albums",
+    "Year in review generates annual listening summary",
+    "Mood ring animates based on recent listening genre"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
