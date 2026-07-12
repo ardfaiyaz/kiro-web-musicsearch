@@ -2,7 +2,7 @@
   "id": "FEAT-012",
   "type": "fix",
   "description": "Address review findings: (1) Feature flags not gating feature rendering - wire them to components, (2) SettingsContext stale closure - fix the setter pattern, (3) Games creating unmanaged Audio elements - pause main player when game starts, (4) Crossfade interval orphaning Audio elements - extract shared helper and track fading elements.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Fix SettingsContext stale closure: change all useCallback setters to read currentSettings at call time instead of capturing it in closure. Since currentSettings is a module-level variable, remove empty dependency arrays or use a getter pattern.",
     "2. Fix feature flags: create a FeatureFlagGate wrapper component that reads feature flags and conditionally renders children. Wrap flagged components in layout.tsx with the gate.",
@@ -22,5 +22,5 @@
     "bun run build succeeds with zero errors"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All four priority review issues addressed. (1) Feature flags now gate 7 components in layout.tsx via FeatureFlagGate that uses useSyncExternalStore and custom events. (2) SettingsContext setters now explicitly call getSettingsSnapshot() to ensure fresh module-level state is read. (3) GuessTheSong imports useAudioPlayer and pauses main player before playing game audio. (4) Crossfade logic extracted into performCrossfade/transitionAudio helpers with fadingOutRef tracking fading elements to prevent orphaning. MemoryGame does not actually use Audio (only visual matching). Build and lint pass cleanly with zero errors and zero warnings."
 }
