@@ -129,6 +129,31 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     setProgress(0);
   }, []);
 
+  /**
+   * Properly release an Audio object to prevent memory leaks.
+   * Sets src to empty and calls load() to release network resources.
+   */
+  const releaseAudio = useCallback((audio: HTMLAudioElement | null) => {
+    if (!audio) return;
+    audio.pause();
+    audio.src = "";
+    audio.load();
+  }, []);
+
+  // Clean up audio on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        releaseAudio(audioRef.current);
+        audioRef.current = null;
+      }
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+    };
+  }, [releaseAudio]);
+
   // Stable listener attachment (only time/metadata, no ended logic)
   const attachCoreListeners = useCallback((audio: HTMLAudioElement) => {
     const handleTimeUpdate = () => {
@@ -198,13 +223,15 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
               clearInterval(crossfadeRef.current);
               crossfadeRef.current = null;
             }
-            oldAudio.pause();
+            // Properly release old audio to prevent memory leaks
+            releaseAudio(oldAudio);
           }
         }, fadeInterval);
       } else {
         audio.volume = targetVolume;
         if (oldAudio) {
-          oldAudio.pause();
+          // Properly release old audio to prevent memory leaks
+          releaseAudio(oldAudio);
         }
       }
 
@@ -237,7 +264,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
       });
     },
-    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate]
+    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate, releaseAudio]
   );
 
   // Handle ended event via effect - uses refs for current state to avoid stale closures
@@ -279,6 +306,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       cleanupRef.current();
       cleanupRef.current = null;
     }
+    releaseAudio(audioRef.current);
     audioRef.current = null;
     clearPlayerState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -466,13 +494,15 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
               clearInterval(crossfadeRef.current);
               crossfadeRef.current = null;
             }
-            oldAudio.pause();
+            // Properly release old audio to prevent memory leaks
+            releaseAudio(oldAudio);
           }
         }, fadeInterval);
       } else {
         audio.volume = targetVolume;
         if (oldAudio) {
-          oldAudio.pause();
+          // Properly release old audio to prevent memory leaks
+          releaseAudio(oldAudio);
         }
       }
 
@@ -488,7 +518,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
       });
     },
-    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate]
+    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate, releaseAudio]
   );
 
   const setVolume = useCallback((v: number) => {

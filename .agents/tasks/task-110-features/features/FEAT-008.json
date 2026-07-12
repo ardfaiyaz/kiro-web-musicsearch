@@ -2,7 +2,7 @@
   "id": "FEAT-008",
   "type": "feat",
   "description": "Performance and Technical Enhancements (items 71-80): Virtual scrolling for long lists, image blur-up loading, predictive prefetching, IndexedDB for large storage, background sync, streaming search results with Suspense, route-based code splitting, memory-efficient audio, request deduplication, and stale-while-revalidate caching.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Create app/components/ui/VirtualList.tsx: implement virtual scrolling using Intersection Observer and a windowing approach - only render visible items plus buffer. Apply to track lists in search results and playlists with 100+ items.",
     "2. Create app/components/ui/BlurUpImage.tsx: show blurred low-res thumbnail (using CSS blur filter on a tiny version) then load full resolution progressively. Replace Image usage in cards with this component.",
