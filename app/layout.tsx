@@ -19,6 +19,7 @@ import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
+import PageTransition from "./components/ui/PageTransition";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -77,7 +78,9 @@ export default function RootLayout({
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
                         <main id="main-content" tabIndex={-1}>
-                          {children}
+                          <PageTransition>
+                            {children}
+                          </PageTransition>
                         </main>
                         <MiniPlayer />
                         <MobileBottomNav />

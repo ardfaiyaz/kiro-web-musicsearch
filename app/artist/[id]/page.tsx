@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getArtistById, getArtistAlbums } from "@/lib/itunes";
 import { getSimilarArtists } from "@/lib/lastfm";
 import { getUnifiedArtist } from "@/lib/music-service";
@@ -14,6 +15,50 @@ import ArtistVideos from "@/app/components/ArtistVideos";
 import ArtistBio from "@/app/components/ArtistBio";
 import ArtistInsightsPanel from "@/app/components/ArtistInsightsPanel";
 import RecentlyViewedTracker from "@/app/components/RecentlyViewedTracker";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const artistId = parseInt(id, 10);
+
+  if (isNaN(artistId)) {
+    return { title: "Artist Not Found" };
+  }
+
+  const artist = await getArtistById(artistId);
+
+  if (!artist) {
+    return { title: "Artist Not Found" };
+  }
+
+  const title = `${artist.artistName} - Music Search & Discovery`;
+  const description = `Explore ${artist.artistName}'s discography, top tracks, and similar artists. Genre: ${artist.primaryGenreName}.`;
+  const artworkUrl = artist.artworkUrl100?.replace("100x100", "600x600");
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: artist.artistName,
+      description,
+      ...(artworkUrl
+        ? {
+            images: [
+              {
+                url: artworkUrl,
+                width: 600,
+                height: 600,
+                alt: `${artist.artistName} artwork`,
+              },
+            ],
+          }
+        : {}),
+    },
+  };
+}
 
 function SectionSkeleton({ height = "h-64" }: { height?: string }) {
   return (

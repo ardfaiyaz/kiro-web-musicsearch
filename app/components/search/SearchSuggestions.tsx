@@ -68,7 +68,7 @@ export default function SearchSuggestions({
       <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
         <TrendingUp size={12} className="text-muted" aria-hidden="true" />
         <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">
-          Trending Searches
+          Try searching for:
         </span>
       </div>
       {trendingSearches.map((term, idx) => (

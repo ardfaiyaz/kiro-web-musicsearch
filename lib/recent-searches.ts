@@ -44,3 +44,16 @@ export function clearRecentSearches(): void {
     // localStorage might be unavailable
   }
 }
+
+export function getLastSearch(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return "";
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed) || parsed.length === 0) return "";
+    return parsed[0].query || "";
+  } catch {
+    return "";
+  }
+}

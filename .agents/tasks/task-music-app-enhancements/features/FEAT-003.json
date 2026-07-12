@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "OpenGraph meta tags for shareable URLs, loading states for SearchBar, empty search placeholder suggestions, smooth page transitions, and persist last search. Items 7, 9, 10, 11, 12, 13.",
+  "status": "in_progress",
+  "steps": [
+    "Add generateMetadata() export to app/artist/[id]/page.tsx that fetches artist data and returns OpenGraph meta tags (title, description, images with artist artwork). Follow Next.js 16 metadata API patterns.",
+    "Add generateMetadata() export to app/album/[id]/page.tsx that fetches album data and returns OpenGraph meta tags (title, description, images with album artwork).",
+    "Add generateMetadata() export to app/track/[id]/page.tsx that fetches track data and returns OpenGraph meta tags (title, description, images with track artwork).",
+    "The SearchBar already has a shimmer loading state in InstantResults.tsx when isFetching is true - verify this works correctly. Also add a subtle spinner/shimmer to the SearchBar input itself (a small animated indicator next to the Cmd+K badge) while isFetching is true to provide immediate feedback.",
+    "The SearchBar already shows trending searches (Taylor Swift, Drake, BTS, Billie Eilish, The Weeknd) as placeholder suggestions in the dropdown when input is empty. Add visual 'Try searching for:' text above the trending section in SearchSuggestions.tsx to make it more discoverable, and also show this text as part of the input placeholder when there's no query on the /search page.",
+    "The app/components/ui/PageTransition.tsx already exists with animate-page-enter. It's not used anywhere currently. Wrap the {children} in app/layout.tsx with PageTransition to enable fade-in animations on route changes.",
+    "Update lib/recent-searches.ts to also export a getLastSearch() function that returns the most recent search query. Update the SearchBar component to pre-fill the input with the last search when the user navigates to /search without a ?q= param (only on the search page, not on homepage). This persists the last search across sessions."
+  ],
+  "acceptance_criteria": [
+    "Artist pages have OpenGraph meta tags with artist name and artwork image",
+    "Album pages have OpenGraph meta tags with album name, artist, and artwork image",
+    "Track pages have OpenGraph meta tags with track name, artist, and artwork image",
+    "SearchBar shows a loading indicator while fetching suggestions",
+    "Empty search state shows 'Try searching for:' with example artists",
+    "Page transitions have a subtle fade-in animation when navigating",
+    "Returning to /search pre-fills the last searched query",
+    "Build passes with zero TypeScript errors and zero lint errors"
+  ],
+  "verification": [
+    "bun run lint",
+    "bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

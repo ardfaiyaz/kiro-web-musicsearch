@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   useState,
   useEffect,
@@ -11,8 +11,8 @@ import {
   FormEvent,
   KeyboardEvent,
 } from "react";
-import { Search, Mic, SlidersHorizontal } from "lucide-react";
-import { addRecentSearch, getRecentSearches, clearRecentSearches } from "@/lib/recent-searches";
+import { Search, Mic, SlidersHorizontal, Loader2 } from "lucide-react";
+import { addRecentSearch, getRecentSearches, clearRecentSearches, getLastSearch } from "@/lib/recent-searches";
 import { RecentSearch } from "@/lib/types";
 import SearchSuggestions from "./search/SearchSuggestions";
 import InstantResults from "./search/InstantResults";
@@ -52,6 +52,7 @@ function getServerSnapshot(): boolean {
 export default function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [isPending, startTransition] = useTransition();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -101,6 +102,16 @@ export default function SearchBar() {
     document.addEventListener("keydown", handleGlobalKeydown);
     return () => document.removeEventListener("keydown", handleGlobalKeydown);
   }, []);
+
+  // Pre-fill with last search on /search page when no ?q= param
+  useEffect(() => {
+    if (pathname === "/search" && !searchParams.get("q")) {
+      const lastSearch = getLastSearch();
+      if (lastSearch) {
+        setQuery(lastSearch);
+      }
+    }
+  }, [pathname, searchParams]);
 
   const fetchSuggestions = useCallback(async (term: string) => {
     if (!term.trim()) {
@@ -387,9 +398,18 @@ export default function SearchBar() {
             aria-controls="search-dropdown"
             aria-activedescendant={activeIndex >= 0 ? `search-item-${activeIndex}` : undefined}
           />
-          {/* Keyboard shortcut hint */}
-          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden items-center gap-0.5 rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-xs text-muted sm:inline-flex">
-            <span className="text-[10px]">&#8984;</span>K
+          {/* Keyboard shortcut hint and loading indicator */}
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden items-center gap-1.5 sm:inline-flex">
+            {isFetching && (
+              <Loader2
+                size={14}
+                className="animate-spin text-muted"
+                aria-label="Loading suggestions"
+              />
+            )}
+            <span className="flex items-center gap-0.5 rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-xs text-muted">
+              <span className="text-[10px]">&#8984;</span>K
+            </span>
           </span>
 
           {dropdownVisible && (
