@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, memo } from "react";
+import { useEffect, useRef, useCallback, memo, useState, ReactNode } from "react";
 import { Play, ListPlus, Heart, Share2, User, ExternalLink } from "lucide-react";
 
 export interface ContextMenuItem {
@@ -172,6 +172,106 @@ export function getArtistContextMenuItems(options: {
   }
 
   return items;
+}
+
+/**
+ * LongPressWrapper - wraps a component with long-press detection (500ms timeout).
+ * On long-press, shows a context menu at the press position.
+ */
+export function LongPressWrapper({
+  children,
+  items,
+  className = "",
+}: {
+  children: ReactNode;
+  items: ContextMenuItem[];
+  className?: string;
+}) {
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+  const didLongPress = useRef(false);
+
+  const clearTimer = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+      didLongPress.current = false;
+
+      longPressTimer.current = setTimeout(() => {
+        didLongPress.current = true;
+        setMenuPosition({
+          x: touch.clientX,
+          y: touch.clientY,
+        });
+      }, 500);
+    },
+    []
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStartPos.current) return;
+      const touch = e.touches[0];
+      const dx = Math.abs(touch.clientX - touchStartPos.current.x);
+      const dy = Math.abs(touch.clientY - touchStartPos.current.y);
+
+      // Cancel long press if finger moves too far
+      if (dx > 10 || dy > 10) {
+        clearTimer();
+      }
+    },
+    [clearTimer]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      clearTimer();
+      // Prevent click from firing if long press was triggered
+      if (didLongPress.current) {
+        e.preventDefault();
+      }
+    },
+    [clearTimer]
+  );
+
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenuPosition({ x: e.clientX, y: e.clientY });
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setMenuPosition(null);
+  }, []);
+
+  return (
+    <>
+      <div
+        className={className}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onContextMenu={handleContextMenu}
+      >
+        {children}
+      </div>
+      {menuPosition && (
+        <ContextMenu
+          x={menuPosition.x}
+          y={menuPosition.y}
+          items={items}
+          onClose={closeMenu}
+        />
+      )}
+    </>
+  );
 }
 
 export default ContextMenu;

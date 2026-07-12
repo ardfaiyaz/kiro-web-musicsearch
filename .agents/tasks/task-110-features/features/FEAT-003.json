@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Mobile and Touch Enhancements (items 21-30): Swipe between tabs, pull-to-refresh, haptic feedback simulation, long-press context menus, swipe-to-favorite, pinch-to-zoom artwork, landscape player mode, bottom sheet for track details, floating action button, and thumb-zone optimized layout.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Create app/components/ui/SwipeTabs.tsx: a wrapper component that detects horizontal swipe gestures (touchstart/touchmove/touchend) and emits tab change events. Use in favorites page tabs and other tabbed interfaces.",
     "2. Create app/components/ui/PullToRefresh.tsx: detect pull-down gesture on mobile. Show a spinner animation at top. Call router.refresh() or window.location.reload() on release. Add to main content areas.",

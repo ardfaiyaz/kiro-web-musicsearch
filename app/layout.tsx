@@ -21,6 +21,9 @@ import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import WebVitalsReporter from "./components/WebVitalsReporter";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
+import FloatingActionButton from "./components/ui/FloatingActionButton";
+import LandscapePlayer from "./components/player/LandscapePlayer";
+import "./globals.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -85,6 +88,8 @@ export default function RootLayout({
                         </main>
                         <MiniPlayer />
                         <MobileBottomNav />
+                        <FloatingActionButton />
+                        <LandscapePlayer />
                         <SettingsFab />
                         <KeyboardShortcuts />
                         <KeyboardShortcutsOverlay />

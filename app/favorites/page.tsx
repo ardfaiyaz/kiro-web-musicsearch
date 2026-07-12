@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import { usePersonalization } from "@/app/components/PersonalizationContext";
@@ -12,6 +12,7 @@ import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArti
 import FavoriteAlbumsPage from "@/app/components/favorites/albums/FavoriteAlbumsPage";
 import RecentlyPlayedPage from "@/app/components/favorites/history/RecentlyPlayedPage";
 import MusicInsightsPage from "@/app/components/favorites/analytics/MusicInsightsPage";
+import SwipeTabs from "@/app/components/ui/SwipeTabs";
 
 type TabId = "songs" | "artists" | "albums" | "collections" | "history" | "insights";
 
@@ -28,6 +29,22 @@ export default function FavoritesPage() {
   const { favorites, favoriteArtists, favoriteAlbums } = useFavorites();
   const { listeningHistory } = usePersonalization();
   const [activeTab, setActiveTab] = useState<TabId>("songs");
+
+  const currentTabIndex = TABS.findIndex((t) => t.id === activeTab);
+
+  const handleSwipeLeft = useCallback(() => {
+    const nextIndex = currentTabIndex + 1;
+    if (nextIndex < TABS.length) {
+      setActiveTab(TABS[nextIndex].id);
+    }
+  }, [currentTabIndex]);
+
+  const handleSwipeRight = useCallback(() => {
+    const prevIndex = currentTabIndex - 1;
+    if (prevIndex >= 0) {
+      setActiveTab(TABS[prevIndex].id);
+    }
+  }, [currentTabIndex]);
 
   function getTabCount(tabId: TabId): number {
     switch (tabId) {
@@ -96,6 +113,12 @@ export default function FavoritesPage() {
           </nav>
 
           {/* Songs Tab */}
+          <SwipeTabs
+            currentIndex={currentTabIndex}
+            tabCount={TABS.length}
+            onSwipeLeft={handleSwipeLeft}
+            onSwipeRight={handleSwipeRight}
+          >
           {activeTab === "songs" && (
             <div
               id="tabpanel-songs"
@@ -174,6 +197,7 @@ export default function FavoritesPage() {
               <MusicInsightsPage />
             </div>
           )}
+          </SwipeTabs>
         </section>
       </div>
 
