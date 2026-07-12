@@ -21,7 +21,6 @@ import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import WebVitalsReporter from "./components/WebVitalsReporter";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
-import PageTransition from "./components/ui/PageTransition";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -82,9 +81,7 @@ export default function RootLayout({
                         <ServiceWorkerRegistration />
                         <WebVitalsReporter />
                         <main id="main-content" tabIndex={-1}>
-                          <PageTransition>
-                            {children}
-                          </PageTransition>
+                          {children}
                         </main>
                         <MiniPlayer />
                         <MobileBottomNav />

@@ -4,6 +4,7 @@
 const CACHE_NAME = "music-app-v1";
 const API_CACHE_NAME = "music-app-api-v1";
 const API_CACHE_MAX_ENTRIES = 50;
+const STATIC_CACHE_MAX_ENTRIES = 100;
 
 const PRE_CACHE_URLS = ["/", "/search"];
 
@@ -60,7 +61,10 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (response.ok) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(request, clone))
+              .then(() => trimCache(CACHE_NAME, STATIC_CACHE_MAX_ENTRIES));
           }
           return response;
         })
@@ -110,7 +114,8 @@ self.addEventListener("fetch", (event) => {
               const clone = response.clone();
               caches
                 .open(CACHE_NAME)
-                .then((cache) => cache.put(request, clone));
+                .then((cache) => cache.put(request, clone))
+                .then(() => trimCache(CACHE_NAME, STATIC_CACHE_MAX_ENTRIES));
             }
             return response;
           }),
@@ -125,7 +130,10 @@ self.addEventListener("fetch", (event) => {
       .then((response) => {
         if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(request, clone))
+            .then(() => trimCache(CACHE_NAME, STATIC_CACHE_MAX_ENTRIES));
         }
         return response;
       })

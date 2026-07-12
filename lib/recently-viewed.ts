@@ -35,6 +35,7 @@ export function addRecentlyViewed(item: Omit<RecentlyViewedItem, "timestamp">): 
       ...filtered,
     ].slice(0, MAX_ITEMS);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new Event("recently-viewed-updated"));
   } catch {
     // localStorage might be unavailable
   }
