@@ -2,7 +2,7 @@
   "id": "FEAT-010",
   "type": "feat",
   "description": "Fun and Engagement Features (items 91-100): Music trivia quiz, guess the song game, music bingo, listening challenges, Easter eggs, album of the day, music memory game, countdown to release, year in review, and musical mood ring.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Create app/games/trivia/page.tsx and app/components/games/MusicTrivia.tsx: daily music trivia quiz - 'Which artist released this album?' Show album artwork, provide 4 artist choices. Generate from listening history or random iTunes searches. Track score in localStorage.",
     "2. Create app/games/guess/page.tsx and app/components/games/GuessTheSong.tsx: play 5 seconds of a track preview, user guesses the song from 4 options. Use Audio API with setTimeout to stop after 5s. Score tracking.",

@@ -28,6 +28,7 @@ import FocusMode from "./components/FocusMode";
 import VoiceNavigation from "./components/VoiceNavigation";
 import AudioCaption from "./components/player/AudioCaption";
 import ColorBlindFilters from "./components/ColorBlindFilters";
+import EasterEggs from "./components/EasterEggs";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -103,6 +104,7 @@ export default function RootLayout({
                         <VoiceNavigation />
                         <AudioCaption />
                         <ColorBlindFilters />
+                        <EasterEggs />
                       </div>
                     </ToastProvider>
                   </PersonalizationProvider>

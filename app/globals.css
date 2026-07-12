@@ -2204,3 +2204,68 @@ html.colorblind-tritanopia {
 }
 
 /* Color blind filter SVG definitions are injected via ColorBlindFilters component */
+
+/* Easter Egg: Retro Theme */
+html.retro-theme {
+  --font-family-override: "Courier New", Courier, monospace;
+}
+
+html.retro-theme body {
+  font-family: "Courier New", Courier, monospace !important;
+  background-color: #1a1a2e !important;
+  color: #00ff41 !important;
+  image-rendering: pixelated;
+}
+
+html.retro-theme * {
+  border-radius: 0 !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html.retro-theme .rounded-2xl,
+html.retro-theme .rounded-xl,
+html.retro-theme .rounded-lg,
+html.retro-theme .rounded-full {
+  border-radius: 0 !important;
+}
+
+html.retro-theme img {
+  filter: contrast(1.2) saturate(1.5);
+  image-rendering: pixelated;
+}
+
+/* Easter Egg: Vinyl Mode */
+html.vinyl-mode img {
+  border-radius: 50% !important;
+  animation: vinyl-spin 4s linear infinite;
+}
+
+html.vinyl-mode .aspect-square img {
+  border-radius: 50% !important;
+}
+
+@keyframes vinyl-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+html.vinyl-mode body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(139, 69, 19, 0.05) 100%
+  );
+}
