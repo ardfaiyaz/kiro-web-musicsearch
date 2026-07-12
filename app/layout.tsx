@@ -17,6 +17,8 @@ import CommandPalette from "./components/CommandPalette";
 import { ToastProvider } from "./components/ToastContext";
 import OfflineDetector from "./components/OfflineDetector";
 import RecentlyPlayedTracker from "./components/RecentlyPlayedTracker";
+import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
+import WebVitalsReporter from "./components/WebVitalsReporter";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
 import PageTransition from "./components/ui/PageTransition";
@@ -77,6 +79,8 @@ export default function RootLayout({
                       <div className="relative z-10 flex min-h-full flex-col pb-16 sm:pb-0">
                         <OfflineDetector />
                         <RecentlyPlayedTracker />
+                        <ServiceWorkerRegistration />
+                        <WebVitalsReporter />
                         <main id="main-content" tabIndex={-1}>
                           <PageTransition>
                             {children}
