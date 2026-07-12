@@ -2,7 +2,7 @@
   "task_id": "task-music-app-enhancements",
   "task_description": "Implement 16 enhancements to the music search web app: dedicated search page, mobile bottom nav, audio preview indicators, keyboard shortcut overlay, genre browsing, feeling lucky, OpenGraph tags, recently viewed, loading states, empty search suggestions, page transitions, persist last search, service worker offline support, web vitals reporting, and splash screen.",
   "status": "completed",
-  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005", "FEAT-006"],
   "blocked_reason": null,
   "verification": {
     "build": "pass",
