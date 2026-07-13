@@ -17,6 +17,7 @@ import { RecentSearch } from "@/lib/types";
 import SearchSuggestions from "./search/SearchSuggestions";
 import InstantResults from "./search/InstantResults";
 import AdvancedFilters from "./search/AdvancedFilters";
+import HumSearch from "./search/HumSearch";
 
 interface Suggestion {
   trackId: number;
@@ -247,7 +248,16 @@ export default function SearchBar() {
       ? suggestion.artistName
       : `${suggestion.trackName} ${suggestion.artistName}`;
     setQuery(term);
-    performSearch(term);
+    // Save with album art thumbnail
+    addRecentSearch(term.trim(), suggestion.imageUrl);
+    setRecentSearches(getRecentSearches());
+    setShowDropdown(false);
+    setActiveIndex(-1);
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("q", term.trim());
+      router.push(`/search?${params.toString()}`);
+    });
   }
 
   function handleRecentClick(recent: RecentSearch) {
@@ -514,6 +524,11 @@ export default function SearchBar() {
 
       {/* Advanced Filters Panel */}
       <AdvancedFilters isOpen={showAdvancedFilters} />
+
+      {/* Easter egg: Hum to search */}
+      <div className="flex justify-center">
+        <HumSearch />
+      </div>
     </div>
   );
 }

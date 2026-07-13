@@ -6,6 +6,7 @@ import Header from "@/app/components/Header";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import { usePersonalization } from "@/app/components/PersonalizationContext";
 import { getRecentSearches } from "@/lib/recent-searches";
+import ListeningChallenges from "@/app/components/games/ListeningChallenges";
 
 function getMostCommonGenre(
   genres: string[]
@@ -284,6 +285,11 @@ export default function DashboardPage() {
               </ul>
             )}
           </div>
+        </section>
+
+        {/* Weekly Challenges */}
+        <section className="mt-12" aria-label="Weekly challenges">
+          <ListeningChallenges />
         </section>
       </div>
     </div>

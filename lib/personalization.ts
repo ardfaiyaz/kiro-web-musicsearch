@@ -209,6 +209,32 @@ export function removeTrackFromPlaylist(
   }
 }
 
+export function reorderPlaylistTracks(
+  playlistId: string,
+  fromIndex: number,
+  toIndex: number
+): void {
+  if (typeof window === "undefined") return;
+  const playlists = getPlaylists();
+  const playlist = playlists.find((p) => p.id === playlistId);
+  if (!playlist) return;
+  if (
+    fromIndex < 0 ||
+    fromIndex >= playlist.tracks.length ||
+    toIndex < 0 ||
+    toIndex >= playlist.tracks.length
+  ) return;
+  const [track] = playlist.tracks.splice(fromIndex, 1);
+  playlist.tracks.splice(toIndex, 0, track);
+  try {
+    localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(playlists));
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[Music Search] localStorage quota exceeded. Some data may not be persisted.");
+    }
+  }
+}
+
 // --- Listening History ---
 
 export interface HistoryEntry {

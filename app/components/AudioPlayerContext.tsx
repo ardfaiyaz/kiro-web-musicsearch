@@ -14,6 +14,7 @@ import {
   addToPlaybackHistory,
   updatePlaybackProgress,
 } from "@/lib/playback-history";
+import { addToQueueHistory } from "@/lib/queue-history";
 
 export type RepeatMode = "off" | "one" | "all";
 
@@ -52,6 +53,8 @@ interface AudioPlayerContextType {
   setPlaybackRate: (rate: number) => void;
   isMuted: boolean;
   toggleMute: () => void;
+  crossfadeEnabled: boolean;
+  toggleCrossfade: () => void;
 }
 
 interface TrackMetadata {
@@ -84,6 +87,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [isMuted, setIsMuted] = useState(false);
   const [playbackRate, setPlaybackRateState] = useState(1);
   const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null);
+  const [crossfadeEnabled, setCrossfadeEnabled] = useState(false);
 
   // A counter that increments when a track ends, triggering the ended effect
   const [endedCounter, setEndedCounter] = useState(0);
@@ -91,6 +95,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const historyStackRef = useRef<ItunesTrack[]>([]);
   const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const previousVolumeRef = useRef(1);
+  const crossfadeRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const crossfadeEnabledRef = useRef(false);
 
   // Refs for values needed in the endedCounter effect to avoid stale closures
   const queueRef = useRef<ItunesTrack[]>([]);
@@ -103,6 +109,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   shuffleModeRef.current = shuffleMode;
   repeatModeRef.current = repeatMode;
   currentTrackRef.current = currentTrack;
+  crossfadeEnabledRef.current = crossfadeEnabled;
 
   const resetPlaybackState = useCallback(() => {
     setCurrentTime(0);
@@ -121,6 +128,130 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     setDuration(0);
     setProgress(0);
   }, []);
+
+  /**
+   * Properly release an Audio object to prevent memory leaks.
+   * Sets src to empty and calls load() to release network resources.
+   */
+  const releaseAudio = useCallback((audio: HTMLAudioElement | null) => {
+    if (!audio) return;
+    audio.pause();
+    audio.src = "";
+    audio.load();
+  }, []);
+
+  /**
+   * Track audio elements that are currently fading out.
+   * This prevents orphaned audio elements when rapid track switching
+   * triggers multiple crossfades before earlier ones complete.
+   */
+  const fadingOutRef = useRef<Set<HTMLAudioElement>>(new Set());
+
+  /**
+   * Shared crossfade helper. Handles fading out old audio and fading in new audio.
+   * If called while a previous fade is in progress, the old fading element is
+   * immediately released, preventing orphaned Audio elements.
+   */
+  const performCrossfade = useCallback(
+    (oldAudio: HTMLAudioElement, newAudio: HTMLAudioElement, targetVolume: number) => {
+      // Cancel any existing crossfade interval
+      if (crossfadeRef.current) {
+        clearInterval(crossfadeRef.current);
+        crossfadeRef.current = null;
+      }
+
+      // Release any previously fading-out elements to prevent orphaning
+      for (const fadingAudio of fadingOutRef.current) {
+        releaseAudio(fadingAudio);
+      }
+      fadingOutRef.current.clear();
+
+      // Track the old audio element as fading out
+      fadingOutRef.current.add(oldAudio);
+
+      newAudio.volume = 0;
+      const fadeSteps = 40; // 2 seconds at 50ms intervals
+      const fadeInterval = 50;
+      const volumeStep = targetVolume / fadeSteps;
+      const oldStartVolume = oldAudio.volume || targetVolume;
+      const oldVolumeStep = oldStartVolume / fadeSteps;
+      let step = 0;
+
+      crossfadeRef.current = setInterval(() => {
+        step++;
+        // Fade in new audio
+        newAudio.volume = Math.min(targetVolume, volumeStep * step);
+        // Fade out old audio
+        oldAudio.volume = Math.max(0, oldStartVolume - oldVolumeStep * step);
+
+        if (step >= fadeSteps) {
+          if (crossfadeRef.current) {
+            clearInterval(crossfadeRef.current);
+            crossfadeRef.current = null;
+          }
+          // Remove from fading set and release
+          fadingOutRef.current.delete(oldAudio);
+          releaseAudio(oldAudio);
+        }
+      }, fadeInterval);
+    },
+    [releaseAudio]
+  );
+
+  /**
+   * Transition from old audio to new audio, using crossfade if enabled,
+   * or immediate switch otherwise.
+   */
+  const transitionAudio = useCallback(
+    (oldAudio: HTMLAudioElement | null, newAudio: HTMLAudioElement, targetVolume: number) => {
+      // Cancel any existing crossfade interval
+      if (crossfadeRef.current) {
+        clearInterval(crossfadeRef.current);
+        crossfadeRef.current = null;
+      }
+
+      const shouldCrossfade = crossfadeEnabledRef.current && oldAudio && !oldAudio.paused;
+
+      if (shouldCrossfade && oldAudio) {
+        performCrossfade(oldAudio, newAudio, targetVolume);
+      } else {
+        newAudio.volume = targetVolume;
+        if (oldAudio) {
+          // Release any fading-out elements as well
+          for (const fadingAudio of fadingOutRef.current) {
+            releaseAudio(fadingAudio);
+          }
+          fadingOutRef.current.clear();
+          releaseAudio(oldAudio);
+        }
+      }
+    },
+    [performCrossfade, releaseAudio]
+  );
+
+  // Clean up audio on unmount to prevent memory leaks
+  useEffect(() => {
+    const fadingOutSet = fadingOutRef.current;
+    return () => {
+      if (audioRef.current) {
+        releaseAudio(audioRef.current);
+        audioRef.current = null;
+      }
+      // Release any fading-out elements
+      for (const fadingAudio of fadingOutSet) {
+        releaseAudio(fadingAudio);
+      }
+      fadingOutSet.clear();
+      if (crossfadeRef.current) {
+        clearInterval(crossfadeRef.current);
+        crossfadeRef.current = null;
+      }
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+    };
+  }, [releaseAudio]);
 
   // Stable listener attachment (only time/metadata, no ended logic)
   const attachCoreListeners = useCallback((audio: HTMLAudioElement) => {
@@ -157,17 +288,20 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     (track: ItunesTrack) => {
       if (!track.previewUrl) return;
       const audio = new Audio(track.previewUrl);
-      audio.volume = isMuted ? 0 : volumeRef.current;
+      const targetVolume = isMuted ? 0 : volumeRef.current;
       audio.playbackRate = playbackRate;
 
-      // Clean up old audio and its listeners first
+      const oldAudio = audioRef.current;
+
+      // Use shared transition helper for crossfade or immediate switch
+      transitionAudio(oldAudio, audio, targetVolume);
+
+      // Clean up old listeners
       if (cleanupRef.current) {
         cleanupRef.current();
         cleanupRef.current = null;
       }
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+
       audioRef.current = audio;
 
       resetPlaybackState();
@@ -191,7 +325,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
       });
     },
-    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate]
+    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate, transitionAudio]
   );
 
   // Handle ended event via effect - uses refs for current state to avoid stale closures
@@ -233,6 +367,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       cleanupRef.current();
       cleanupRef.current = null;
     }
+    releaseAudio(audioRef.current);
     audioRef.current = null;
     clearPlayerState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -368,14 +503,13 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         ];
       }
 
-      // Clean up old listeners and audio
+      const targetVolume = isMuted ? 0 : volumeRef.current;
+      const oldAudio = audioRef.current;
+
+      // Clean up old listeners
       if (cleanupRef.current) {
         cleanupRef.current();
         cleanupRef.current = null;
-      }
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
       }
 
       resetPlaybackState();
@@ -386,11 +520,18 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       setCurrentTrack(metadata?.fullTrack || null);
 
       const audio = new Audio(url);
-      audio.volume = isMuted ? 0 : volumeRef.current;
       audio.playbackRate = playbackRate;
       audioRef.current = audio;
       setCurrentlyPlayingId(id);
       setIsPlaying(true);
+
+      // Track in queue history
+      if (metadata?.fullTrack) {
+        addToQueueHistory(metadata.fullTrack);
+      }
+
+      // Use shared transition helper for crossfade or immediate switch
+      transitionAudio(oldAudio, audio, targetVolume);
 
       const cleanup = attachCoreListeners(audio);
       cleanupRef.current = cleanup;
@@ -404,7 +545,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         }
       });
     },
-    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate]
+    [attachCoreListeners, resetPlaybackState, clearPlayerState, isMuted, playbackRate, transitionAudio]
   );
 
   const setVolume = useCallback((v: number) => {
@@ -542,6 +683,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const toggleCrossfade = useCallback(() => {
+    setCrossfadeEnabled((prev) => !prev);
+  }, []);
+
   return (
     <AudioPlayerContext.Provider
       value={{
@@ -579,6 +724,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         setPlaybackRate,
         isMuted,
         toggleMute,
+        crossfadeEnabled,
+        toggleCrossfade,
       }}
     >
       {children}

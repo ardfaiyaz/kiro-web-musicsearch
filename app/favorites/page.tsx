@@ -1,17 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/app/components/FavoritesContext";
 import { usePersonalization } from "@/app/components/PersonalizationContext";
 import TrackGrid from "@/app/components/TrackGrid";
-import CollectionsPage from "@/app/components/favorites/collections/CollectionsPage";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import FavoriteArtistsPage from "@/app/components/favorites/artists/FavoriteArtistsPage";
-import FavoriteAlbumsPage from "@/app/components/favorites/albums/FavoriteAlbumsPage";
-import RecentlyPlayedPage from "@/app/components/favorites/history/RecentlyPlayedPage";
-import MusicInsightsPage from "@/app/components/favorites/analytics/MusicInsightsPage";
+import SwipeTabs from "@/app/components/ui/SwipeTabs";
+import dynamic from "next/dynamic";
+
+// Route-based code splitting: lazy-load heavy tab components
+const CollectionsPage = dynamic(
+  () => import("@/app/components/favorites/collections/CollectionsPage"),
+  { loading: () => <TabLoadingState />, ssr: false }
+);
+const FavoriteArtistsPage = dynamic(
+  () => import("@/app/components/favorites/artists/FavoriteArtistsPage"),
+  { loading: () => <TabLoadingState />, ssr: false }
+);
+const FavoriteAlbumsPage = dynamic(
+  () => import("@/app/components/favorites/albums/FavoriteAlbumsPage"),
+  { loading: () => <TabLoadingState />, ssr: false }
+);
+const RecentlyPlayedPage = dynamic(
+  () => import("@/app/components/favorites/history/RecentlyPlayedPage"),
+  { loading: () => <TabLoadingState />, ssr: false }
+);
+const MusicInsightsPage = dynamic(
+  () => import("@/app/components/favorites/analytics/MusicInsightsPage"),
+  { loading: () => <TabLoadingState />, ssr: false }
+);
+
+function TabLoadingState() {
+  return (
+    <div className="flex items-center justify-center py-16">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-foreground/20 border-t-foreground" />
+    </div>
+  );
+}
 
 type TabId = "songs" | "artists" | "albums" | "collections" | "history" | "insights";
 
@@ -28,6 +55,22 @@ export default function FavoritesPage() {
   const { favorites, favoriteArtists, favoriteAlbums } = useFavorites();
   const { listeningHistory } = usePersonalization();
   const [activeTab, setActiveTab] = useState<TabId>("songs");
+
+  const currentTabIndex = TABS.findIndex((t) => t.id === activeTab);
+
+  const handleSwipeLeft = useCallback(() => {
+    const nextIndex = currentTabIndex + 1;
+    if (nextIndex < TABS.length) {
+      setActiveTab(TABS[nextIndex].id);
+    }
+  }, [currentTabIndex]);
+
+  const handleSwipeRight = useCallback(() => {
+    const prevIndex = currentTabIndex - 1;
+    if (prevIndex >= 0) {
+      setActiveTab(TABS[prevIndex].id);
+    }
+  }, [currentTabIndex]);
 
   function getTabCount(tabId: TabId): number {
     switch (tabId) {
@@ -96,6 +139,12 @@ export default function FavoritesPage() {
           </nav>
 
           {/* Songs Tab */}
+          <SwipeTabs
+            currentIndex={currentTabIndex}
+            tabCount={TABS.length}
+            onSwipeLeft={handleSwipeLeft}
+            onSwipeRight={handleSwipeRight}
+          >
           {activeTab === "songs" && (
             <div
               id="tabpanel-songs"
@@ -174,6 +223,7 @@ export default function FavoritesPage() {
               <MusicInsightsPage />
             </div>
           )}
+          </SwipeTabs>
         </section>
       </div>
 

@@ -1556,3 +1556,716 @@ html {
   display: none;
 }
 
+/* ===== FEAT-004: Visual & Animation Enhancements ===== */
+
+/* --- Aurora Background Effect --- */
+.aurora-background {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  mix-blend-mode: screen;
+}
+
+.aurora-blob-1 {
+  width: 50%;
+  height: 60%;
+  top: -10%;
+  left: 10%;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.4), rgba(20, 184, 166, 0.3));
+  animation: auroraFloat1 25s ease-in-out infinite;
+}
+
+.aurora-blob-2 {
+  width: 45%;
+  height: 50%;
+  top: 5%;
+  right: 10%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.3));
+  animation: auroraFloat2 30s ease-in-out infinite;
+}
+
+.aurora-blob-3 {
+  width: 40%;
+  height: 45%;
+  top: -5%;
+  left: 30%;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.2));
+  animation: auroraFloat3 22s ease-in-out infinite;
+}
+
+.aurora-blob-4 {
+  width: 35%;
+  height: 40%;
+  top: 10%;
+  right: 25%;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(59, 130, 246, 0.2));
+  animation: auroraFloat4 28s ease-in-out infinite;
+}
+
+@keyframes auroraFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
+  33% { transform: translate(5%, 3%) scale(1.1); opacity: 0.35; }
+  66% { transform: translate(-3%, -2%) scale(0.95); opacity: 0.2; }
+}
+
+@keyframes auroraFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+  25% { transform: translate(-4%, 5%) scale(1.05); opacity: 0.3; }
+  50% { transform: translate(3%, -3%) scale(0.9); opacity: 0.25; }
+  75% { transform: translate(-2%, 2%) scale(1.08); opacity: 0.35; }
+}
+
+@keyframes auroraFloat3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+  50% { transform: translate(6%, -4%) scale(1.15); opacity: 0.3; }
+}
+
+@keyframes auroraFloat4 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+  40% { transform: translate(-5%, 3%) scale(1.1); opacity: 0.25; }
+  80% { transform: translate(4%, -2%) scale(0.95); opacity: 0.2; }
+}
+
+/* --- Animated Gradient Mesh for AmbientBackground --- */
+.ambient-gradient-mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ambient-mesh-layer {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  opacity: 0.15;
+  border-radius: 50%;
+}
+
+.ambient-mesh-layer-1 {
+  background: radial-gradient(ellipse at 30% 40%, rgba(99, 102, 241, 0.3), transparent 60%);
+  animation: meshDrift1 25s ease-in-out infinite;
+}
+
+.ambient-mesh-layer-2 {
+  background: radial-gradient(ellipse at 70% 60%, rgba(236, 72, 153, 0.25), transparent 55%);
+  animation: meshDrift2 30s ease-in-out infinite;
+}
+
+.ambient-mesh-layer-3 {
+  background: radial-gradient(ellipse at 50% 30%, rgba(34, 197, 94, 0.2), transparent 50%);
+  animation: meshDrift3 28s ease-in-out infinite;
+}
+
+@keyframes meshDrift1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(3%, -2%) rotate(2deg); }
+  66% { transform: translate(-2%, 3%) rotate(-1deg); }
+}
+
+@keyframes meshDrift2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-4%, 2%) rotate(-2deg); }
+}
+
+@keyframes meshDrift3 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(2%, 4%) rotate(1deg); }
+  75% { transform: translate(-3%, -2%) rotate(-1.5deg); }
+}
+
+/* --- Vinyl Spinner --- */
+.vinyl-disc {
+  transition: animation-play-state 0.3s;
+}
+
+.vinyl-spinning {
+  animation: vinylSpin 3s linear infinite;
+}
+
+.vinyl-paused {
+  animation: vinylSpin 3s linear infinite paused;
+}
+
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* --- Particle Burst Effect --- */
+@keyframes particleBurst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--particle-x), var(--particle-y)) scale(0);
+    opacity: 0;
+  }
+}
+
+.particle-burst-item {
+  animation: particleBurst 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* --- Text Reveal Animation --- */
+.text-reveal-container {
+  overflow: hidden;
+}
+
+.text-reveal-letter {
+  opacity: 0;
+  transform: translateY(20px);
+  display: inline-block;
+}
+
+.text-reveal-visible {
+  animation: textRevealIn 0.4s ease-out forwards;
+}
+
+@keyframes textRevealIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Staggered Grid Animation --- */
+.staggered-grid-item {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.staggered-grid-item-visible {
+  animation: staggeredItemIn 0.5s ease-out forwards;
+}
+
+@keyframes staggeredItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* --- Cassette Theme --- */
+.cassette-player {
+  background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.cassette-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  opacity: 0.5;
+}
+
+.cassette-reel {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #333 30%, #555 60%, #333 100%);
+  border: 3px solid #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cassette-reel-spinning {
+  animation: vinylSpin 2s linear infinite;
+}
+
+.cassette-reel-inner {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.cassette-spoke {
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  background: #888;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+.cassette-spoke-2 {
+  transform: translateY(-50%) rotate(60deg);
+}
+
+.cassette-spoke-3 {
+  transform: translateY(-50%) rotate(120deg);
+}
+
+.cassette-tape-strip {
+  flex: 1;
+  height: 4px;
+  background: #222;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cassette-tape-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #8b4513;
+  border-radius: 2px;
+  transition: width 0.3s linear;
+}
+
+.cassette-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.1s, box-shadow 0.1s;
+  cursor: pointer;
+}
+
+.cassette-btn:active {
+  transform: scale(0.95) translateY(1px);
+}
+
+.cassette-btn-primary {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(180deg, #e0e0e0, #b0b0b0);
+  border: 2px solid #999;
+  color: #333;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.cassette-btn-primary:active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.cassette-btn-secondary {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(180deg, #d0d0d0, #a0a0a0);
+  border: 2px solid #888;
+  color: #444;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.cassette-btn-secondary:active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* --- Reduced Motion: disable FEAT-004 animations --- */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob-1,
+  .aurora-blob-2,
+  .aurora-blob-3,
+  .aurora-blob-4 {
+    animation: none !important;
+  }
+
+  .ambient-mesh-layer-1,
+  .ambient-mesh-layer-2,
+  .ambient-mesh-layer-3 {
+    animation: none !important;
+  }
+
+  .vinyl-spinning {
+    animation: none !important;
+  }
+
+  .particle-burst-item {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .text-reveal-letter {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .staggered-grid-item {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .cassette-reel-spinning {
+    animation: none !important;
+  }
+}
+
+html.reduce-motion .aurora-blob-1,
+html.reduce-motion .aurora-blob-2,
+html.reduce-motion .aurora-blob-3,
+html.reduce-motion .aurora-blob-4 {
+  animation: none !important;
+}
+
+html.reduce-motion .ambient-mesh-layer-1,
+html.reduce-motion .ambient-mesh-layer-2,
+html.reduce-motion .ambient-mesh-layer-3 {
+  animation: none !important;
+}
+
+html.reduce-motion .vinyl-spinning {
+  animation: none !important;
+}
+
+html.reduce-motion .particle-burst-item {
+  animation: none !important;
+  opacity: 0;
+}
+
+html.reduce-motion .text-reveal-letter {
+  opacity: 1;
+  transform: none;
+  animation: none !important;
+}
+
+html.reduce-motion .staggered-grid-item {
+  opacity: 1;
+  transform: none;
+  animation: none !important;
+}
+
+html.reduce-motion .cassette-reel-spinning {
+  animation: none !important;
+}
+
+/* ===== FEAT-009: Accessibility Enhancements ===== */
+
+/* --- Font Size Adjustment --- */
+body {
+  font-size: var(--user-font-size, 16px);
+}
+
+/* --- Dyslexia-Friendly Font (OpenDyslexic) --- */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/OpenDyslexic-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/OpenDyslexic-Bold.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+html.dyslexia-font,
+html.dyslexia-font body,
+html.dyslexia-font * {
+  font-family: "OpenDyslexic", sans-serif !important;
+}
+
+/* --- High Contrast Mode --- */
+html.high-contrast {
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #333333;
+  --border: #000000;
+  --card: #ffffff;
+  --accent: #000000;
+  --accent-hover: #333333;
+  --surface: #f5f5f5;
+  --surface-hover: #e0e0e0;
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 0.5);
+  --glass-highlight: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --ring: rgba(0, 0, 0, 0.3);
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
+  --text-tertiary: #333333;
+}
+
+html.high-contrast.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --muted: #cccccc;
+  --border: #ffffff;
+  --card: #000000;
+  --accent: #ffffff;
+  --accent-hover: #cccccc;
+  --surface: #1a1a1a;
+  --surface-hover: #333333;
+  --glass-bg: rgba(0, 0, 0, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(255, 255, 255, 0.1);
+  --ring: rgba(255, 255, 255, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #cccccc;
+}
+
+html.high-contrast a,
+html.high-contrast button {
+  text-decoration-thickness: 2px;
+}
+
+html.high-contrast *:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* --- Reduced Transparency Mode --- */
+html.reduce-transparency .glass,
+html.reduce-transparency .glass-elevated,
+html.reduce-transparency .glass-search,
+html.reduce-transparency .glass-dropdown,
+html.reduce-transparency .glass-player,
+html.reduce-transparency .glass-card,
+html.reduce-transparency .glass-tooltip,
+html.reduce-transparency .glass-sidebar,
+html.reduce-transparency .glass-dialog,
+html.reduce-transparency .glass-settings,
+html.reduce-transparency .glass-recommendation,
+html.reduce-transparency .glass-stats,
+html.reduce-transparency .glass-fab,
+html.reduce-transparency .glass-subtle,
+html.reduce-transparency .glass-light,
+html.reduce-transparency .glass-medium,
+html.reduce-transparency .glass-heavy,
+html.reduce-transparency .glass-ultra {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+html.reduce-transparency.dark .glass,
+html.reduce-transparency.dark .glass-elevated,
+html.reduce-transparency.dark .glass-search,
+html.reduce-transparency.dark .glass-dropdown,
+html.reduce-transparency.dark .glass-player,
+html.reduce-transparency.dark .glass-card,
+html.reduce-transparency.dark .glass-tooltip,
+html.reduce-transparency.dark .glass-sidebar,
+html.reduce-transparency.dark .glass-dialog,
+html.reduce-transparency.dark .glass-settings,
+html.reduce-transparency.dark .glass-recommendation,
+html.reduce-transparency.dark .glass-stats,
+html.reduce-transparency.dark .glass-fab,
+html.reduce-transparency.dark .glass-subtle,
+html.reduce-transparency.dark .glass-light,
+html.reduce-transparency.dark .glass-medium,
+html.reduce-transparency.dark .glass-heavy,
+html.reduce-transparency.dark .glass-ultra {
+  background: var(--surface) !important;
+}
+
+html.reduce-transparency .ambient-background,
+html.reduce-transparency .ambient-floating-shapes,
+html.reduce-transparency .aurora-background {
+  display: none !important;
+}
+
+/* --- Focus Mode --- */
+html.focus-mode #mini-player,
+html.focus-mode nav,
+html.focus-mode .mobile-bottom-nav,
+html.focus-mode .floating-action-button,
+html.focus-mode .settings-fab,
+html.focus-mode aside:not(#main-content aside),
+html.focus-mode .ambient-background,
+html.focus-mode .aurora-background {
+  display: none !important;
+}
+
+html.focus-mode main {
+  padding-bottom: 0 !important;
+}
+
+/* --- Motion Sensitivity Levels --- */
+
+/* Off: disable all animations and transitions */
+html.motion-off *,
+html.motion-off *::before,
+html.motion-off *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+html.motion-off .ambient-floating-shapes,
+html.motion-off .aurora-background {
+  display: none !important;
+}
+
+/* Reduced: minimal animations, no complex effects */
+html.motion-reduced *,
+html.motion-reduced *::before,
+html.motion-reduced *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 150ms !important;
+}
+
+html.motion-reduced .ambient-gradient-layer,
+html.motion-reduced .ambient-shape-1,
+html.motion-reduced .ambient-shape-2,
+html.motion-reduced .ambient-shape-3,
+html.motion-reduced .aurora-blob-1,
+html.motion-reduced .aurora-blob-2,
+html.motion-reduced .aurora-blob-3,
+html.motion-reduced .aurora-blob-4 {
+  animation: none !important;
+}
+
+html.motion-reduced .ambient-floating-shapes {
+  display: none;
+}
+
+html.motion-reduced .card-tilt:hover {
+  transform: none;
+}
+
+/* Full: enable all effects including extra animations */
+html.motion-full .transition-premium {
+  transition-duration: 0.4s;
+}
+
+html.motion-full .hover-glow:hover {
+  box-shadow: 0 0 30px -4px var(--dynamic-accent, var(--accent)),
+    0 0 12px -2px var(--dynamic-accent, var(--accent));
+}
+
+html.motion-full .card-tilt:hover {
+  transform: perspective(800px) rotateX(3deg) rotateY(-3deg) translateY(-6px);
+}
+
+/* --- Color Blind Modes --- */
+
+/* Protanopia (red-blind): shift reds toward blue/yellow */
+html.colorblind-protanopia {
+  filter: url("#protanopia-filter");
+}
+
+html.colorblind-protanopia {
+  --error: #d4a017;
+  --error-light: #fef3c7;
+  --success: #2563eb;
+  --success-light: #bfdbfe;
+}
+
+/* Deuteranopia (green-blind): shift greens toward blue/yellow */
+html.colorblind-deuteranopia {
+  filter: url("#deuteranopia-filter");
+}
+
+html.colorblind-deuteranopia {
+  --success: #2563eb;
+  --success-light: #bfdbfe;
+  --error: #d97706;
+  --error-light: #fef3c7;
+}
+
+/* Tritanopia (blue-blind): shift blues toward red/green */
+html.colorblind-tritanopia {
+  filter: url("#tritanopia-filter");
+}
+
+html.colorblind-tritanopia {
+  --info: #dc2626;
+  --info-light: #fecaca;
+  --primary: #dc2626;
+  --primary-hover: #b91c1c;
+}
+
+/* Color blind filter SVG definitions are injected via ColorBlindFilters component */
+
+/* Easter Egg: Retro Theme */
+html.retro-theme {
+  --font-family-override: "Courier New", Courier, monospace;
+}
+
+html.retro-theme body {
+  font-family: "Courier New", Courier, monospace !important;
+  background-color: #1a1a2e !important;
+  color: #00ff41 !important;
+  image-rendering: pixelated;
+}
+
+html.retro-theme * {
+  border-radius: 0 !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html.retro-theme .rounded-2xl,
+html.retro-theme .rounded-xl,
+html.retro-theme .rounded-lg,
+html.retro-theme .rounded-full {
+  border-radius: 0 !important;
+}
+
+html.retro-theme img {
+  filter: contrast(1.2) saturate(1.5);
+  image-rendering: pixelated;
+}
+
+/* Easter Egg: Vinyl Mode */
+html.vinyl-mode img {
+  border-radius: 50% !important;
+  animation: vinyl-spin 4s linear infinite;
+}
+
+html.vinyl-mode .aspect-square img {
+  border-radius: 50% !important;
+}
+
+@keyframes vinyl-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+html.vinyl-mode body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(139, 69, 19, 0.05) 100%
+  );
+}

@@ -12,6 +12,7 @@ import {
 import { useAudioPlayer } from "./AudioPlayerContext";
 import { useDynamicColors } from "./DynamicColorProvider";
 import AnimatedEqualizer from "./AnimatedEqualizer";
+import MiniLyricsTicker from "./player/MiniLyricsTicker";
 import dynamic from "next/dynamic";
 
 const ExpandedPlayer = dynamic(() => import("./ExpandedPlayer"), {
@@ -104,7 +105,7 @@ export default function MiniPlayer() {
         <aside
           id="mini-player"
           aria-label="Mini player"
-          className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-player shadow-2xl transition-premium"
+          className="fixed bottom-[72px] left-4 right-4 z-50 mx-auto max-w-2xl rounded-2xl glass-player shadow-2xl transition-premium sm:bottom-4"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -190,6 +191,7 @@ export default function MiniPlayer() {
                 <AnimatedEqualizer />
                 {artistName || "Unknown Artist"}
               </span>
+              <MiniLyricsTicker />
             </button>
 
             {/* Compact controls */}

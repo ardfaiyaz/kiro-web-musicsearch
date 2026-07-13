@@ -15,6 +15,11 @@ import ListeningTimeline from "./ListeningTimeline";
 import TasteEvolution from "./TasteEvolution";
 import Achievements from "./Achievements";
 import DiscoveryAnalytics from "./DiscoveryAnalytics";
+import ListeningStreaks from "./ListeningStreaks";
+import MusicalJourney from "./MusicalJourney";
+import TasteCompatibility from "./TasteCompatibility";
+import MonthlyWrapped from "./MonthlyWrapped";
+import LongestSession from "./LongestSession";
 import InsightsSkeleton from "./InsightsSkeleton";
 import EmptyInsights from "./EmptyInsights";
 
@@ -62,7 +67,11 @@ export default function MusicInsightsPage() {
 
       <ListeningSummary history={history} />
 
+      <ListeningStreaks history={history} />
+
       <ActivityOverview history={history} />
+
+      <MonthlyWrapped history={history} />
 
       {/* Rankings - responsive 2-column layout */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -76,9 +85,15 @@ export default function MusicInsightsPage() {
 
       <ListeningHeatmap history={history} />
 
+      <LongestSession history={history} />
+
       <ListeningTimeline history={history} />
 
       <TasteEvolution history={history} />
+
+      <TasteCompatibility history={history} />
+
+      <MusicalJourney history={history} />
 
       <DiscoveryAnalytics history={history} />
 

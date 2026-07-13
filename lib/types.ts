@@ -56,6 +56,7 @@ export interface ItunesSearchResponse {
 export interface RecentSearch {
   query: string;
   timestamp: number;
+  imageUrl?: string;
 }
 
 // Last.fm types

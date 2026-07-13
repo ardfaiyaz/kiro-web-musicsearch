@@ -21,6 +21,19 @@ import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import WebVitalsReporter from "./components/WebVitalsReporter";
 import CustomCursorWrapper from "./components/CustomCursorWrapper";
 import SkipLinks from "./components/ui/SkipLinks";
+import FloatingActionButton from "./components/ui/FloatingActionButton";
+import LandscapePlayer from "./components/player/LandscapePlayer";
+import ScreenReaderAnnouncer from "./components/ScreenReaderAnnouncer";
+import FocusMode from "./components/FocusMode";
+import VoiceNavigation from "./components/VoiceNavigation";
+import AudioCaption from "./components/player/AudioCaption";
+import ColorBlindFilters from "./components/ColorBlindFilters";
+import EasterEggs from "./components/EasterEggs";
+import DebugOverlay from "./components/DebugOverlay";
+import Onboarding from "./components/Onboarding";
+import FeedbackWidget from "./components/FeedbackWidget";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import FeatureFlagGate from "./components/FeatureFlagGate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -85,10 +98,36 @@ export default function RootLayout({
                         </main>
                         <MiniPlayer />
                         <MobileBottomNav />
+                        <FloatingActionButton />
+                        <LandscapePlayer />
                         <SettingsFab />
                         <KeyboardShortcuts />
                         <KeyboardShortcutsOverlay />
                         <CommandPalette />
+                        <ScreenReaderAnnouncer />
+                        <FeatureFlagGate flag="focusMode">
+                          <FocusMode />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="voiceNavigation">
+                          <VoiceNavigation />
+                        </FeatureFlagGate>
+                        <AudioCaption />
+                        <ColorBlindFilters />
+                        <FeatureFlagGate flag="easterEggs">
+                          <EasterEggs />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="debugMode">
+                          <DebugOverlay />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="onboarding">
+                          <Onboarding />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="feedbackWidget">
+                          <FeedbackWidget />
+                        </FeatureFlagGate>
+                        <FeatureFlagGate flag="pwaInstallPrompt">
+                          <PWAInstallPrompt />
+                        </FeatureFlagGate>
                       </div>
                     </ToastProvider>
                   </PersonalizationProvider>

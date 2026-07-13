@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Visual and Animation Enhancements (items 31-40): Parallax scrolling hero, morphing transitions, animated gradient backgrounds, particle effects on interaction, vinyl record spinning animation, cassette tape UI retro mode, 3D card tilt on hover, aurora background effect, text reveal animations, and staggered grid loading.",
+  "status": "completed",
+  "steps": [
+    "1. Enhance app/components/HeroSection.tsx: add parallax scrolling effect using scroll event listener and CSS transform translateY based on scroll position. Create depth layers for background image and foreground content.",
+    "2. Create app/components/ui/MorphTransition.tsx: implement shared element animation using View Transitions API (document.startViewTransition) or CSS transitions with fixed positioning. Apply to album card -> album page transitions.",
+    "3. Enhance app/components/AmbientBackground.tsx: add slow-moving animated gradient mesh using CSS @keyframes with multiple gradient layers that shift position over 20-30 second cycles. Use behind glass panels.",
+    "4. Create app/components/ui/ParticleEffect.tsx: subtle particle burst animation (CSS-only with multiple small divs animating outward) triggered when favoriting a song. Use CSS keyframes for performance.",
+    "5. Create app/components/player/VinylSpinner.tsx: show a spinning vinyl record animation (CSS rotate animation) while audio preview plays. Display album art in center of vinyl. Integrate into expanded player.",
+    "6. Create app/components/themes/CassetteTheme.tsx: retro cassette player UI theme with tape reels (rotating circles), play/pause styled as physical buttons, and VHS-style scanlines overlay. Togglable in settings.",
+    "7. Create app/components/ui/TiltCard.tsx: CSS perspective 3D tilt following cursor position on album/artist cards using onMouseMove to calculate rotation. Apply subtle translateZ for depth effect.",
+    "8. Create app/components/AuroraBackground.tsx: animated aurora borealis effect using multiple overlapping gradient blobs with CSS animation (translate and opacity changes). Use behind hero section.",
+    "9. Create app/components/ui/TextReveal.tsx: headlines animate in letter-by-letter on page load using CSS animation-delay on individual spans. Apply to page titles and hero headings.",
+    "10. Create app/components/ui/StaggeredGrid.tsx: cards appear one-by-one with slight delay (stagger) using Intersection Observer + CSS animation-delay. Apply to track/album grids on page load."
+  ],
+  "acceptance_criteria": [
+    "Homepage hero has depth parallax effect on scroll",
+    "Navigating to album page shows morphing transition from card",
+    "Background has slow-moving animated gradient mesh",
+    "Favoriting a song triggers a subtle particle burst animation",
+    "Vinyl record spins during audio playback with artwork in center",
+    "Cassette tape retro mode is available in settings and completely reskins the player",
+    "Album/artist cards tilt in 3D following cursor on hover",
+    "Aurora borealis effect animates behind the hero section",
+    "Page titles animate in letter-by-letter on load",
+    "Grid items stagger in one-by-one when scrolled into view"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": "All 10 visual and animation features implemented successfully. Build and lint pass with zero errors. Key patterns: (1) Created useReducedMotion hook using useSyncExternalStore with MutationObserver to avoid setState-in-effect lint errors when checking reduce-motion class, (2) HeroSection converted to client component for parallax scroll listener with requestAnimationFrame throttling, (3) VinylSpinner integrated into ExpandedPlayer showing when isPlaying is true, (4) CassetteTheme conditionally replaces normal player content when cassetteMode setting is enabled, (5) Added cassetteMode boolean to Settings interface and SettingsContext, (6) TiltCard wraps AlbumCard/TrackCard/ArtistCard replacing static card-tilt CSS class with interactive mouse-following 3D perspective, (7) ParticleEffect uses CSS custom properties (--particle-x, --particle-y) for burst direction animation, (8) StaggeredGrid integrated into NewReleasesGrid (converted to client component), (9) TextReveal integrated into HeroSection headline, (10) AuroraBackground placed behind hero section, (11) All new CSS animations include reduce-motion overrides, (12) Fixed duplicate globals.css import in layout.tsx, (13) MorphTransitionLink uses View Transitions API with fallback to standard router.push."
+}

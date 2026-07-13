@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-008",
+  "type": "feat",
+  "description": "Performance and Technical Enhancements (items 71-80): Virtual scrolling for long lists, image blur-up loading, predictive prefetching, IndexedDB for large storage, background sync, streaming search results with Suspense, route-based code splitting, memory-efficient audio, request deduplication, and stale-while-revalidate caching.",
+  "status": "completed",
+  "steps": [
+    "1. Create app/components/ui/VirtualList.tsx: implement virtual scrolling using Intersection Observer and a windowing approach - only render visible items plus buffer. Apply to track lists in search results and playlists with 100+ items.",
+    "2. Create app/components/ui/BlurUpImage.tsx: show blurred low-res thumbnail (using CSS blur filter on a tiny version) then load full resolution progressively. Replace Image usage in cards with this component.",
+    "3. Create lib/prefetch.ts and app/components/ui/PrefetchLink.tsx: on hover over links, prefetch the target page data. Use requestIdleCallback and router.prefetch() from Next.js. Apply to navigation links.",
+    "4. Create lib/indexeddb.ts: implement IndexedDB storage adapter for favorites, listening history, and collections (larger datasets). Provide get/set/delete with Promise-based API. Fall back to localStorage on error.",
+    "5. Create lib/background-sync.ts: queue favorite/unfavorite actions when offline (using navigator.onLine detection). When back online, replay queued actions. Store queue in localStorage.",
+    "6. Enhance search to use React Suspense streaming: in app/search/page.tsx, the existing Suspense boundaries already stream results. Ensure search result components use proper loading states and progressive rendering.",
+    "7. Apply dynamic imports for heavy pages: use next/dynamic with { ssr: false } or { loading } for analytics page components, collection editor, expanded player. Ensure route-based code splitting.",
+    "8. Enhance AudioPlayerContext.tsx: ensure Audio objects are properly released when switching tracks - call audio.src = '' and audio.load() before dereferencing. Track Audio instances to prevent memory leaks.",
+    "9. Create lib/request-cache.ts: implement in-flight request deduplication - if the same API URL is currently being fetched, return the existing Promise instead of making a new request. Use a Map of URL -> Promise.",
+    "10. Create lib/swr-cache.ts: implement stale-while-revalidate pattern - return cached results instantly from localStorage/memory, then fetch fresh data in background and update. Apply to iTunes search calls."
+  ],
+  "acceptance_criteria": [
+    "Lists with 100+ items render smoothly with virtual scrolling",
+    "Images show blurred placeholder then load full resolution",
+    "Hovering links prefetches target page data",
+    "IndexedDB stores large datasets (favorites, history) reliably",
+    "Offline actions queue and sync when connection returns",
+    "Search results stream in progressively with Suspense boundaries",
+    "Heavy page components are code-split and lazy-loaded",
+    "Audio objects are properly cleaned up preventing memory leaks",
+    "Duplicate API requests share a single in-flight Promise",
+    "Cached results show instantly with background revalidation"
+  ],
+  "verification": [
+    "bun run lint passes with zero errors",
+    "bun run build succeeds with zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": "All 10 steps implemented successfully. Build and lint pass cleanly. The search page already had proper Suspense boundaries with streaming, so step 6 was verified as already complete. The favorites page uses dynamic imports for all heavy tab components (analytics, collections, artists, albums, history). AudioPlayerContext now properly releases Audio objects via src='' and load() before dereferencing, preventing memory leaks. The VirtualList uses ResizeObserver instead of setState in effect to avoid cascading renders lint error."
+}

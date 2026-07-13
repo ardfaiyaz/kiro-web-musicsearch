@@ -9,6 +9,8 @@ import NewReleasesGrid from "./components/NewReleasesGrid";
 import PersonalizedSection from "./components/PersonalizedSection";
 import ContinueListening from "./components/player/ContinueListening";
 import RecentlyViewed from "./components/RecentlyViewed";
+import DailyDiscovery from "./components/discover/DailyDiscovery";
+import AlbumOfTheDay from "./components/discover/AlbumOfTheDay";
 import { getTrendingSongs, getNewReleases } from "@/lib/discovery";
 import { getRecommendationsByMood } from "@/lib/ai-discovery";
 
@@ -165,6 +167,17 @@ export default async function Home() {
 
       <ContinueListening />
       <RecentlyViewed />
+
+      {/* Daily Discovery Feed */}
+      <div className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+        <DailyDiscovery />
+      </div>
+
+      {/* Album of the Day */}
+      <div className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+        <AlbumOfTheDay />
+      </div>
+
       <Suspense fallback={<EditorialSkeleton />}>
         <EditorialHomepage />
       </Suspense>

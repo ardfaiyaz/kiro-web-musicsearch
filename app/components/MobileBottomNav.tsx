@@ -23,10 +23,10 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 glass-heavy border-t border-border/50 sm:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 glass-heavy border-t border-border/50 sm:hidden safe-area-bottom"
       aria-label="Mobile navigation"
     >
-      <div className="flex items-center justify-around px-2 py-2">
+      <div className="flex items-center justify-around px-2 py-3">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -34,14 +34,14 @@ export default function MobileBottomNav() {
               key={href}
               href={href}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-1.5 transition-colors ${
+              className={`flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-2 transition-all active:scale-90 ${
                 active
                   ? "text-[var(--primary)]"
                   : "text-muted hover:text-foreground"
               }`}
             >
               <Icon
-                size={20}
+                size={22}
                 fill={active && label === "Favorites" ? "currentColor" : "none"}
                 aria-hidden="true"
               />

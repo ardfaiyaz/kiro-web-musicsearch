@@ -1,7 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { RSSFeedItem } from "@/lib/discovery";
+import AuroraBackground from "./AuroraBackground";
+import TextReveal from "./ui/TextReveal";
+import { useReducedMotion } from "./hooks/useReducedMotion";
 
 interface HeroSectionProps {
   featured: RSSFeedItem;
@@ -12,14 +18,52 @@ export default function HeroSection({ featured }: HeroSectionProps) {
     ? featured.artworkUrl100.replace("100x100", "600x600")
     : "";
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+  const reducedMotion = useReducedMotion();
+  const rafRef = useRef<number | null>(null);
+
+  const handleScroll = useCallback(() => {
+    if (reducedMotion) return;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      setScrollY(window.scrollY);
+    });
+  }, [reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [handleScroll, reducedMotion]);
+
+  // Parallax factor for depth layers
+  const bgOffset = scrollY * 0.4;
+  const fgOffset = scrollY * 0.15;
+
   return (
     <section
+      ref={sectionRef}
       className="relative min-h-[60vh] overflow-hidden sm:min-h-[70vh]"
       aria-label="Featured track"
     >
-      {/* Dynamic gradient background from artwork */}
+      {/* Aurora background effect */}
+      <AuroraBackground />
+
+      {/* Dynamic gradient background from artwork - PARALLAX LAYER (back) */}
       {artworkUrl && (
-        <div className="absolute inset-0" aria-hidden="true">
+        <div
+          className="absolute inset-0"
+          aria-hidden="true"
+          style={
+            !reducedMotion
+              ? { transform: `translateY(${bgOffset}px)`, willChange: "transform" }
+              : undefined
+          }
+        >
           <Image
             src={artworkUrl}
             alt=""
@@ -33,8 +77,15 @@ export default function HeroSection({ featured }: HeroSectionProps) {
         </div>
       )}
 
-      {/* Content overlay */}
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-end gap-8 px-4 pb-16 pt-32 sm:flex-row sm:items-end sm:gap-12 sm:px-6 sm:pb-20 lg:px-8 lg:pb-24">
+      {/* Content overlay - PARALLAX LAYER (front, slower movement) */}
+      <div
+        className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-end gap-8 px-4 pb-16 pt-32 sm:flex-row sm:items-end sm:gap-12 sm:px-6 sm:pb-20 lg:px-8 lg:pb-24"
+        style={
+          !reducedMotion
+            ? { transform: `translateY(${fgOffset}px)`, willChange: "transform" }
+            : undefined
+        }
+      >
         {/* Artwork */}
         <div className="animate-slide-up relative aspect-square w-56 shrink-0 overflow-hidden rounded-2xl shadow-xl sm:w-64 lg:w-72">
           {artworkUrl && (
@@ -54,9 +105,12 @@ export default function HeroSection({ featured }: HeroSectionProps) {
           <span className="inline-block rounded-full border border-border/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-muted">
             Featured
           </span>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            {featured.name}
-          </h2>
+          <TextReveal
+            text={featured.name}
+            as="h2"
+            className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
+            letterDelay={25}
+          />
           <p className="text-lg text-muted sm:text-xl">
             {featured.artistName}
           </p>

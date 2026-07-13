@@ -15,6 +15,8 @@ import BrowseByActivity from "@/app/components/discover/BrowseByActivity";
 import BrowseByTheme from "@/app/components/discover/BrowseByTheme";
 import HiddenGems from "@/app/components/discover/HiddenGems";
 import PopularThisWeek from "@/app/components/discover/PopularThisWeek";
+import MoodPlaylists from "@/app/components/discover/MoodPlaylists";
+import ReleaseRadar from "@/app/components/discover/ReleaseRadar";
 import {
   getTrendingSongs,
   getNewReleases,
@@ -350,6 +352,9 @@ export default async function DiscoverPage() {
             <DiscoveryMoodSelector />
           </section>
 
+          {/* Mood Playlists (interactive) */}
+          <MoodPlaylists />
+
           {/* Browse by Mood (link cards) */}
           <BrowseByMood />
 
@@ -364,6 +369,11 @@ export default async function DiscoverPage() {
 
           {/* Browse by Theme */}
           <BrowseByTheme />
+
+          {/* Release Radar (calendar view) */}
+          <Suspense fallback={<LoadingSkeleton />}>
+            <ReleaseRadar />
+          </Suspense>
 
           {/* New Releases */}
           {newReleases.length > 0 && (

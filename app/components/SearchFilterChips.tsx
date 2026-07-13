@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
-import { Music, User, Disc3, ListMusic, ChevronDown } from "lucide-react";
+import { Music, User, Disc3, ListMusic, ChevronDown, Calendar } from "lucide-react";
 
 const FILTER_OPTIONS = [
   { value: "all", label: "All", icon: null },
@@ -35,6 +35,14 @@ const DECADE_OPTIONS = [
   { value: "1990s", label: "1990s" },
   { value: "1980s", label: "1980s" },
   { value: "older", label: "Older" },
+];
+
+const DECADE_QUICK_CHIPS = [
+  { value: "1980s", label: "80s" },
+  { value: "1990s", label: "90s" },
+  { value: "2000s", label: "2000s" },
+  { value: "2010s", label: "2010s" },
+  { value: "2020s", label: "2020s" },
 ];
 
 const SORT_OPTIONS = [
@@ -115,6 +123,30 @@ export default function SearchFilterChips() {
               >
                 {Icon && <Icon size={14} aria-hidden="true" />}
                 {option.label}
+              </button>
+            );
+          })}
+        </fieldset>
+
+        {/* Decade quick-select chips */}
+        <fieldset className="flex flex-wrap items-center gap-1.5">
+          <legend className="sr-only">Filter by decade</legend>
+          <Calendar size={14} className="text-muted mr-0.5" aria-hidden="true" />
+          {DECADE_QUICK_CHIPS.map((chip) => {
+            const isActive = currentYear === chip.value;
+            return (
+              <button
+                key={chip.value}
+                type="button"
+                onClick={() => updateParams("year", isActive ? "" : chip.value)}
+                aria-pressed={isActive}
+                className={`inline-flex cursor-pointer items-center rounded-full px-3 py-1.5 text-xs font-medium transition-premium ${
+                  isActive
+                    ? "bg-primary text-text-inverse shadow-sm"
+                    : "glass-subtle text-muted hover:text-foreground hover:glass-light"
+                }`}
+              >
+                {chip.label}
               </button>
             );
           })}
